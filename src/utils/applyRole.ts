@@ -20,6 +20,10 @@ const _apply = (message: Message, roleID: string, userID: string) =>
 
 export default function applyRole(message: Message, user: User) {
 	cargos.forEach((cargo) => {
-		if (user.level >= cargo.nivel) _apply(message, cargo.role, user.id);
+		try {
+			if (user?.level >= cargo.nivel) _apply(message, cargo.role, user.id);
+		} catch (e) {
+			/* empty */
+		}
 	});
 }
