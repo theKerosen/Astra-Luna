@@ -10,7 +10,7 @@ export const onInteraction = async (
     if (interaction.user.bot == true) return;
     if (!command) return;
     try {
-      command.execute(client, interaction);
+      command.execute(interaction, client);
     } catch (error) {
       console.log(error);
       await interaction.reply({

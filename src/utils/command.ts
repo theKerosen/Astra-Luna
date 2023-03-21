@@ -1,16 +1,14 @@
 import {
-  ApplicationCommandOption,
   CommandInteraction,
-  MessageComponentType,
+  SlashCommandBuilder,
+  ChatInputCommandInteraction,
 } from "discord.js";
-import { XPManager } from "./Client";
+import { XPManager } from "../utils/Client";
 
 export interface Command {
-  data: {
-    name: string;
-    description: string;
-    type?: MessageComponentType;
-    options?: ApplicationCommandOption[];
-  };
-  execute(client: XPManager, interaction: CommandInteraction): void;
+  data: SlashCommandBuilder;
+  execute(
+    interaction: CommandInteraction | ChatInputCommandInteraction,
+    client: XPManager
+  ): Promise<void>;
 }

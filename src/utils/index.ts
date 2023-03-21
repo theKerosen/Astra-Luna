@@ -3,13 +3,18 @@ import { handler } from "./handler";
 import { onInteraction } from "../events/onInteraction";
 import { Init } from "../events/Init";
 import { onMessage } from "../events/onMessage";
+import { Events } from "discord.js";
 const client = new XPManager();
+client.mongoConnect();
 client.login();
 handler();
-client.once("ready", async () => await Init(client));
+client.once(Events.ClientReady, async () => await Init(client));
 client.on(
-  "interactionCreate",
+  Events.InteractionCreate,
   async (interaction) => await onInteraction(interaction, client)
 );
-client.on("messageCreate", async (message) => await onMessage(client, message));
+client.on(
+  Events.MessageCreate,
+  async (message) => await onMessage(client, message)
+);
 export { client };
