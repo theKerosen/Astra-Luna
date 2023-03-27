@@ -1,4 +1,4 @@
-# XpManager
+# Manager/CSGO Blog Finder
 
 ## How to use?
 
