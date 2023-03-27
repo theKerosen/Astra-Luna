@@ -9,10 +9,9 @@ client.mongoConnect();
 client.login();
 handler();
 client.once(Events.ClientReady, async () => await Init(client));
-client.on(
-  Events.InteractionCreate,
-  async (interaction) => await onInteraction(interaction, client)
-);
+client.on(Events.InteractionCreate, async (interaction) => {
+  await onInteraction(interaction, client);
+});
 client.on(
   Events.MessageCreate,
   async (message) => await onMessage(client, message)

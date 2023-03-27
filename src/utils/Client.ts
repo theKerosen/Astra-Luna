@@ -7,6 +7,7 @@ import { connect, set } from "mongoose";
 class XPManager extends Client {
   commands: Collection<string, Command> = new Collection();
   misc: Collection<unknown, unknown> = new Collection();
+  votes: Collection<unknown, unknown> = new Collection();
   constructor() {
     super({ intents: 3276799 });
   }

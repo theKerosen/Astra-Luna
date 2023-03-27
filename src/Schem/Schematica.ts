@@ -17,6 +17,7 @@ const warnChannel = new Schema({
   GuildId: String,
   GuildName: String,
   BlogChannelId: String,
+  NotifyRoleId: String,
 });
 const Channels = model("NotifyChannel", warnChannel);
 export { WPSDB, Channels };

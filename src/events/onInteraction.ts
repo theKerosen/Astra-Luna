@@ -20,4 +20,10 @@ export const onInteraction = async (
       });
     }
   }
+  if (interaction.isButton()) {
+    (await import(`../Buttons/${interaction?.customId}`)).execute(
+      interaction,
+      client
+    );
+  }
 };

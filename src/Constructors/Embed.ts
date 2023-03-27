@@ -18,9 +18,6 @@ export class BEmbed extends EmbedBuilder {
       super.setColor(color)
     );
   }
-  setFodase(description: string, color: ColorResolvable) {
-    return super.setColor(color), super.setDescription(description);
-  }
   static from(other: JSONEncodable<APIEmbed> | APIEmbed) {
     if (isJSONEncodable(other)) {
       return new this(other.toJSON());
