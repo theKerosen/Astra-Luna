@@ -6,11 +6,7 @@ import {
   ButtonStyle,
   ComponentEmojiResolvable,
 } from "discord.js";
-/////////////////////////////////////////////////////////////
-//      Why did you remade the ButtonBuilder Class?        //
-//  I remade it to easily modify the Button Class &        //
-//  Remove the .addComponent() method because it is dumb.  //
-////////////////////////////////////////////////////////////
+
 export class ButtonBuilding extends ButtonBuilder {
   constructor(
     data?: Partial<ButtonComponentData> | Partial<APIButtonComponent>

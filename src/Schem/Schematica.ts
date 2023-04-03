@@ -20,4 +20,10 @@ const warnChannel = new Schema({
   NotifyRoleId: String,
 });
 const Channels = model("NotifyChannel", warnChannel);
-export { WPSDB, Channels };
+const saveGiveaways = new Schema({
+  userId: String,
+  gaveItem: Array,
+  Winner: String,
+});
+const Giveaway = model("GiveAways", saveGiveaways);
+export { WPSDB, Channels, Giveaway };

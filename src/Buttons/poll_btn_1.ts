@@ -4,7 +4,7 @@ export async function execute(
   interaction: ButtonInteraction,
   client: XPManager
 ) {
-  if (
+   if (
     client.votes.has(
       `vote_${interaction.user.id}_${interaction.message.embeds[0].description}`
     )
@@ -18,7 +18,7 @@ export async function execute(
     true
   );
   const Embed = interaction.message.embeds[0];
-  Embed.fields[0].value = (parseInt(Embed.fields[0].value) + 1).toString();
+  Embed.fields[0].value = `${(parseInt(Embed.fields[0].value) + 1).toString()} (${(Math.ceil(parseInt((Embed.fields[0].value) + 1) / client.votes.size) * 100).toString()}%)`;
   interaction.message.edit({ embeds: [Embed] });
   interaction.reply({
     content: "Obrigado por ter votado.",
