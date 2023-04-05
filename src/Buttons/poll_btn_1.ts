@@ -22,9 +22,11 @@ export async function execute(
   const votes2 = parseInt(Embed.fields[1].value)
   const percentage1 = votes1 / (votes1+votes2) * 100
   const percentage2 = votes2 / (votes1+votes2) * 100
-  Embed.fields[0].value = `${votes1} (${Math.floor(percentage1)}%)`;
-  Embed.fields[1].value = `${votes2} (${Math.floor(percentage2)}%)`;
-  interaction.message.edit({ embeds: [Embed] });
+  Embed.fields[0].value = `${votes1} (${percentage1.toFixed(2)}%)`;
+  Embed.fields[1].value = `${votes2} (${percentage2.toFixed(2)}%)`;
+  interaction.message.edit({ embeds: [Embed] }).catch(() => {
+    console.log("Unable to edit poll message.")
+  });
   interaction.reply({
     content: "Obrigado por ter votado.",
     ephemeral: true,
