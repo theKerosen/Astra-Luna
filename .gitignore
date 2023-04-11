@@ -2,5 +2,5 @@
 src/Commands/XP_Ranks.ts
 node_modules
 dist/
-src/utils/applyRole.ts
-src/events/onMessage.ts
+dist
+

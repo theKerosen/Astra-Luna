@@ -13,13 +13,14 @@ const WPScanner = new Schema({
 });
 const WPSDB = model("WordPressScan", WPScanner);
 
-const warnChannel = new Schema({
+const Guilds = new Schema({
   GuildId: String,
   GuildName: String,
   BlogChannelId: String,
   NotifyRoleId: String,
+  RolesNXP: Array,
 });
-const Channels = model("NotifyChannel", warnChannel);
+const Channels = model("Guilds", Guilds);
 const saveGiveaways = new Schema({
   userId: String,
   gaveItem: Array,
