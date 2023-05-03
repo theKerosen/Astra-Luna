@@ -1,4 +1,6 @@
-# Manager/CSGO Blog Finder
+# Manager/CSGO Blog Scanner
+
+Disclamer: this project is not updated very often and the oficial bot may have newer code.
 
 ## How to use?
 
