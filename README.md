@@ -1,6 +1,6 @@
 # Manager/CSGO Blog Scanner
 
-Disclamer: this project is not updated very often and the oficial bot may have newer code.
+Disclamer: this project is not updated very often and the official bot may have newer code.
 
 ## How to use?
 
