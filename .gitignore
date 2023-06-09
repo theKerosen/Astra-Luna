@@ -1,6 +1,5 @@
 .env
 src/Commands/XP_Ranks.ts
 node_modules
-dist/
 dist
 
