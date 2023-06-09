@@ -1,5 +1,6 @@
 import { Interaction } from "discord.js";
 import { XPManager } from "../utils/Client";
+import { Channels } from "../Schem/Schematica";
 
 export const onInteraction = async (
   interaction: Interaction,
@@ -9,6 +10,15 @@ export const onInteraction = async (
     const command = client.commands.get(interaction.commandName);
     if (interaction.user.bot == true) return;
     if (!command) return;
+
+    const Commands = await Channels.findOne({
+      GuildId: interaction.guildId,
+    });
+    if (Commands?.ToggleCommands.includes(command.data.name))
+      return interaction.reply({
+        content: "Módulo desabilitado.",
+        ephemeral: true,
+      });
     try {
       command.execute(interaction, client);
     } catch (error) {
@@ -22,6 +32,12 @@ export const onInteraction = async (
   }
   if (interaction.isButton()) {
     (await import(`../Buttons/${interaction?.customId}`)).execute(
+      interaction,
+      client
+    );
+  }
+  if (interaction.isModalSubmit()) {
+    (await import(`../Modals/${interaction?.customId}`)).execute(
       interaction,
       client
     );

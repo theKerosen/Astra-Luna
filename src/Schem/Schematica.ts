@@ -15,16 +15,22 @@ const WPSDB = model("WordPressScan", WPScanner);
 
 const Guilds = new Schema({
   GuildId: String,
-  GuildName: String,
   BlogChannelId: String,
   NotifyRoleId: String,
   RolesNXP: Array,
+  ToggleCommands: Array,
+  suggestionChannelId: String,
 });
 const Channels = model("Guilds", Guilds);
-const saveGiveaways = new Schema({
+
+const XPSchema = new Schema({
+  GuildId: String,
   userId: String,
-  gaveItem: Array,
-  Winner: String,
+  Users: Array,
+  XP: Number,
+  Level: Number,
+  cooldown: Number,
 });
-const Giveaway = model("GiveAways", saveGiveaways);
-export { WPSDB, Channels, Giveaway };
+
+const XP = model("XP", XPSchema);
+export { WPSDB, XP, Channels };

@@ -7,25 +7,11 @@ import {
   ComponentEmojiResolvable,
 } from "discord.js";
 
-export class ButtonBuilding extends ButtonBuilder {
+class ButtonBuilding extends ButtonBuilder {
   constructor(
     data?: Partial<ButtonComponentData> | Partial<APIButtonComponent>
   ) {
     super(data);
-  }
-  setButton(
-    customId: string,
-    Label: string,
-    Style?: ButtonStyle,
-    Emoji?: ComponentEmojiResolvable,
-    Disabled?: boolean | false
-  ) {
-    super
-      .setCustomId(customId)
-      .setDisabled(Disabled)
-      .setEmoji(Emoji ?? "")
-      .setLabel(Label)
-      .setStyle(Style ?? ButtonStyle.Primary);
   }
 }
 export class BButton extends ActionRowBuilder<ButtonBuilder> {
@@ -34,18 +20,20 @@ export class BButton extends ActionRowBuilder<ButtonBuilder> {
   ) {
     super(data);
   }
-  addButton(
-    customId: string,
-    Label: string,
-    Style?: ButtonStyle,
-    Disabled?: boolean | false
-  ) {
+  addButton(ButtonStuff: {
+    customId: string;
+    label?: string;
+    style?: ButtonStyle;
+    disabled?: boolean;
+    emoji?: ComponentEmojiResolvable;
+  }) {
     return super.addComponents(
       new ButtonBuilding()
-        .setCustomId(customId)
-        .setDisabled(Disabled)
-        .setLabel(Label)
-        .setStyle(Style ?? ButtonStyle.Primary)
+        .setCustomId(ButtonStuff?.customId)
+        .setDisabled(ButtonStuff?.disabled ?? false)
+        .setLabel(ButtonStuff?.label ?? "​")
+        .setStyle(ButtonStuff.style ?? ButtonStyle.Primary)
+        .setEmoji(ButtonStuff.emoji ?? "")
     );
   }
 }

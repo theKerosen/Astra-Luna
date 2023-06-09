@@ -11,11 +11,15 @@ export class BEmbed extends EmbedBuilder {
   constructor(data?: EmbedData | APIEmbed) {
     super(data);
   }
-  setADC(author: EmbedAuthorData, description: string, color: ColorResolvable) {
+  setADC(ADC: {
+    author: EmbedAuthorData;
+    description: string;
+    color: ColorResolvable;
+  }) {
     return (
-      super.setAuthor(author),
-      super.setDescription(description),
-      super.setColor(color)
+      super.setAuthor(ADC.author),
+      super.setDescription(ADC.description),
+      super.setColor(ADC.color)
     );
   }
   static from(other: JSONEncodable<APIEmbed> | APIEmbed) {
