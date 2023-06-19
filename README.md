@@ -29,7 +29,7 @@ observação 1: O sistema de cargos não funciona ainda para outros servidores. 
 observação 2: O sistema de Rankings ainda não foi introduzido, mesmo tendo o código pronto.
 
 <h1></h1>
-<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120267525947662426/Screenshot_3.png" width="680" height="240" alt="XP System">
+<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120427883924557975/Screenshot_3.png" width="680" height="240" alt="XP System">
 <br>
 </div>
   
