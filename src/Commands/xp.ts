@@ -4,7 +4,7 @@ import {
   inlineCode,
 } from "discord.js";
 import { Command } from "../utils/command";
-import { XP } from "../Schem/Schematica";
+import { defaultGuildConfig } from "../Schem/Schematica";
 import { BEmbed } from "../Constructors/Embed";
 
 export = {
@@ -16,150 +16,105 @@ export = {
         .setName("ver")
         .setDescription("veja o XP de alguém ou o seu próprio")
         .addUserOption((s) => s.setName("usuário").setDescription("o usuário"))
+    )
+    .addSubcommand((s) =>
+      s.setName("ranking").setDescription("Veja o ranking do servidor!")
     ),
   async execute(interaction: ChatInputCommandInteraction, client) {
+    const subcommand = interaction.options.getSubcommand();
     const usuário = interaction.options.getUser("usuário");
-    if (!usuário) {
-      XP.findOne(
-        {
-          GuildId: interaction.guildId,
-          "Users.userId": interaction.user.id,
-        },
-        { "Users.$": 1 },
-        {},
-        async (err, data) => {
-          if (err) throw err;
-          if (!data) return;
 
-          const solvedFormula =
-            (5 / 6) *
-            (data?.Users[0].Level + 1) *
-            (2 * (data?.Users[0].Level + 1) * (data?.Users[0].Level + 1) +
-              27 * (data?.Users[0].Level + 1) +
-              91);
+    if (subcommand === "ranking") {
+      const leaderboard = await defaultGuildConfig
+        .find({ GuildId: interaction.guildId })
+        .sort({
+          "Users.XP": -1,
+        });
+      const Embed = new BEmbed()
+        .setAuthor({ name: interaction.guild?.name ?? "\u200b" })
+        .setColor("#e43d37")
+        .setDescription(`Leaderboard do Servidor`);
 
-          const progressPercent = Math.round(
-            (data.Users[0].XP / solvedFormula) * 100
-          );
-          console.log(progressPercent);
+      for (let i = 0; i < Math.min(5, leaderboard[0].Users.length); i++) {
+        Embed.addFields({
+          name: `${
+            (await client.users.fetch(leaderboard[0].Users[i].userId)).username
+          }`,
+          value: `${leaderboard[0].Users[i].XP}`,
+        });
+      }
 
-          const filledBarLength = Math.round((20 * progressPercent) / 100);
-          console.log(filledBarLength);
-          const filledBar = "▰".repeat(filledBarLength);
-          const emptyBar = "▱".repeat(20 - filledBarLength);
-          console.log(filledBar + emptyBar);
-          const Embed = new BEmbed()
-            .setAuthor({ name: interaction.guild?.name ?? "\u200b" })
-            .setThumbnail(interaction.user.avatarURL())
-            .setColor("#e43d37")
-            .setDescription(`${filledBar}${emptyBar}`)
-            .setFields([
-              {
-                name: "\u200b",
-                value: `<:lv:1107514022997274654> ${inlineCode(
-                  data?.Users[0].Level
-                )}`,
-                inline: true,
-              },
-              {
-                name: "\u200b",
-                value: `<:XP:1107514024427536416> ${inlineCode(
-                  data?.Users[0].XP.toLocaleString()
-                )}`,
-                inline: true,
-              },
-              {
-                name: "\u200b",
-                value: `<:levelup:1107514020241621133> ${inlineCode(
-                  //5 / 6 * lvl * (2 * lvl * lvl + 27 * lvl + 91)
-                  (
-                    (5 / 6) *
-                      (data?.Users[0].Level + 1) *
-                      (2 *
-                        (data?.Users[0].Level + 1) *
-                        (data?.Users[0].Level + 1) +
-                        27 * (data?.Users[0].Level + 1) +
-                        91) -
-                    data?.Users[0].XP
-                  ).toLocaleString()
-                )}`,
-                inline: true,
-              },
-            ]);
-          interaction.reply({ embeds: [Embed], ephemeral: true });
-        }
-      );
+      return interaction.reply({ embeds: [Embed] });
     }
-    if(usuário) {
-      XP.findOne(
-        {
-          GuildId: interaction.guildId,
-          "Users.userId": usuário.id,
-        },
-        { "Users.$": 1 },
-        {},
-        async (err, data) => {
-          if (err) throw err;
-          if (!data) return;
 
-          const solvedFormula =
-            (5 / 6) *
-            (data?.Users[0].Level + 1) *
-            (2 * (data?.Users[0].Level + 1) * (data?.Users[0].Level + 1) +
-              27 * (data?.Users[0].Level + 1) +
-              91);
+    defaultGuildConfig.findOne(
+      {
+        GuildId: interaction.guildId,
+        "Users.userId": usuário ? usuário.id : interaction.user.id,
+      },
+      { "Users.$": 1 },
+      {},
+      async (err, data) => {
+        if (err) throw err;
+        if (!data)
+          return interaction.reply({
+            content: "esse usuário não tem XP.",
+            ephemeral: true,
+          });
 
-          const progressPercent = Math.round(
-            (data.Users[0].XP / solvedFormula) * 100
+        const user = data.Users[0];
+        const level = user.Level;
+        const xp = user.XP;
+        const solvedFormula =
+          (5 / 6) *
+          (level + 1) *
+          (2 * (level + 1) * (level + 1) + 27 * (level + 1) + 91);
+        const progressPercent = Math.round((xp / solvedFormula) * 100);
+        const filledBarLength = Math.round((20 * progressPercent) / 100);
+        const filledBar = "▰".repeat(filledBarLength);
+        const emptyBar = "▱".repeat(20 - filledBarLength);
+
+        const Embed = new BEmbed()
+          .setAuthor({ name: interaction.guild?.name ?? "\u200b" })
+          .setThumbnail(
+            usuário
+              ? usuário.avatarURL()
+              : interaction.user.avatarURL() ||
+                  "https://cdn.discordapp.com/attachments/943547363031670785/1116163222748270592/huh.png"
+          )
+          .setColor("#e43d37")
+          .setDescription(
+            `[ *${interaction.user.username}* ]\n${filledBar}${emptyBar} **${progressPercent}%**`
+          )
+          .addFields(
+            {
+              name: "\u200b",
+              value: `<:lv:1107514022997274654> ${inlineCode(level)}`,
+              inline: true,
+            },
+            {
+              name: "\u200b",
+              value: `<:XP:1107514024427536416> ${inlineCode(
+                xp.toLocaleString()
+              )}`,
+              inline: true,
+            },
+            {
+              name: "\u200b",
+              value: `<:levelup:1107514020241621133> ${inlineCode(
+                (
+                  (5 / 6) *
+                    (level + 1) *
+                    (2 * (level + 1) * (level + 1) + 27 * (level + 1) + 91) -
+                  xp
+                ).toLocaleString()
+              )}`,
+              inline: true,
+            }
           );
-          console.log(progressPercent);
 
-          const filledBarLength = Math.round((20 * progressPercent) / 100);
-          console.log(filledBarLength);
-          const filledBar = "▰".repeat(filledBarLength);
-          const emptyBar = "▱".repeat(20 - filledBarLength);
-          console.log(filledBar + emptyBar);
-          const Embed = new BEmbed()
-            .setAuthor({ name: interaction.guild?.name ?? "\u200b" })
-            .setThumbnail(usuário.avatarURL())
-            .setColor("#e43d37")
-            .setDescription(`${filledBar}${emptyBar}`)
-            .setFields([
-              {
-                name: "\u200b",
-                value: `<:lv:1107514022997274654> ${inlineCode(
-                  data?.Users[0].Level
-                )}`,
-                inline: true,
-              },
-              {
-                name: "\u200b",
-                value: `<:XP:1107514024427536416> ${inlineCode(
-                  data?.Users[0].XP.toLocaleString()
-                )}`,
-                inline: true,
-              },
-              {
-                name: "\u200b",
-                value: `<:levelup:1107514020241621133> ${inlineCode(
-                  //5 / 6 * lvl * (2 * lvl * lvl + 27 * lvl + 91)
-                  (
-                    (5 / 6) *
-                      (data?.Users[0].Level + 1) *
-                      (2 *
-                        (data?.Users[0].Level + 1) *
-                        (data?.Users[0].Level + 1) +
-                        27 * (data?.Users[0].Level + 1) +
-                        91) -
-                    data?.Users[0].XP
-                  ).toLocaleString()
-                )}`,
-                inline: true,
-              },
-            ]);
-          interaction.reply({ embeds: [Embed], ephemeral: true });
-        }
-      );
-    }
+        interaction.reply({ embeds: [Embed], ephemeral: true });
+      }
+    );
   },
 } as Command;

@@ -1,8 +1,8 @@
 import { ButtonInteraction } from "discord.js";
-import { XPManager } from "../utils/Client";
+import { AstraLuna } from "../utils/Client";
 export async function execute(
   interaction: ButtonInteraction,
-  client: XPManager
+  client: AstraLuna
 ) {
  if (
     client.votes.has(

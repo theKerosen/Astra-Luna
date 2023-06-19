@@ -5,7 +5,7 @@ import {
   ChannelType,
   PermissionFlagsBits,
 } from "discord.js";
-import { Channels } from "../Schem/Schematica";
+import { defaultGuildConfig } from "../Schem/Schematica";
 
 export = {
   data: new SlashCommandBuilder()
@@ -32,29 +32,24 @@ export = {
         ephemeral: true,
       });
     const role = interaction.options.getRole("role");
-    const selectedChannel = interaction.options.getChannel("channel");
-
-    await Channels.findOneAndUpdate({
-      GuildId: interaction.guildId,
-      NotifyRoleId: role?.id,
-    });
-    interaction.reply({
-      content:
-        "Pronto, agora esse cargo será mencionado quando haver uma mensagem no canal de menções.",
-      ephemeral: true,
-    });
-    
+    const selectedChannel = interaction.options.getChannel("canal");
     if (selectedChannel?.type !== ChannelType.GuildText)
       return interaction.reply({
         content: "Esse canal não é um canal de texto.",
         ephemeral: true,
       });
-    await Channels.create({
-      GuildId: interaction.guildId,
-      BlogChannelId: selectedChannel?.id,
-    });
+    await defaultGuildConfig.findOneAndUpdate(
+      { GuildId: interaction.guildId },
+      {
+        GuildId: interaction.guildId,
+        "channels.updatesCS": selectedChannel?.id,
+        NotifyRoleId: role?.id,
+      },
+      { upsert: true }
+    );
     interaction.reply({
-      content: "Canal salvo com sucesso, agora você irá ser notificado!",
+      content:
+        "Canal & Cargo salvo com sucesso, agora você irá ser notificado!",
       ephemeral: true,
     });
   },

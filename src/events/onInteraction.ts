@@ -1,20 +1,20 @@
 import { Interaction } from "discord.js";
-import { XPManager } from "../utils/Client";
-import { Channels } from "../Schem/Schematica";
+import { AstraLuna } from "../utils/Client";
+import { defaultGuildConfig } from "../Schem/Schematica";
 
 export const onInteraction = async (
   interaction: Interaction,
-  client: XPManager
+  client: AstraLuna
 ) => {
   if (interaction.isCommand()) {
     const command = client.commands.get(interaction.commandName);
     if (interaction.user.bot == true) return;
     if (!command) return;
 
-    const Commands = await Channels.findOne({
+    const Commands = await defaultGuildConfig.findOne({
       GuildId: interaction.guildId,
     });
-    if (Commands?.ToggleCommands.includes(command.data.name))
+    if (Commands?.toggleCommands.includes(command.data.name))
       return interaction.reply({
         content: "Módulo desabilitado.",
         ephemeral: true,

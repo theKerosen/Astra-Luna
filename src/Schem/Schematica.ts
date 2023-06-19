@@ -13,24 +13,48 @@ const WPScanner = new Schema({
 });
 const WPSDB = model("WordPressScan", WPScanner);
 
-const Guilds = new Schema({
-  GuildId: String,
-  BlogChannelId: String,
-  NotifyRoleId: String,
-  RolesNXP: Array,
-  ToggleCommands: Array,
-  suggestionChannelId: String,
-});
-const Channels = model("Guilds", Guilds);
-
-const XPSchema = new Schema({
+const guildStuff = new Schema({
   GuildId: String,
   userId: String,
   Users: Array,
   XP: Number,
   Level: Number,
   cooldown: Number,
+  channels: {
+    suggestions: String,
+    reports: String,
+    updatesCS: String,
+  },
+  defaultMentionRole: String,
+  toggleCommands: Array,
+  XPRoles: Array,
 });
 
-const XP = model("XP", XPSchema);
-export { WPSDB, XP, Channels };
+const defaultGuildConfig = model("guildStuff", guildStuff);
+
+const Rep = new Schema({
+  UserId: String,
+  createdAt: Date,
+  isPositive: {
+    type: Boolean,
+    default: false,
+  },
+  Comments: Object,
+  goodRep: {
+    type: Number,
+    default: 0,
+  },
+  badRep: {
+    type: Number,
+    default: 0,
+  },
+});
+const RepSchem = model("Rep", Rep);
+
+const shadowBan = new Schema({
+  userId: String,
+});
+
+const shadowBanSchema = model("blacklist", shadowBan);
+
+export { WPSDB, defaultGuildConfig, RepSchem, shadowBanSchema };

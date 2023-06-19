@@ -8,10 +8,7 @@ import {
 export = {
   data: new SlashCommandBuilder()
     .setName("sugestão")
-    .setDescription("► Enviar sugestão...")
-    .addSubcommand((sub) =>
-      sub.setName("servidor").setDescription("...para o servidor")
-    ),
+    .setDescription("Enviar sugestão..."),
   async execute(interaction: ChatInputCommandInteraction, client) {
     const modal = new BModal()
       .createModal({ custom_id: "sugestão", title: "Sugestão" })
@@ -29,11 +26,11 @@ export = {
         label: `Conte me mais, ${interaction.user.username}!`,
         style: TextInputStyle.Paragraph,
         placeholder:
-          "Sugiro mover aquela cadeira de lugar, tá me incomodando...",
+          "Sugiro mover aquela cadeira de lugar, tá me incomodando bastante!",
         min_length: 68,
         max_length: 250,
         required: true,
       });
-    await interaction.showModal(modal)
+    await interaction.showModal(modal);
   },
 } as Command;

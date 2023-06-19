@@ -3,8 +3,24 @@ dotenv.config();
 import { Client, Collection } from "discord.js";
 import { Command } from "./command";
 import { connect, set } from "mongoose";
+import Steam from "steam-user";
+import csgo from "globaloffensive";
 
-class XPManager extends Client {
+const SteamClient = new Steam({
+  autoRelogin: true,
+});
+SteamClient.logOn({
+  accountName: process.env.steamName,
+  password: process.env.steamPassword,
+});
+SteamClient.on("loggedOn", async () => {
+  SteamClient.setPersona(Steam.EPersonaState.Online);
+  await SteamClient.gamesPlayed([730]);
+  console.log("\x1b[35m[Steam] \x1b[36mLogado na Steam");
+});
+
+const CSGOClient = new csgo(SteamClient);
+class AstraLuna extends Client {
   commands: Collection<string, Command> = new Collection();
   misc: Collection<unknown, unknown> = new Collection();
   votes: Collection<unknown, unknown> = new Collection();
@@ -24,4 +40,4 @@ class XPManager extends Client {
     );
   }
 }
-export { XPManager };
+export { AstraLuna, CSGOClient, SteamClient };
