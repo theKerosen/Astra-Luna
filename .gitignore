@@ -4,4 +4,4 @@ node_modules
 dist
 users.json
 yarn.lock
-
+yarn-error.log
