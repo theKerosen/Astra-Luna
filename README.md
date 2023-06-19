@@ -39,7 +39,7 @@ observação 2: O sistema de Rankings ainda não foi introduzido, mesmo tendo o 
   
 O sistema de Reputação possui um comando que explica tudo sobre ele. O comando é /reputação ajuda <br>
 <h1></h1>
-<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120270025387937832/Screenshot_4.png" width="680" height="720" alt="Rep System">
+<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120428516752760862/Screenshot_4.png" width="680" height="720" alt="Rep System">
 <h1></h1>
 </div>
 
