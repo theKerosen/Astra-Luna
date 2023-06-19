@@ -53,6 +53,7 @@ const RepSchem = model("Rep", Rep);
 
 const shadowBan = new Schema({
   userId: String,
+  GuildId: String,
 });
 
 const shadowBanSchema = model("blacklist", shadowBan);

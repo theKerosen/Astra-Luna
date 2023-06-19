@@ -5,6 +5,7 @@ import {
   SlashCommandBuilder,
   ChatInputCommandInteraction,
   codeBlock,
+  PermissionFlagsBits,
 } from "discord.js";
 const softbannedUsers = new Map();
 export = {
@@ -46,6 +47,17 @@ export = {
     )
     .addSubcommand((sub) =>
       sub
+        .setName("whitelist")
+        .setDescription("remova usuários da blacklist do seu servidor!")
+        .addUserOption((s) =>
+          s
+            .setName("usuário")
+            .setDescription("usuário para entrar na blacklist")
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((sub) =>
+      sub
         .setName("adicionar")
         .setDescription("► Adicione pontos positivos para um usuário...")
         .addUserOption((usr) =>
@@ -73,8 +85,7 @@ export = {
         )
     ),
   async execute(interaction: ChatInputCommandInteraction, client) {
-    const subcommand = interaction.options.getSubcommand();
-    if (subcommand === "ajuda") {
+    if (interaction.options.getSubcommand() === "ajuda") {
       return interaction.reply({
         embeds: [
           new BEmbed()
@@ -120,23 +131,45 @@ export = {
         ephemeral: true,
       });
     }
-    if (subcommand === "blacklist") {
+    if (interaction.options.getSubcommand() === "blacklist") {
       const Guild = client.guilds.cache.get(interaction.guildId ?? "");
       const User = Guild?.members.cache.get(interaction.user.id);
-      if (User?.id != "434360273726341160")
+      if (!User?.permissions.has(PermissionFlagsBits.Administrator))
         return interaction.reply({
           content: "[❌] Sem permissão.",
           ephemeral: true,
         });
       const usuário = interaction.options.getUser("usuário");
-      await shadowBanSchema.create({ userId: usuário?.id });
+      await shadowBanSchema.create({
+        userId: usuário?.id,
+        GuildId: interaction.guildId,
+      });
       return interaction.reply({
         content: "Usuário banido com sucesso.",
         ephemeral: true,
       });
     }
+    if (interaction.options.getSubcommand() === "whitelist") {
+      const Guild = client.guilds.cache.get(interaction.guildId ?? "");
+      const User = Guild?.members.cache.get(interaction.user.id);
+      if (!User?.permissions.has(PermissionFlagsBits.Administrator))
+        return interaction.reply({
+          content: "[❌] Sem permissão.",
+          ephemeral: true,
+        });
+      const usuário = interaction.options.getUser("usuário");
+      await shadowBanSchema.deleteOne({
+        userId: usuário?.id,
+        GuildId: interaction.guildId,
+      });
+      return interaction.reply({
+        content: "Usuário desbanido com sucesso.",
+        ephemeral: true,
+      });
+    }
 
     const shadowban = await shadowBanSchema.findOne({
+      GuildId: interaction.guildId,
       userId: interaction.user.id,
     });
     if (shadowban)
@@ -157,19 +190,22 @@ export = {
         ephemeral: true,
       });
     }
-    if (subcommand === "adicionar" || subcommand === "remover") {
+    if (
+      interaction.options.getSubcommand() === "adicionar" ||
+      interaction.options.getSubcommand() === "remover"
+    ) {
       const comment = interaction.options.getString("comentário");
       const user = interaction.options.getUser("usuário");
 
       if (user?.id === interaction.user.id) {
         const content =
-          subcommand === "adicionar"
+          interaction.options.getSubcommand() === "adicionar"
             ? "[❌] Você não pode adicionar pontos de reputação a si mesmo."
             : "[❌] Você não pode remover pontos de reputação a si mesmo.";
 
         return interaction.reply({ content, ephemeral: true });
       }
-      const isPositive = subcommand === "adicionar";
+      const isPositive = interaction.options.getSubcommand() === "adicionar";
       if (!isPositive && user?.id) {
         const currentTimestamp = Date.now();
         const index = await RepSchem.findOne({ UserId: user.id });
@@ -245,7 +281,7 @@ export = {
 
       interaction.reply({ embeds: [embed] });
     }
-    if (subcommand === "comentários") {
+    if (interaction.options.getSubcommand() === "comentários") {
       const user = interaction.options.getUser("usuário");
       const index = await RepSchem.findOne({ UserId: user?.id });
 

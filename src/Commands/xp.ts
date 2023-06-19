@@ -2,6 +2,7 @@ import {
   SlashCommandBuilder,
   ChatInputCommandInteraction,
   inlineCode,
+  PermissionFlagsBits,
 } from "discord.js";
 import { Command } from "../utils/command";
 import { defaultGuildConfig } from "../Schem/Schematica";
@@ -14,17 +15,91 @@ export = {
     .addSubcommand((s) =>
       s
         .setName("ver")
-        .setDescription("veja o XP de alguém ou o seu próprio")
+        .setDescription("Veja o XP de alguém ou o seu próprio")
         .addUserOption((s) => s.setName("usuário").setDescription("o usuário"))
     )
     .addSubcommand((s) =>
       s.setName("ranking").setDescription("Veja o ranking do servidor!")
+    )
+    .addSubcommandGroup((s) =>
+      s
+        .setName("cargos")
+        .setDescription("Configure cargos de XP para o seu servidor")
+        .addSubcommand((sub) =>
+          sub
+            .setName("adicionar")
+            .setDescription("Configure cargos de XP para o seu servidor")
+            .addRoleOption((r) =>
+              r
+                .setName("cargo")
+                .setDescription("cargo que será dado ao usuário")
+                .setRequired(true)
+            )
+            .addIntegerOption((i) =>
+              i
+                .setName("level")
+                .setDescription(
+                  "o nível que o usuário precisa ter para receber esse cargo"
+                )
+                .setRequired(true)
+            )
+        )
+        .addSubcommand((sub) =>
+          sub
+            .setName("remover")
+            .setDescription("Configure cargos de XP para o seu servidor")
+            .addRoleOption((r) =>
+              r
+                .setName("cargo")
+                .setDescription("cargo que será dado ao usuário")
+                .setRequired(true)
+            )
+        )
     ),
   async execute(interaction: ChatInputCommandInteraction, client) {
-    const subcommand = interaction.options.getSubcommand();
     const usuário = interaction.options.getUser("usuário");
 
-    if (subcommand === "ranking") {
+    if (interaction.options.getSubcommand() === "adicionar") {
+      const role = interaction.options.getRole("cargo");
+      const level = interaction.options.getInteger("level");
+      const Guild = client.guilds.cache.get(interaction.guildId ?? "");
+      const User = Guild?.members.cache.get(interaction.user.id);
+      if (!User?.permissions.has(PermissionFlagsBits.Administrator))
+        return interaction.reply({
+          content: "[❌] Sem permissão.",
+          ephemeral: true,
+        });
+      await defaultGuildConfig.findOneAndUpdate(
+        { GuildId: interaction.guildId },
+        { $push: { XPRoles: { role: role?.id, level: level } } },
+        { upsert: true }
+      );
+      return interaction.reply({
+        content: "Cargo adicionado com sucesso!",
+        ephemeral: true,
+      });
+    }
+    if (interaction.options.getSubcommand() === "remover") {
+      const role = interaction.options.getRole("cargo");
+      const Guild = client.guilds.cache.get(interaction.guildId ?? "");
+      const User = Guild?.members.cache.get(interaction.user.id);
+      if (!User?.permissions.has(PermissionFlagsBits.Administrator))
+        return interaction.reply({
+          content: "[❌] Sem permissão.",
+          ephemeral: true,
+        });
+      await defaultGuildConfig.findOneAndUpdate(
+        { GuildId: interaction.guildId },
+        { $pull: { XPRoles: { role: role?.id } } },
+        { upsert: true }
+      );
+      return interaction.reply({
+        content: "Cargo removido com sucesso!",
+        ephemeral: true,
+      });
+    }
+
+    if (interaction.options.getSubcommand() === "ranking") {
       const leaderboard = await defaultGuildConfig
         .find({ GuildId: interaction.guildId })
         .sort({
