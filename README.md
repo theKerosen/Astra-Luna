@@ -24,9 +24,8 @@ Para utilizar esse sistema, é só utilizar o comando /notificar
 <h3> Sistema de XP & Cargos automáticos [⌨] </h3>
   
 O sistema é tão simples que até um gato consegue utilizar sem problemas. (Eu testei)<br>
-Para ver o XP do usuário apenas use /xp ver <usuário> <br><br>
-observação 1: O sistema de cargos não funciona ainda para outros servidores. <br>
-observação 2: O sistema de Rankings ainda não foi introduzido, mesmo tendo o código pronto.
+Para ver o XP do usuário apenas use /xp ver <usuário> <br>
+Para configurar os cargos, apenas utilize /xp cargos adicionar/remover <cargo> <nível><br>
 
 <h1></h1>
 <img src="https://cdn.discordapp.com/attachments/943547363031670785/1120427883924557975/Screenshot_3.png" width="680" height="240" alt="XP System">
@@ -38,6 +37,8 @@ observação 2: O sistema de Rankings ainda não foi introduzido, mesmo tendo o 
 <h3> [🛡] Sistema de Reputação com "Fator de Confiança" </h3>
   
 O sistema de Reputação possui um comando que explica tudo sobre ele. O comando é /reputação ajuda <br>
+Agora administradores de um servidor podem botar um usuário em uma lista negra (ou lista branca)! <br>
+Comandos: /reputação blacklist/whitelist <usuário>
 <h1></h1>
 <img src="https://cdn.discordapp.com/attachments/943547363031670785/1120428516752760862/Screenshot_4.png" width="680" height="720" alt="Rep System">
 <h1></h1>
@@ -47,13 +48,18 @@ O sistema de Reputação possui um comando que explica tudo sobre ele. O comando
 <h3> Sistema de Enquetes! [🔼|🔽] </h3>
 Simples e autoexplicativo como o sistema de XP, só utilizar /enquete para ver as opções.
 <h1></h1>
-<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120281601255944222/Screenshot_5.png" width="680" height="240" alt="XP System">
+<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120281601255944222/Screenshot_5.png" width="680" height="240" alt="vote system">
 <br>
-  
 <h1></h1>
-
 </div>
-
+<div align="left">
+<h3> [📜] Sistema de Sugestões </h3>
+Um sistema ótimo para dar sugestões a um servidor, basta digitar o comando /sugestão sugerir e preencher o formulário
+<h1></h1>
+<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120504077403570196/image.png" width="540" height="540" alt="suggestion system">
+<br>
+<h1></h1>
+</div>
 <h1>Futuros Planos</h1>
 
 Pretendo adicionar tudo que está/estará citado aqui.
