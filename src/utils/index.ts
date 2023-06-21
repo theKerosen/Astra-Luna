@@ -5,10 +5,14 @@ import { Init } from "../events/Init";
 import { Events } from "discord.js";
 import { onMessage } from "../events/onMessage";
 import { gcStatus } from "../events/onGCDisconnect";
+import { checkStatus } from "../events/checkCSStatus";
+import { xpReset } from "../events/xpBonusResetAlert";
 const client = new AstraLuna();
 client.mongoConnect();
 client.login();
 handler();
+checkStatus();
+xpReset(client);
 gcStatus(client);
 client.once(Events.ClientReady, async () => await Init(client));
 client.on(Events.InteractionCreate, async (interaction) => {
