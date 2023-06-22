@@ -192,7 +192,8 @@ export async function checkStatus() {
         }
       })
       .catch((error: AxiosError) => {
-        if(error.response?.status === 429) return console.error("API RATE LIMIT REACHED!");
+        if (error.response?.status === 429)
+          return console.error("API RATE LIMIT REACHED!");
         data.forEach((e) => {
           const channel = client.channels.cache.get(e?.updatesCS ?? "");
           const embed = new BEmbed()
