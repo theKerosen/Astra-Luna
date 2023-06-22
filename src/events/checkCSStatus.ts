@@ -27,6 +27,7 @@ export async function checkStatus() {
         switch (r.data.result.services.SessionsLogon) {
           case "normal":
             client.misc.set("SessionResult", 0);
+            client.misc.set("APIResult", 0);
             break;
           case "surge":
             {
@@ -194,6 +195,8 @@ export async function checkStatus() {
       .catch((error: AxiosError) => {
         if (error.response?.status === 429)
           return console.error("API RATE LIMIT REACHED!");
+        if (client.misc.get("APIResult") === 1) return;
+        client.misc.set("APIResult", 1);
         data.forEach((e) => {
           const channel = client.channels.cache.get(e?.updatesCS ?? "");
           const embed = new BEmbed()

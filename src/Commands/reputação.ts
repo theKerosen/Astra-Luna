@@ -279,7 +279,7 @@ export = {
         )
         .setColor(isPositive ? "Green" : "Red");
 
-      interaction.reply({ embeds: [embed] });
+      interaction.reply({ embeds: [embed], content: `<@${user?.id}>` });
     }
     if (interaction.options.getSubcommand() === "comentários") {
       const user = interaction.options.getUser("usuário");
