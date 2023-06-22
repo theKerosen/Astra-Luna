@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { BEmbed } from "../Constructors/Embed";
 import { schedule } from "node-cron";
 import { defaultGuildConfig } from "../Schem/Schematica";
@@ -16,8 +16,6 @@ export async function checkStatus() {
         `https://api.steampowered.com/ICSGOServers_730/GetGameServersStatus/v1/?key=${process.env.KEY}`
       )
       .then(async (r) => {
-        if (r.status === 409) return console.error("API RATE LIMIT REACHED!");
-
         const embed = new BEmbed()
           .setAuthor({
             name: "Status — Counter-Strike",
@@ -193,7 +191,8 @@ export async function checkStatus() {
             break;
         }
       })
-      .catch(() => {
+      .catch((error: AxiosError) => {
+        if(error.response?.status === 429) return console.error("API RATE LIMIT REACHED!");
         data.forEach((e) => {
           const channel = client.channels.cache.get(e?.updatesCS ?? "");
           const embed = new BEmbed()
