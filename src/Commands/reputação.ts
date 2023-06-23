@@ -128,43 +128,39 @@ export = {
             .setColor("Blurple")
             .setThumbnail(interaction.user.avatarURL()),
         ],
-        ephemeral: true,
       });
     }
     if (interaction.options.getSubcommand() === "blacklist") {
+      await interaction.deferReply({ ephemeral: true });
       const Guild = client.guilds.cache.get(interaction.guildId ?? "");
       const User = Guild?.members.cache.get(interaction.user.id);
       if (!User?.permissions.has(PermissionFlagsBits.Administrator))
-        return interaction.reply({
+        return await interaction.editReply({
           content: "[❌] Sem permissão.",
-          ephemeral: true,
         });
       const usuário = interaction.options.getUser("usuário");
       await shadowBanSchema.create({
         userId: usuário?.id,
         GuildId: interaction.guildId,
       });
-      return interaction.reply({
+      return await interaction.editReply({
         content: "Usuário banido com sucesso.",
-        ephemeral: true,
       });
     }
     if (interaction.options.getSubcommand() === "whitelist") {
       const Guild = client.guilds.cache.get(interaction.guildId ?? "");
       const User = Guild?.members.cache.get(interaction.user.id);
       if (!User?.permissions.has(PermissionFlagsBits.Administrator))
-        return interaction.reply({
+        return await interaction.editReply({
           content: "[❌] Sem permissão.",
-          ephemeral: true,
         });
       const usuário = interaction.options.getUser("usuário");
       await shadowBanSchema.deleteOne({
         userId: usuário?.id,
         GuildId: interaction.guildId,
       });
-      return interaction.reply({
+      return await interaction.editReply({
         content: "Usuário desbanido com sucesso.",
-        ephemeral: true,
       });
     }
 
@@ -173,10 +169,9 @@ export = {
       userId: interaction.user.id,
     });
     if (shadowban)
-      return interaction.reply({
+      return await interaction.editReply({
         content:
           "[❌] Você está permanentemente banido de usar o sistema de reputações.",
-        ephemeral: true,
       });
     if (
       softbannedUsers.has(interaction.user.id) &&
@@ -185,26 +180,26 @@ export = {
       const remainingTime = Math.ceil(
         (softbannedUsers.get(interaction.user.id) - Date.now()) / 1000
       );
-      return interaction.reply({
+      return await interaction.editReply({
         content: `[❌] Você está sendo limitado de usar o sistema de Reputação. Aguarde ${remainingTime} segundos.`,
-        ephemeral: true,
       });
     }
     if (
       interaction.options.getSubcommand() === "adicionar" ||
       interaction.options.getSubcommand() === "remover"
     ) {
+      await interaction.deferReply({ ephemeral: true });
       const comment = interaction.options.getString("comentário");
       const user = interaction.options.getUser("usuário");
 
-      if (user?.id === interaction.user.id) {
-        const content =
-          interaction.options.getSubcommand() === "adicionar"
-            ? "[❌] Você não pode adicionar pontos de reputação a si mesmo."
-            : "[❌] Você não pode remover pontos de reputação a si mesmo.";
+      if (user?.id === interaction.user.id)
+        return await interaction.editReply({
+          content:
+            interaction.options.getSubcommand() === "adicionar"
+              ? "[❌] Você não pode adicionar pontos de reputação a si mesmo."
+              : "[❌] Você não pode remover pontos de reputação a si mesmo.",
+        });
 
-        return interaction.reply({ content, ephemeral: true });
-      }
       const isPositive = interaction.options.getSubcommand() === "adicionar";
       if (!isPositive && user?.id) {
         const currentTimestamp = Date.now();
@@ -279,16 +274,19 @@ export = {
         )
         .setColor(isPositive ? "Green" : "Red");
 
-      interaction.reply({ embeds: [embed], content: `<@${user?.id}>` });
+      await interaction.editReply({
+        embeds: [embed],
+        content: `<@${user?.id}>`,
+      });
     }
     if (interaction.options.getSubcommand() === "comentários") {
+      await interaction.deferReply({ ephemeral: true });
       const user = interaction.options.getUser("usuário");
       const index = await RepSchem.findOne({ UserId: user?.id });
 
       if (!index) {
-        return interaction.reply({
+        return interaction.editReply({
           content: "[❌] Este usuário não tem reputação alguma.",
-          ephemeral: true,
         });
       }
 
@@ -331,7 +329,7 @@ export = {
         });
       }
 
-      interaction.reply({ embeds: [embed], ephemeral: true });
+      await interaction.editReply({ embeds: [embed] });
     }
   },
 } as Command;
