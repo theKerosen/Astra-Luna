@@ -193,28 +193,7 @@ export async function checkStatus() {
         }
       })
       .catch((error: AxiosError) => {
-        if (error.response?.status === 429)
-          return console.error("API RATE LIMIT REACHED!");
-        if (client.misc.get("APIResult") === 1) return;
-        client.misc.set("APIResult", 1);
-        data.forEach((e) => {
-          const channel = client.channels.cache.get(e?.updatesCS ?? "");
-          const embed = new BEmbed()
-            .setAuthor({
-              name: "Status — Counter-Strike",
-            })
-            .setThumbnail(
-              "https://images-ext-2.discordapp.net/external/O5C3rkJrjmLpvDHM_rHk13MBeIrYUJbFmg65j7z4O24/https/cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/69f7ebe2735c366c65c0b33dae00e12dc40edbe4.jpg?width=35&height=35"
-            )
-            .setColor("Red")
-
-            .setDescription(
-              `O Serviço de ${inlineCode("WebAPI")} não está funcionando.`
-            )
-            .setColor("Red");
-          if (channel?.type === ChannelType.GuildText)
-            channel.send({ embeds: [embed] });
-        });
+        console.log(error);
       });
   });
 }
