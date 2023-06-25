@@ -26,6 +26,7 @@ Para utilizar esse sistema, é só utilizar o comando /notificar
 O sistema é tão simples que até um gato consegue utilizar sem problemas. (Eu testei)<br>
 Para ver o XP do usuário apenas use /xp ver <usuário> <br>
 Para configurar os cargos, apenas utilize /xp cargos adicionar/remover <cargo> <nível><br>
+Para ver o ranking do servidor, apenas utilize /xp ranking<br>
 
 <h1></h1>
 <img src="https://cdn.discordapp.com/attachments/943547363031670785/1120427883924557975/Screenshot_3.png" width="680" height="240" alt="XP System">
@@ -64,14 +65,15 @@ Um sistema ótimo para dar sugestões a um servidor, basta digitar o comando /su
 
 Pretendo adicionar tudo que está/estará citado aqui.
 
-Feature                                 | Feito?
-----------------------------------------| -------------
-Arrumar Ranking                         | ❌
-Cargos de XP configuráveis              | ✅
-Adicionar mais opções nas enquetes      | ❌
-Sistema de Sugestões Global             | ✅
-Black/Whitelist no sistema de Reputação | ✅
-*Tem alguma ideia de feature interessante? me contate via Discord: @neko.lunx, ou envie uma Pull Request.*
+| Feature                                 | Feito? |
+| --------------------------------------- | ------ |
+| Arrumar Ranking                         | ✅     |
+| Cargos de XP configuráveis              | ✅     |
+| Adicionar mais opções nas enquetes      | ❌     |
+| Sistema de Sugestões Global             | ✅     |
+| Black/Whitelist no sistema de Reputação | ✅     |
+
+_Tem alguma ideia de feature interessante? me contate via Discord: @neko.lunx, ou envie uma Pull Request._
 
 <h1></h1>
 
@@ -80,4 +82,5 @@ Black/Whitelist no sistema de Reputação | ✅
 ✨ Pull Requests são muito bem vindas! Não sou uma desenvolvedora perfeita e erros são esperados. <br>
 
 Caso veja um erro e saiba arrumar, um problema bobo, ou até uma maneira melhor de implementar algo, vá em frente, envie uma Pull Request!
+
 <h1></h1>

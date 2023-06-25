@@ -10,7 +10,6 @@ export const gcStatus = async (client: AstraLuna) => {
   });
 
   CSGOClient.on("disconnectedFromGC", (e) => {
-    console.log(e);
     if (e === GlobalOffensive.GCConnectionStatus.GC_GOING_DOWN)
       data.forEach((e) => {
         const channel = client.channels.cache.get(e.channels?.updatesCS ?? "");

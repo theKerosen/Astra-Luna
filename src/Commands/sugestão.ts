@@ -6,8 +6,10 @@ import {
   ChatInputCommandInteraction,
   PermissionFlagsBits,
   SlashCommandBuilder,
+  TextChannel,
   TextInputStyle,
 } from "discord.js";
+import { BEmbed } from "../Constructors/Embed";
 export = {
   data: new SlashCommandBuilder()
     .setName("sugestão")
@@ -53,10 +55,25 @@ export = {
           upsert: true,
         }
       );
-      return interaction.reply({
+      interaction.reply({
         content: "O canal de sugestões foi alterado!",
         ephemeral: true,
       });
+      (channel as TextChannel).send({
+        embeds: [
+          new BEmbed()
+            .setAuthor({ name: `${interaction.guild?.name} — Sugestões` })
+            .setColor("Aqua")
+            .setDescription(
+              `Como funciona?\n
+              *Para sugerir adições/remoções, utilize o comando "/sugestão sugerir" e responda o formulário.*\n
+              Após sugerir sua sugestão, o Astra Luna irá automaticamente enviar ela neste canal, e então, outros membros podem votar.
+              `
+            )
+            .setThumbnail(client.user?.avatarURL() || null),
+        ],
+        //Terminar isso aqui
+      }); //?? O Discord não me permite mandar mensagens sem fazer isso...
     }
     if (interaction.options.getSubcommand() === "sugerir") {
       const modal = new BModal()

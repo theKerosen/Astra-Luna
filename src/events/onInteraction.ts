@@ -30,12 +30,6 @@ export const onInteraction = async (
       });
     }
   }
-  if (interaction.isButton()) {
-    (await import(`../Buttons/${interaction?.customId}`)).execute(
-      interaction,
-      client
-    );
-  }
   if (interaction.isModalSubmit()) {
     (await import(`../Modals/${interaction?.customId}`)).execute(
       interaction,

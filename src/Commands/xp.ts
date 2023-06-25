@@ -3,10 +3,19 @@ import {
   ChatInputCommandInteraction,
   inlineCode,
   PermissionFlagsBits,
+  ButtonStyle,
+  Interaction,
 } from "discord.js";
 import { Command } from "../utils/command";
 import { defaultGuildConfig } from "../Schem/Schematica";
 import { BEmbed } from "../Constructors/Embed";
+import { BButton } from "../Constructors/Button";
+
+interface Ranks {
+  userid: string;
+  XP: number;
+  Level: number;
+}
 
 export = {
   data: new SlashCommandBuilder()
@@ -102,21 +111,106 @@ export = {
         .sort({
           "Users.XP": -1,
         });
-      const Embed = new BEmbed()
-        .setAuthor({ name: interaction.guild?.name ?? "\u200b" })
-        .setColor("#e43d37")
-        .setDescription(`Leaderboard do Servidor`);
-
-      for (let i = 0; i < Math.min(5, leaderboard[0].Users.length); i++) {
-        Embed.addFields({
-          name: `${
-            (await client.users.fetch(leaderboard[0].Users[i].userId)).username
-          }`,
-          value: `${leaderboard[0].Users[i].XP}`,
+      const sortedRanks: Ranks[] = [];
+      const slicedRanks: Ranks[][] = [];
+      leaderboard[0].Users.forEach((User) => {
+        sortedRanks.push({
+          userid: User.userId,
+          XP: User.XP,
+          Level: User.Level,
         });
+      });
+      sortedRanks.sort((a, b) => b.Level - a.Level);
+      for (let i = 0; i < Math.min(sortedRanks.length, 40); i += 5)
+        slicedRanks.push(sortedRanks.slice(i, i + 5));
+
+      const GlobalPages: BEmbed[] = [];
+      for (let i = 0; i < slicedRanks.length; i++) {
+        const embed = new BEmbed()
+          .setAuthor({
+            name: `${interaction.guild?.name} — Leaderboard`,
+          })
+          .setColor("#e43d37")
+          .setThumbnail(
+            interaction.guild?.iconURL() ??
+              "https://cdn.discordapp.com/attachments/943547363031670785/1116163222748270592/huh.png"
+          )
+          .setFooter({ text: `Página ${i + 1} de ${slicedRanks.length}` });
+        for (let a = 0; a < Math.min(slicedRanks[i].length, 5); a++) {
+          const level = slicedRanks[i][a].Level;
+          const xp = slicedRanks[i][a].XP;
+          const solvedFormula =
+            (5 / 6) *
+            (level + 1) *
+            (2 * (level + 1) * (level + 1) + 27 * (level + 1) + 91);
+          const progressPercent = Math.round((xp / solvedFormula) * 100);
+          const filledBarLength = Math.round((20 * progressPercent) / 100);
+          const filledBar = "▰".repeat(filledBarLength);
+          const emptyBar = "▱".repeat(20 - filledBarLength);
+          embed.addFields({
+            name: `${
+              (await client.users.fetch(slicedRanks[i][a].userid)).username
+            } [Lv.${slicedRanks[i][a].Level}] #${
+              slicedRanks
+                .flat(1)
+                .findIndex((usr) => usr.userid === slicedRanks[i][a].userid) + 1
+            }`,
+            value: `< ${slicedRanks[i][
+              a
+            ].XP.toLocaleString()} / ${solvedFormula.toLocaleString()} XP >\n${filledBar}${emptyBar} **${progressPercent}%**\n\u200b`,
+          });
+        }
+        GlobalPages.push(embed);
       }
 
-      return await interaction.editReply({ embeds: [Embed] });
+      const pages = {} as { [key: string]: number };
+      pages[interaction.user.id] = pages[interaction.user.id] || 0;
+
+      const Rows = (id: string) => {
+        return new BButton()
+          .addButton({
+            customId: "previous",
+            emoji: "<:previous_page:1098891318572363877>",
+            style: ButtonStyle.Success,
+            disabled: pages[id] === 0,
+          })
+          .addButton({
+            customId: "next",
+            emoji: "<:next_page:1098891315611193364>",
+            style: ButtonStyle.Success,
+            disabled: pages[id] === GlobalPages.length - 1,
+          });
+      };
+      const filterIn = (i: Interaction) => i.user.id === interaction.user.id;
+      const collector = interaction.channel?.createMessageComponentCollector({
+        filter: filterIn,
+        time: 50 * 60000,
+      });
+      await interaction.editReply({
+        embeds: [GlobalPages[pages[interaction.user.id]]],
+        components: [Rows(interaction.user.id)],
+      });
+
+      collector?.on("collect", async (buttonI) => {
+        if (!buttonI) return;
+        buttonI.deferUpdate();
+        if (buttonI.customId === "previous" && pages[interaction.user.id] > 0)
+          --pages[interaction.user.id];
+        await interaction.editReply({
+          embeds: [GlobalPages[pages[interaction.user.id]]],
+          components: [Rows(interaction.user.id)],
+        });
+
+        if (
+          buttonI.customId === "next" &&
+          pages[interaction.user.id] < GlobalPages.length - 1
+        )
+          ++pages[interaction.user.id];
+        await interaction.editReply({
+          embeds: [GlobalPages[pages[interaction.user.id]]],
+          components: [Rows(interaction.user.id)],
+        });
+      });
     }
     if (interaction.options.getSubcommand() === "ver") {
       await interaction.deferReply({ ephemeral: true });
@@ -124,7 +218,7 @@ export = {
       defaultGuildConfig.findOne(
         {
           GuildId: interaction.guildId,
-          "Users.userId": usuário ? usuário.id : interaction.user.id,
+          "Users.userId": usuário ? usuário.username : interaction.user.id,
         },
         { "Users.$": 1 },
         {},

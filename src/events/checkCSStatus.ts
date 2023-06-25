@@ -7,7 +7,7 @@ import { ChannelType, inlineCode } from "discord.js";
 
 export async function checkStatus() {
   const find = await defaultGuildConfig.find({
-    "channels.updatesCS": { $exists: true },
+    "channels.csStatus": { $exists: true },
   });
   const data = find.map((e) => e.channels);
   schedule("*/45 * * * * *", () => {
@@ -27,7 +27,6 @@ export async function checkStatus() {
         switch (r.data.result.services.SessionsLogon) {
           case "normal":
             client.misc.set("SessionResult", 0);
-            client.misc.set("APIResult", 0);
             break;
           case "surge":
             {
@@ -41,7 +40,7 @@ export async function checkStatus() {
                 )
                 .setColor("Yellow");
               data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.updatesCS ?? "");
+                const channel = client.channels.cache.get(e?.csStatus ?? "");
                 if (channel?.type === ChannelType.GuildText)
                   channel.send({ embeds: [embed] });
               });
@@ -57,7 +56,7 @@ export async function checkStatus() {
                 )
                 .setColor("Red");
               data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.updatesCS ?? "");
+                const channel = client.channels.cache.get(e?.csStatus ?? "");
                 if (channel?.type === ChannelType.GuildText)
                   channel.send({ embeds: [embed] });
               });
@@ -73,7 +72,7 @@ export async function checkStatus() {
                 )
                 .setColor("Yellow");
               data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.updatesCS ?? "");
+                const channel = client.channels.cache.get(e?.csStatus ?? "");
                 if (channel?.type === ChannelType.GuildText)
                   channel.send({ embeds: [embed] });
               });
@@ -97,7 +96,7 @@ export async function checkStatus() {
                 )
                 .setColor("Yellow");
               data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.updatesCS ?? "");
+                const channel = client.channels.cache.get(e?.csStatus ?? "");
                 if (channel?.type === ChannelType.GuildText)
                   channel.send({ embeds: [embed] });
               });
@@ -113,7 +112,7 @@ export async function checkStatus() {
                 )
                 .setColor("Red");
               data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.updatesCS ?? "");
+                const channel = client.channels.cache.get(e?.csStatus ?? "");
                 if (channel?.type === ChannelType.GuildText)
                   channel.send({ embeds: [embed] });
               });
@@ -129,7 +128,7 @@ export async function checkStatus() {
                 )
                 .setColor("Yellow");
               data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.updatesCS ?? "");
+                const channel = client.channels.cache.get(e?.csStatus ?? "");
                 if (channel?.type === ChannelType.GuildText)
                   channel.send({ embeds: [embed] });
               });
@@ -152,7 +151,7 @@ export async function checkStatus() {
                 )
                 .setColor("Yellow");
               data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.updatesCS ?? "");
+                const channel = client.channels.cache.get(e?.csStatus ?? "");
                 if (channel?.type === ChannelType.GuildText)
                   channel.send({ embeds: [embed] });
               });
@@ -168,7 +167,7 @@ export async function checkStatus() {
                 )
                 .setColor("Red");
               data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.updatesCS ?? "");
+                const channel = client.channels.cache.get(e?.csStatus ?? "");
                 if (channel?.type === ChannelType.GuildText)
                   channel.send({ embeds: [embed] });
               });
@@ -184,7 +183,7 @@ export async function checkStatus() {
                 )
                 .setColor("Yellow");
               data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.updatesCS ?? "");
+                const channel = client.channels.cache.get(e?.csStatus ?? "");
                 if (channel?.type === ChannelType.GuildText)
                   channel.send({ embeds: [embed] });
               });
