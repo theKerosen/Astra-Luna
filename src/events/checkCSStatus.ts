@@ -27,6 +27,7 @@ export async function checkStatus() {
         switch (r.data.result.services.SessionsLogon) {
           case "normal":
             client.misc.set("SessionResult", 0);
+            client.misc.set("WebAPI", 0);
             break;
           case "surge":
             {
@@ -193,6 +194,24 @@ export async function checkStatus() {
       })
       .catch((error: AxiosError) => {
         console.log(error);
+        if (client.misc.get("WebAPI") === 1) return;
+        client.misc.set("WebAPI", 1);
+        const embed = new BEmbed()
+          .setTitle("WebAPI — Counter-Strike")
+          .setThumbnail(
+            "https://images-ext-2.discordapp.net/external/O5C3rkJrjmLpvDHM_rHk13MBeIrYUJbFmg65j7z4O24/https/cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/69f7ebe2735c366c65c0b33dae00e12dc40edbe4.jpg?width=35&height=35"
+          )
+          .setColor("Red")
+          .setDescription(
+            `O Serviço de ${inlineCode("WebAPI")} retornou o erro HTTP ${
+              error.response?.status
+            }, (${error.message})`
+          ).setFooter({ text: "acesse o website https://developer.mozilla.org/en-US/docs/Web/HTTP/Status para entender os códigos de erro HTTP"});
+        data.forEach((e) => {
+          const channel = client.channels.cache.get(e?.csStatus ?? "");
+          if (channel?.type === ChannelType.GuildText)
+            channel.send({ embeds: [embed] });
+        });
       });
   });
 }
