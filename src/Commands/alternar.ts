@@ -5,20 +5,20 @@ import {
   inlineCode,
 } from "discord.js";
 import { Command } from "../utils/command";
-import { Channels } from "../Schem/Schematica";
+import { defaultGuildConfig } from "../Schem/Schematica";
 
 export = {
   data: new SlashCommandBuilder()
     .setName("alternar")
-    .setDescription("Desabilitar/Habilitar Módulo > ...")
+    .setDescription("► Desabilitar/Habilitar Módulo > ...")
     .addSubcommand((s) =>
       s
         .setName("módulo")
-        .setDescription("Desabilitar/Habilitar Módulo > Módulo")
+        .setDescription("► Desabilitar/Habilitar Módulo > Módulo")
         .addStringOption((r) =>
           r
             .setName("módulo")
-            .setDescription("escreva o nome do módulo...")
+            .setDescription("► escreva o nome do módulo...")
             .setRequired(true)
         )
     ),
@@ -31,7 +31,9 @@ export = {
         ephemeral: true,
       });
 
-    const GuildProps = await Channels.findOne({ GuildId: interaction.guildId });
+    const GuildProps = await defaultGuildConfig.findOne({
+      GuildId: interaction.guildId,
+    });
 
     const selectedModule = interaction.options
       .getString("módulo")
@@ -49,7 +51,7 @@ export = {
         ephemeral: true,
       });
 
-    if (!GuildProps?.ToggleCommands.includes(selectedModule)) {
+    if (!GuildProps?.toggleCommands.includes(selectedModule)) {
       interaction.reply({
         content: `Módulo ${inlineCode(
           selectedModule
@@ -61,7 +63,7 @@ export = {
       });
     }
 
-    if (GuildProps?.ToggleCommands.includes(selectedModule)) {
+    if (GuildProps?.toggleCommands.includes(selectedModule)) {
       interaction.reply({
         content: `Módulo ${inlineCode(selectedModule)} habilitado com sucesso.`,
         ephemeral: true,

@@ -8,7 +8,7 @@ import { BEmbed } from "../Constructors/Embed";
 export = {
   data: new SlashCommandBuilder()
     .setName("csstatus")
-    .setDescription("Veja o estado dos servidores do Counter-Strike."),
+    .setDescription("► Veja o estado dos servidores do Counter-Strike."),
   async execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply({ ephemeral: true });
     SteamClient.sendToGC(

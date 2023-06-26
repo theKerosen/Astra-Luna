@@ -20,35 +20,35 @@ interface Ranks {
 export = {
   data: new SlashCommandBuilder()
     .setName("xp")
-    .setDescription("Veja informações sobre seu XP!")
+    .setDescription("► Veja informações sobre seu XP!")
     .addSubcommand((s) =>
       s
         .setName("ver")
-        .setDescription("Veja o XP de alguém ou o seu próprio")
+        .setDescription("► Veja o XP de alguém ou o seu próprio")
         .addUserOption((s) => s.setName("usuário").setDescription("o usuário"))
     )
     .addSubcommand((s) =>
-      s.setName("ranking").setDescription("Veja o ranking do servidor!")
+      s.setName("ranking").setDescription("► Veja o ranking do servidor!")
     )
     .addSubcommandGroup((s) =>
       s
         .setName("cargos")
-        .setDescription("Configure cargos de XP para o seu servidor")
+        .setDescription("► Configure cargos de XP para o seu servidor")
         .addSubcommand((sub) =>
           sub
             .setName("adicionar")
-            .setDescription("Configure cargos de XP para o seu servidor")
+            .setDescription("► Configure cargos de XP para o seu servidor")
             .addRoleOption((r) =>
               r
                 .setName("cargo")
-                .setDescription("cargo que será dado ao usuário")
+                .setDescription("► Cargo que será dado ao usuário")
                 .setRequired(true)
             )
             .addIntegerOption((i) =>
               i
                 .setName("level")
                 .setDescription(
-                  "o nível que o usuário precisa ter para receber esse cargo"
+                  "► O nível que o usuário precisa ter para receber esse cargo"
                 )
                 .setRequired(true)
             )
@@ -60,7 +60,7 @@ export = {
             .addRoleOption((r) =>
               r
                 .setName("cargo")
-                .setDescription("cargo que será dado ao usuário")
+                .setDescription("Cargo que será dado ao usuário")
                 .setRequired(true)
             )
         )
@@ -218,7 +218,7 @@ export = {
       defaultGuildConfig.findOne(
         {
           GuildId: interaction.guildId,
-          "Users.userId": usuário ? usuário.username : interaction.user.id,
+          "Users.userId": usuário ? usuário.id : interaction.user.id,
         },
         { "Users.$": 1 },
         {},
@@ -252,7 +252,7 @@ export = {
             .setColor("#e43d37")
             .setDescription(
               `[ *${
-                usuário ? usuário.id : interaction.user.username
+                usuário ? usuário.username : interaction.user.username
               }* ]\n${filledBar}${emptyBar} **${progressPercent}%**`
             )
             .addFields(

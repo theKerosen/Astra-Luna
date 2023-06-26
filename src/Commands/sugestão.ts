@@ -13,20 +13,20 @@ import { BEmbed } from "../Constructors/Embed";
 export = {
   data: new SlashCommandBuilder()
     .setName("sugestão")
-    .setDescription("Enviar sugestão...")
+    .setDescription("► Enviar sugestão...")
     .addSubcommand((sub) =>
       sub
         .setName("sugerir")
-        .setDescription("Mande uma sugestão para o servidor!")
+        .setDescription("► Mande uma sugestão para o servidor!")
     )
     .addSubcommand((s) =>
       s
         .setName("canal")
         .setDescription(
-          "Configure um canal para receber sugestões para o servidor"
+          "► Configure um canal para receber sugestões para o servidor"
         )
         .addChannelOption((s) =>
-          s.setName("canal").setDescription("O canal").setRequired(true)
+          s.setName("canal").setDescription("► O canal").setRequired(true)
         )
     ),
   async execute(interaction: ChatInputCommandInteraction, client) {

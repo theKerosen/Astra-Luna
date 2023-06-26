@@ -15,7 +15,7 @@ export = {
     .addSubcommand((sub) =>
       sub
         .setName("ajuda")
-        .setDescription("Caso você não entenda como funciona...")
+        .setDescription("► Caso você não entenda como funciona...")
     )
     .addSubcommand((sub) =>
       sub
@@ -37,22 +37,22 @@ export = {
     .addSubcommand((sub) =>
       sub
         .setName("blacklist")
-        .setDescription("Dê um shadowban em um usuário malandro!")
+        .setDescription("► Dê um shadowban em um usuário malandro!")
         .addUserOption((s) =>
           s
             .setName("usuário")
-            .setDescription("usuário para entrar na blacklist")
+            .setDescription("► Usuário para entrar na blacklist")
             .setRequired(true)
         )
     )
     .addSubcommand((sub) =>
       sub
         .setName("whitelist")
-        .setDescription("remova usuários da blacklist do seu servidor!")
+        .setDescription("► Remova usuários da blacklist do seu servidor!")
         .addUserOption((s) =>
           s
             .setName("usuário")
-            .setDescription("usuário para entrar na blacklist")
+            .setDescription("► Usuário para entrar na blacklist")
             .setRequired(true)
         )
     )

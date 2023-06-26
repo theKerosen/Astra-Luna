@@ -15,21 +15,21 @@ export = {
     .addStringOption((s) =>
       s
         .setName("título")
-        .setDescription("Título da enquete (pode conter markdown.)")
+        .setDescription("► Título da enquete (pode conter markdown.)")
         .setRequired(true)
         .setMaxLength(125)
     )
     .addStringOption((s) =>
       s
         .setName("opção_1")
-        .setDescription("Primeira opção")
+        .setDescription("► Primeira opção")
         .setRequired(true)
         .setMaxLength(125)
     )
     .addStringOption((s) =>
       s
         .setName("opção_2")
-        .setDescription("Segunda opção")
+        .setDescription("► Segunda opção")
         .setRequired(true)
         .setMaxLength(125)
     )
@@ -42,7 +42,7 @@ export = {
     .addNumberOption((s) =>
       s
         .setName("tempo")
-        .setDescription("tempo (em segundos) de duração.")
+        .setDescription("► tempo (em segundos) de duração.")
         .setMaxValue(604800)
         .setMinValue(5)
     ),

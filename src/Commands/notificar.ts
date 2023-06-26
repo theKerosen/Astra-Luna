@@ -12,7 +12,7 @@ import { BEmbed } from "../Constructors/Embed";
 export = {
   data: new SlashCommandBuilder()
     .setName("notificar")
-    .setDescription("notificação de atualizações > ...")
+    .setDescription("► Notificação de atualizações > ...")
     .addSubcommandGroup((s) =>
       s
         .setName("configurar")
@@ -20,28 +20,28 @@ export = {
         .addSubcommand((sub) =>
           sub
             .setName("updates")
-            .setDescription("Updates do Counter-Strike")
+            .setDescription("► Updates do Counter-Strike")
             .addChannelOption((sub) =>
               sub
                 .setName("canal")
-                .setDescription("notificação de atualizações > canal")
+                .setDescription("► Notificação de atualizações > canal")
                 .setRequired(true)
             )
             .addRoleOption((sub) =>
               sub
                 .setName("cargo")
-                .setDescription("notificação de canais > menção de cargos")
+                .setDescription("► Notificação de canais > menção de cargos")
                 .setRequired(true)
             )
         )
         .addSubcommand((sub) =>
           sub
             .setName("status")
-            .setDescription("Status do Counter-Strike")
+            .setDescription("► Status do Counter-Strike")
             .addChannelOption((sub) =>
               sub
                 .setName("canal")
-                .setDescription("notificação de atualizações > canal")
+                .setDescription("► Notificação de atualizações > canal")
                 .setRequired(true)
             )
         )
