@@ -2273,15 +2273,6 @@ got@^11.8.5:
     p-cancelable "^2.0.0"
     responselike "^2.0.0"
 
-gpt4all@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/gpt4all/-/gpt4all-1.0.0.tgz#d45ce61a1a8d602f14afa521afc3bea75062265d"
-  integrity sha512-fpT5F2kMReP8bQmzdxhPX7Rx6HI2Gvn/T/JqjuDl/JEYoSQWZOINiYgV+lsZjyerst0bb4fU3Rs6BORNhDxz/g==
-  dependencies:
-    axios "^1.3.4"
-    os "^0.1.2"
-    progress "^2.0.3"
-
 grapheme-splitter@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
@@ -2340,11 +2331,6 @@ http2-wrapper@^1.0.0-beta.5.2:
   dependencies:
     quick-lru "^5.1.1"
     resolve-alpn "^1.0.0"
-
-i@^0.3.7:
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/i/-/i-0.3.7.tgz#2a7437a923d59c14b17243dc63a549af24d85799"
-  integrity sha512-FYz4wlXgkQwIPqhzC5TdNMLSE5+GS1IIDJZY/1ZiEPCT2S3COUVZeT5OW4BmW4r5LHLQuOosSwsvnroG9GR59Q==
 
 ieee754@^1.1.13, ieee754@^1.2.1:
   version "1.2.1"
@@ -2883,11 +2869,6 @@ os-locale@^1.4.0:
   dependencies:
     lcid "^1.0.0"
 
-os@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/os/-/os-0.1.2.tgz#f29a50c62908516ba42652de42f7038600cadbc2"
-  integrity sha512-ZoXJkvAnljwvc56MbvhtKVWmSkzV712k42Is2mA0+0KTSRakq5XXuXpjZjgAt9ctzl51ojhQWakQQpmOvXWfjQ==
-
 p-cancelable@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/p-cancelable/-/p-cancelable-2.1.1.tgz#aab7fbd416582fa32a3db49859c122487c5ed2cf"
@@ -2965,11 +2946,6 @@ prettier@^2.8.8:
   version "2.8.8"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.8.tgz#e8c5d7e98a4305ffe3de2e1fc4aca1a71c28b1da"
   integrity sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==
-
-progress@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
-  integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
 protobufjs@^4.1:
   version "4.1.3"
