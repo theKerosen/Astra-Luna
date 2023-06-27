@@ -61,6 +61,14 @@ Um sistema ótimo para dar sugestões a um servidor, basta digitar o comando /su
 <br>
 <h1></h1>
 </div>
+<div align="right">
+<h3> [⬅️] Sistema de Feedback! </h3>
+Um sistema ótimo para dar feedbacks a um servidor, apenas digite /feedback enviar para abrir o formulário. <br> para configurar o canal de feedback, utilize /feedback canal.
+<h1></h1>
+<img src="https://cdn.discordapp.com/attachments/943547363031670785/1123129471508168764/Screenshot_3.png" width="540" height="350" alt="suggestion system">
+<br>
+<h1></h1>
+</div>
 <h1>Futuros Planos</h1>
 
 Pretendo adicionar tudo que está/estará citado aqui.

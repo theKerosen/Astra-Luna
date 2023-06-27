@@ -4,7 +4,6 @@ import {
   SlashCommandBuilder,
   ChatInputCommandInteraction,
   ButtonStyle,
-  /*   APIEmbedField, */
 } from "discord.js";
 import { BEmbed } from "../Constructors/Embed";
 
@@ -33,12 +32,6 @@ export = {
         .setRequired(true)
         .setMaxLength(125)
     )
-    /*     .addStringOption((s) =>
-      s.setName("opção_3").setDescription("Terceira opção").setMaxLength(125)
-    )
-    .addStringOption((s) =>
-      s.setName("opção_4").setDescription("Quarta opção").setMaxLength(125)
-    ) */
     .addNumberOption((s) =>
       s
         .setName("tempo")
@@ -51,8 +44,6 @@ export = {
     const title = interaction.options.getString("título") as string;
     const opção_1 = interaction.options.getString("opção_1") as string;
     const opção_2 = interaction.options.getString("opção_2") as string;
-    /*     const opção_3 = interaction.options.getString("opção_3") as string;
-    const opção_4 = interaction.options.getString("opção_4") as string; */
     const tempo = interaction.options.getNumber("tempo") ?? 120;
 
     function RegexFilter(string: string[]) {
@@ -95,7 +86,7 @@ export = {
         },
       ])
       .setColor("Blurple")
-      .setFooter({ text: `Enquete feita por: ${interaction.user.username}` });
+      .setFooter({ text: `Enquete feita por: ${interaction.user.globalName}` });
 
     const Button = new BButton()
       .addButton({

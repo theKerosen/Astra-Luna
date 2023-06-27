@@ -147,10 +147,11 @@ export = {
           const filledBarLength = Math.round((20 * progressPercent) / 100);
           const filledBar = "▰".repeat(filledBarLength);
           const emptyBar = "▱".repeat(20 - filledBarLength);
+          const user = await client.users.fetch(slicedRanks[i][a].userid);
           embed.addFields({
-            name: `${
-              (await client.users.fetch(slicedRanks[i][a].userid)).username
-            } [Lv.${slicedRanks[i][a].Level}] #${
+            name: `${user.globalName ? user.globalName : user.globalName} [Lv.${
+              slicedRanks[i][a].Level
+            }] #${
               slicedRanks
                 .flat(1)
                 .findIndex((usr) => usr.userid === slicedRanks[i][a].userid) + 1
@@ -252,7 +253,7 @@ export = {
             .setColor("#e43d37")
             .setDescription(
               `[ *${
-                usuário ? usuário.username : interaction.user.username
+                usuário ? usuário.globalName : interaction.user.globalName
               }* ]\n${filledBar}${emptyBar} **${progressPercent}%**`
             )
             .addFields(

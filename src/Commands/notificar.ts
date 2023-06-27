@@ -56,12 +56,9 @@ export = {
       });
     if (interaction.options.getSubcommand() === "updates") {
       const role = interaction.options.getRole("cargo");
-      const selectedChannel = interaction.options.getChannel("canal");
-      if (selectedChannel?.type !== ChannelType.GuildText)
-        return interaction.reply({
-          content: "Esse canal não é um canal de texto.",
-          ephemeral: true,
-        });
+      const selectedChannel = interaction.options.getChannel("canal", true, [
+        ChannelType.GuildText,
+      ]);
       await defaultGuildConfig.findOneAndUpdate(
         { GuildId: interaction.guildId },
         {
@@ -97,12 +94,9 @@ export = {
     }
     if (interaction.options.getSubcommand() === "status") {
       const role = interaction.options.getRole("cargo");
-      const selectedChannel = interaction.options.getChannel("canal");
-      if (selectedChannel?.type !== ChannelType.GuildText)
-        return interaction.reply({
-          content: "Esse canal não é um canal de texto.",
-          ephemeral: true,
-        });
+      const selectedChannel = interaction.options.getChannel("canal", true, [
+        ChannelType.GuildText,
+      ]);
       await defaultGuildConfig.findOneAndUpdate(
         { GuildId: interaction.guildId },
         {

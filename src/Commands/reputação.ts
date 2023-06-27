@@ -255,8 +255,8 @@ export = {
       );
       const embed = new BEmbed()
         .setAuthor({
-          name: `${user?.username}${isPositive ? "🤝" : "🖕"}${
-            interaction.user.username
+          name: `${user?.globalName}${isPositive ? "🤝" : "🖕"}${
+            interaction.user.globalName
           }`,
         })
         .setDescription(
@@ -265,11 +265,11 @@ export = {
               ? "🤑 | REPUTAÇÃO ADICIONADA!"
               : "💸 | REPUTAÇÃO REMOVIDA!"
           } **\n${codeBlock(
-            `${isPositive ? user?.username : interaction.user.username} ${
+            `${isPositive ? user?.globalName : interaction.user.globalName} ${
               isPositive ? "recebeu" : "removeu"
             } ponto de reputação de ${
-              isPositive ? interaction.user.username : user?.username
-            }.\n${interaction.user.username} comentou: "${comment}"`
+              isPositive ? interaction.user.globalName : user?.globalName
+            }.\n${interaction.user.globalName} comentou: "${comment}"`
           )}`
         )
         .setColor(isPositive ? "Green" : "Red");
@@ -307,7 +307,7 @@ export = {
       });
 
       const embed = new BEmbed()
-        .setAuthor({ name: user?.username ?? "Sem nick" })
+        .setAuthor({ name: user?.globalName ?? "Sem nick" })
         .setDescription(
           `✅ ${index.goodRep} Reputações boa(s)\n❌ ${
             index.badRep
@@ -323,7 +323,7 @@ export = {
         const fetchUser = await client?.users.fetch(comment.userId);
 
         embed.addFields({
-          name: fetchUser?.username ?? "Sem nick",
+          name: fetchUser?.globalName ?? "Sem nick",
           value: `> \`${comment.isPositive ? "✅" : "❌"} ${comment.comment}\``,
           inline: true,
         });

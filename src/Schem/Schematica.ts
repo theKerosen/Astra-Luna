@@ -25,6 +25,7 @@ const guildStuff = new Schema({
     reports: String,
     updatesCS: String,
     csStatus: String,
+    feedbacks: String,
   },
   defaultMentionRole: String,
   toggleCommands: Array,

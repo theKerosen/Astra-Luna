@@ -72,15 +72,14 @@ export = {
             )
             .setThumbnail(client.user?.avatarURL() || null),
         ],
-        //Terminar isso aqui
-      }); //?? O Discord não me permite mandar mensagens sem fazer isso...
+      });
     }
     if (interaction.options.getSubcommand() === "sugerir") {
       const modal = new BModal()
         .createModal({ custom_id: "sugestão", title: "Sugestão" })
         .addText({
           custom_id: "TextField_1",
-          label: `Qual é a ideia, ${interaction.user.username}?`,
+          label: `Qual é a ideia, ${interaction.user.globalName}?`,
           style: TextInputStyle.Short,
           placeholder: "Uma sugestão sobre móveis.",
           min_length: 24,
@@ -89,7 +88,7 @@ export = {
         })
         .addText({
           custom_id: "TextField_2",
-          label: `Conte me mais, ${interaction.user.username}!`,
+          label: `Conte me mais, ${interaction.user.globalName}!`,
           style: TextInputStyle.Paragraph,
           placeholder:
             "Sugiro mover aquela cadeira de lugar, tá me incomodando bastante!",
