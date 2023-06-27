@@ -5,7 +5,8 @@
 <div align="center">
 <h1>  Esse é Astra Luna 🌙✨</h1>
   Astra Luna é um projeto feito por Lunx. <br>
-  <a href="https://discord.com/api/oauth2/authorize?client_id=989349457726418964&permissions=8&scope=bot"> BOT Oficial </a>
+  <a href="https://discord.com/api/oauth2/authorize?client_id=989349457726418964&permissions=8&scope=bot"> BOT Oficial </a> <br>
+  <a href=https://github.com/Lunixyz/Astra-Luna/blob/main/Patch_notes.md>Patch Notes</a>
 </div>
 <h2> ✨ Features ✨ </h2>
 
