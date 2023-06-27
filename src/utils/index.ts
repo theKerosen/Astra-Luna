@@ -7,12 +7,14 @@ import { onMessage } from "../events/onMessage";
 import { gcStatus } from "../events/onGCDisconnect";
 import { checkStatus } from "../events/checkCSStatus";
 import { xpReset } from "../events/xpBonusResetAlert";
+import { blogCheck } from "../events/checkCSBlog";
 const client = new AstraLuna();
 client.mongoConnect();
 client.login();
 handler();
 checkStatus();
 xpReset(client);
+blogCheck(client)
 gcStatus(client);
 client.once(Events.ClientReady, async () => await Init(client));
 client.on(Events.InteractionCreate, async (interaction) => {
