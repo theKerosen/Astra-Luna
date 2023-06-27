@@ -15,7 +15,7 @@ export async function execute(
     async (err, data) => {
       if (err) throw err;
       const feedbackChannel = client.channels.cache.get(
-        data?.channels?.suggestions ?? ""
+        data?.channels?.feedbacks ?? ""
       );
       if (feedbackChannel?.type !== ChannelType.GuildText) return;
       const embed = new BEmbed()
