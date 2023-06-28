@@ -6,7 +6,7 @@ import { BEmbed } from "../Constructors/Embed";
 
 export async function xpReset(client: AstraLuna) {
   schedule(
-    "1 * */22 * * TUE",
+    "1 0 22 * * TUE",
     async () => {
       const find = await defaultGuildConfig.find({
         "channels.csStatus": { $exists: true },
