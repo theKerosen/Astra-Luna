@@ -14,8 +14,8 @@ export async function xpReset(client: AstraLuna) {
       const data = find.map((e) => e.channels);
 
       data.forEach((e) => {
-        if (e?.updatesCS) {
-          const channel = client.channels.cache.get(e?.updatesCS);
+        if (e?.csStatus) {
+          const channel = client.channels.cache.get(e?.csStatus);
           if (channel?.type === ChannelType.GuildText)
             channel.send({
               embeds: [
