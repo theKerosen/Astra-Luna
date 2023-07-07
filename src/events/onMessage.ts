@@ -31,7 +31,8 @@ export const onMessage = async (client: AstraLuna, message: Message) => {
         Users: { userId: message.author.id, Level: 0, XP: 0, cooldown: 0 },
       },
     });
-
+  if (message.content.length < 5) return;
+  if (message.content.search(/\b(\w{2})\w*\1\b/g) === 0) return;
   if (user?.cooldown * 60000 - Date.now() < 0) {
     await data.updateOne(
       {

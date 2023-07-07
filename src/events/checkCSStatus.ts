@@ -193,6 +193,7 @@ export async function checkStatus() {
         }
       })
       .catch((error: AxiosError) => {
+        if(error.message === "read ETIMEDOUT") return;
         console.log(error);
         if (client.misc.get("WebAPI") === 1) return;
         client.misc.set("WebAPI", 1);

@@ -16,7 +16,7 @@ SteamClient.logOn({
 SteamClient.on("loggedOn", async () => {
   SteamClient.setPersona(Steam.EPersonaState.Online);
   await SteamClient.gamesPlayed([730]);
-  console.log("\x1b[35m[Steam] \x1b[36mLogado na Steam");
+  console.log("[ASTRA LUNA] -> Logado na Steam com sucesso.");
 });
 
 const CSGOClient = new csgo(SteamClient);
@@ -31,12 +31,39 @@ class AstraLuna extends Client {
   }
 
   login() {
+    console.log(`
+    ._________________________________________________.
+    |                                                 | 
+    |             &##BBB#########BBB##&               |
+    |          &BB##&@@@@@@@@@@@@@@@&##BB&            |
+    |        &BB#&@@@@@@@@@@@@@@@@@@@@@@@&#BB&        |
+    |      &BB&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&BB&      |
+    |     #G#@@@@@@@@@@#BG5YG@@@@@@@@@@@@@@@@@#G#     |
+    |    GG@@@@@@@@@#GPGB55#@@@@@@@@@@@@@@@@@@@@GG    |
+    |   GG@@@@@@@@&PG#@&5B@@@@&&@@&@@@@@@@@@@@@@@GG   |
+    |  #P@@@@@@@@B5#@@@5B@@@@&?5@G!#@@@@@@@@@@@@@@P#  |
+    |  5#@@@@@@@#5@@@@&Y@@@@@@@BY~:!5#@@@@@@@@@@@@#5  |
+    |  5@@@@@@@@5#@@@@&5&@@@@@@?5P~B@@@@@@@@@@@@@@@5  |
+    |  P@@@@@@@&5&@@@@@GG@@@@@@B#@#@@@@@@@@@@@@@@@@P  |
+    |  5@@@@@@@@P#@@@@@@GG@@@@@@@@@@@@@@@@@@@@@@@@@5  |
+    |  Y#@@@@@@@#P@@@@@@@#GB&@@@@@@@@@@@@@&@@@@@@@#Y  |
+    |  B5@@@@@@@@#G&@@@@@@@&BBB##&&&&&##GPB@@@@@@@5B  |
+    |   GP@@@@@@@@&BB&@@@@@@@@&&#######BG#@@@@@@@PG   |
+    |    GP@@@@@@@@@&BB#&&@@@@@@@@@&#BB#@@@@@@@@PG    |
+    |    BP#@@@@@@@@@@&############&@@@@@@@@@#PB      |
+    |     &GP#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#PG&       |
+    |       &GPB&@@@@@@@@@@@@@@@@@@@@@@@&BPG&         |
+    |           #GGB#&&@@@@@@@@@@@@@&&#BGG#           |
+    |              &#BGGGGBBBBBBBGGGGB#&              |
+    ._________________________________________________.
+    
+[ASTRA LUNA] -> Sistema iniciado com sucesso.`);
     return super.login(process.env.TOKEN);
   }
   mongoConnect() {
     set("strictQuery", true);
     return connect(process.env.MONGO_URI ?? "").then(() =>
-      console.log("\x1b[35m[Mongoose] \x1b[36mConectado ao MongoDB")
+      console.log("[ASTRA LUNA] -> Conexão com Mongoose iniciada.")
     );
   }
 }
