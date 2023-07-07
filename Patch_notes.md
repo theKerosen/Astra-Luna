@@ -1,5 +1,13 @@
 <div>
 <h1>Notas de atualização</h1>
+<h2>6.3.1 Hotfix — Sistema de XP</h2>
+</div>
+<ul>
+<li>Agora o sistema de ranking organiza conforme o *XP* e o Nível, não só o Nível.</li>
+</ul>
+
+<div>
+<h1>Notas de atualização</h1>
 <h2>6.3.0 — Sistema de XP</h2>
 </div>
 <ul>

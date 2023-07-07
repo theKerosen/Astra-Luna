@@ -120,7 +120,7 @@ export = {
           Level: User.Level,
         });
       });
-      sortedRanks.sort((a, b) => b.Level - a.Level);
+      sortedRanks.sort((a, b) => b.Level - a.Level).sort((a, b) => b.XP - a.XP);
       for (let i = 0; i < Math.min(sortedRanks.length, 40); i += 5)
         slicedRanks.push(sortedRanks.slice(i, i + 5));
 
