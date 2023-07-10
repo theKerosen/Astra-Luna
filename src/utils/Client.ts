@@ -5,7 +5,10 @@ import { Command } from "./command";
 import { connect, set } from "mongoose";
 import Steam from "steam-user";
 import csgo from "globaloffensive";
-
+interface Roles {
+  role: string;
+  level: number;
+}
 const SteamClient = new Steam({
   autoRelogin: true,
 });
@@ -25,7 +28,7 @@ class AstraLuna extends Client {
   misc: Collection<unknown, unknown> = new Collection();
   votes: Collection<unknown, unknown> = new Collection();
   toggleModules: Collection<string, boolean> = new Collection();
-  giveaways: Collection<string, string[]> = new Collection();
+  roles: Collection<string, Roles> = new Collection();
   constructor() {
     super({ intents: 3276799 });
   }

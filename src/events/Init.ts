@@ -2,7 +2,7 @@ import { AstraLuna } from "../utils/Client";
 import { checkStatus } from "./checkCSStatus";
 export const Init = async (client: AstraLuna) => {
   await checkStatus();
- 
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   client.application?.commands.set(client.commands.map((v: any) => v.data));
   client.user?.setStatus("idle");

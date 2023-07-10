@@ -1,5 +1,21 @@
-<div>
 <h1>Notas de atualização</h1>
+
+<div>
+<h2>6.4.0 — Sistema de XP</h2>
+</div>
+<ul>
+<li>
+Refactor completo da aparência do /xp ver & /xp ranking
+</li>
+<li>
+API atualizada para a versão "14.11.1-dev.1688385870-75d91b5.0" 
+</li>
+<li>
+Agora as mensagens do sistema de XP não são mais efêmeras (para melhor compreensão dos membros)
+</li>
+</ul>
+
+<div>
 <h2>6.3.1 Hotfix — Sistema de XP</h2>
 </div>
 <ul>
@@ -7,7 +23,6 @@
 </ul>
 
 <div>
-<h1>Notas de atualização</h1>
 <h2>6.3.0 — Sistema de XP</h2>
 </div>
 <ul>
@@ -20,7 +35,6 @@ O Astra Luna irá invalidar a adição de XP caso a mensagem tenha menos de 5 le
 </ul>
 
 <div>
-<h1>Notas de atualização</h1>
 <h2>6.1.2 Panic Fix — Alerta de Bônus de XP</h2>
 </div>
 <ul>

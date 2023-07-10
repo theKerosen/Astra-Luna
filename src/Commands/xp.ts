@@ -1,7 +1,6 @@
 import {
   SlashCommandBuilder,
   ChatInputCommandInteraction,
-  inlineCode,
   PermissionFlagsBits,
   ButtonStyle,
   Interaction,
@@ -10,11 +9,16 @@ import { Command } from "../utils/command";
 import { defaultGuildConfig } from "../Schem/Schematica";
 import { BEmbed } from "../Constructors/Embed";
 import { BButton } from "../Constructors/Button";
+import { AstraLuna } from "../utils/Client";
 
 interface Ranks {
   userid: string;
   XP: number;
   Level: number;
+}
+interface Roles {
+  role: string;
+  level: number;
 }
 
 export = {
@@ -65,9 +69,9 @@ export = {
             )
         )
     ),
-  async execute(interaction: ChatInputCommandInteraction, client) {
+  async execute(interaction: ChatInputCommandInteraction, client: AstraLuna) {
     if (interaction.options.getSubcommand() === "adicionar") {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply();
       const role = interaction.options.getRole("cargo");
       const level = interaction.options.getInteger("level");
       const Guild = client.guilds.cache.get(interaction.guildId ?? "");
@@ -86,7 +90,7 @@ export = {
       });
     }
     if (interaction.options.getSubcommand() === "remover") {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply();
       const role = interaction.options.getRole("cargo");
       const Guild = client.guilds.cache.get(interaction.guildId ?? "");
       const User = Guild?.members.cache.get(interaction.user.id);
@@ -105,12 +109,15 @@ export = {
     }
 
     if (interaction.options.getSubcommand() === "ranking") {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply();
       const leaderboard = await defaultGuildConfig
         .find({ GuildId: interaction.guildId })
         .sort({
           "Users.XP": -1,
         });
+      const roles = await defaultGuildConfig.findOne({
+        GuildId: interaction.guildId,
+      });
       const sortedRanks: Ranks[] = [];
       const slicedRanks: Ranks[][] = [];
       leaderboard[0].Users.forEach((User) => {
@@ -123,44 +130,54 @@ export = {
       sortedRanks.sort((a, b) => b.Level - a.Level).sort((a, b) => b.XP - a.XP);
       for (let i = 0; i < Math.min(sortedRanks.length, 40); i += 5)
         slicedRanks.push(sortedRanks.slice(i, i + 5));
-
       const GlobalPages: BEmbed[] = [];
       for (let i = 0; i < slicedRanks.length; i++) {
         const embed = new BEmbed()
-          .setAuthor({
-            name: `${interaction.guild?.name} — Leaderboard`,
-          })
-          .setColor("#e43d37")
-          .setThumbnail(
-            interaction.guild?.iconURL() ??
-              "https://cdn.discordapp.com/attachments/943547363031670785/1116163222748270592/huh.png"
-          )
+          .setTitle(interaction.guild?.name ?? null)
+          .setColor("NotQuiteBlack")
+          .setThumbnail(interaction.guild?.iconURL() ?? null)
           .setFooter({ text: `Página ${i + 1} de ${slicedRanks.length}` });
         for (let a = 0; a < Math.min(slicedRanks[i].length, 5); a++) {
           const level = slicedRanks[i][a].Level;
-          const xp = slicedRanks[i][a].XP;
           const solvedFormula =
             (5 / 6) *
             (level + 1) *
             (2 * (level + 1) * (level + 1) + 27 * (level + 1) + 91);
-          const progressPercent = Math.round((xp / solvedFormula) * 100);
-          const filledBarLength = Math.round((20 * progressPercent) / 100);
-          const filledBar = "▰".repeat(filledBarLength);
-          const emptyBar = "▱".repeat(20 - filledBarLength);
           const user = await client.users.fetch(slicedRanks[i][a].userid);
+          const member = await interaction.guild?.members
+            .fetch(user.id)
+            .catch(() =>
+              console.log(
+                "[ASTRA LUNA] -> GuildMember#fetch() falhou, ignorando membro..."
+              )
+            );
+          if (member && roles) {
+            for (let i = 0; roles?.XPRoles.length > i; i++) {
+              const memberRoles = member.roles.cache.get(
+                roles?.XPRoles[i].role
+              );
+              if (memberRoles?.id === roles?.XPRoles[i].role)
+                client.roles
+                  .set(user.id, roles?.XPRoles[i])
+                  .sort((a: Roles, b: Roles) => b.level - a.level);
+            }
+          }
           embed.addFields({
-            name: `${user.globalName ? user.globalName : user.globalName} [Lv.${
-              slicedRanks[i][a].Level
-            }] #${
+            name: `#${
               slicedRanks
                 .flat(1)
                 .findIndex((usr) => usr.userid === slicedRanks[i][a].userid) + 1
-            }`,
-            value: `< ${slicedRanks[i][
+            } ${user.globalName ?? user.username}`,
+            value: `├ [Lv.${slicedRanks[i][a].Level}]\n├ [${slicedRanks[i][
               a
-            ].XP.toLocaleString()} / ${solvedFormula.toLocaleString()} XP >\n${filledBar}${emptyBar} **${progressPercent}%**\n\u200b`,
+            ].XP.toLocaleString()} / ${solvedFormula.toLocaleString()} XP]\n└ ${
+              client.roles.get(user.id)
+                ? `<@&${client.roles.get(user.id)?.role}>`
+                : "Sem Cargo"
+            }`,
           });
         }
+
         GlobalPages.push(embed);
       }
 
@@ -172,13 +189,19 @@ export = {
           .addButton({
             customId: "previous",
             emoji: "<:previous_page:1098891318572363877>",
-            style: ButtonStyle.Success,
+            style: ButtonStyle.Primary,
             disabled: pages[id] === 0,
+          })
+          .addButton({
+            customId: "blank1",
+            emoji: "❌",
+            style: ButtonStyle.Secondary,
+            disabled: true,
           })
           .addButton({
             customId: "next",
             emoji: "<:next_page:1098891315611193364>",
-            style: ButtonStyle.Success,
+            style: ButtonStyle.Primary,
             disabled: pages[id] === GlobalPages.length - 1,
           });
       };
@@ -214,7 +237,7 @@ export = {
       });
     }
     if (interaction.options.getSubcommand() === "ver") {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply();
       const usuário = interaction.options.getUser("usuário");
       defaultGuildConfig.findOne(
         {
@@ -241,49 +264,46 @@ export = {
           const filledBarLength = Math.round((20 * progressPercent) / 100);
           const filledBar = "▰".repeat(filledBarLength);
           const emptyBar = "▱".repeat(20 - filledBarLength);
+          const sortedRoles: Roles[] = [];
+          const data2 = await defaultGuildConfig.findOne({
+            GuildId: interaction.guildId,
+          });
+          if (data2?.XPRoles)
+            for (let i = 0; data2?.XPRoles.length > i; i++)
+              await interaction.guild?.members
+                .fetch(usuário ? usuário.id : interaction.user.id)
+                .then((user) => user.roles.cache.get(data2.XPRoles[i].role))
+                .then((role) => {
+                  if (role && role.id === data2.XPRoles[i].role)
+                    sortedRoles.push(data2.XPRoles[i]);
+                  sortedRoles.sort((a, b) => b.level - a.level);
+                });
 
           const Embed = new BEmbed()
-            .setAuthor({ name: interaction.guild?.name ?? "\u200b" })
+            .setTitle(
+              `${
+                usuário
+                  ? usuário.globalName ?? usuário.username
+                  : interaction.user.globalName ?? interaction.user.username
+              } [Lv.${level}]`
+            )
             .setThumbnail(
               usuário
                 ? usuário.avatarURL()
                 : interaction.user.avatarURL() ||
                     "https://cdn.discordapp.com/attachments/943547363031670785/1116163222748270592/huh.png"
             )
-            .setColor("#e43d37")
+            .setColor("Purple")
             .setDescription(
-              `[ *${
-                usuário ? usuário.globalName : interaction.user.globalName
-              }* ]\n${filledBar}${emptyBar} **${progressPercent}%**`
-            )
-            .addFields(
-              {
-                name: "\u200b",
-                value: `<:lv:1107514022997274654> ${inlineCode(level)}`,
-                inline: true,
-              },
-              {
-                name: "\u200b",
-                value: `<:XP:1107514024427536416> ${inlineCode(
-                  xp.toLocaleString()
-                )}`,
-                inline: true,
-              },
-              {
-                name: "\u200b",
-                value: `<:levelup:1107514020241621133> ${inlineCode(
-                  (
-                    (5 / 6) *
-                      (level + 1) *
-                      (2 * (level + 1) * (level + 1) + 27 * (level + 1) + 91) -
-                    xp
-                  ).toLocaleString()
-                )}`,
-                inline: true,
-              }
+              `<@&${sortedRoles[0].role}> [${xp.toLocaleString()}/${(
+                (5 / 6) *
+                  (level + 1) *
+                  (2 * (level + 1) * (level + 1) + 27 * (level + 1) + 91) -
+                xp
+              ).toLocaleString()} XP]\n${filledBar}${emptyBar} **${progressPercent}%**`
             );
 
-          await interaction.editReply({ embeds: [Embed] });
+          return await interaction.editReply({ embeds: [Embed] });
         }
       );
     }
