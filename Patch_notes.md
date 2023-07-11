@@ -7,8 +7,7 @@
 <li>
 Refactor do sistema de varredura do Blog do Counter-Strike.
 </li>
-<li>
-</li>
+
 <li>
 Refactor do sistema de status do Counter-Strike.
 </li>
