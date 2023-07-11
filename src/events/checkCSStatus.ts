@@ -3,9 +3,39 @@ import { BEmbed } from "../Constructors/Embed";
 import { schedule } from "node-cron";
 import { defaultGuildConfig } from "../Schem/Schematica";
 import { client } from "../utils";
-import { ChannelType, inlineCode } from "discord.js";
+import { ChannelType, ColorResolvable, inlineCode } from "discord.js";
+
+enum knownErrors {
+  noConn = "read ENETUNREACH", //conexão OU API caiu
+  unstableConn = "read ECONNRESET", //conexão OU API instável
+  AkamaiFail = "connect ETIMEDOUT 23.196.31.69:443", //instabilidade com a Akamai
+}
 
 export async function checkStatus() {
+  const apiResponseMap: Record<
+    string,
+    {
+      value: number;
+      description: string;
+      color: ColorResolvable;
+    }
+  > = {
+    delayed: {
+      value: 1,
+      description: "O Serviço está lento.",
+      color: "Yellow",
+    },
+    surge: {
+      value: 2,
+      description: "O Serviço acabou de iniciar.",
+      color: "Red",
+    },
+    offline: {
+      value: 3,
+      description: "O Serviço de  está Offline.",
+      color: "Red",
+    },
+  };
   const find = await defaultGuildConfig.find({
     "channels.csStatus": { $exists: true },
   });
@@ -16,198 +46,117 @@ export async function checkStatus() {
         `https://api.steampowered.com/ICSGOServers_730/GetGameServersStatus/v1/?key=${process.env.KEY}`
       )
       .then(async (r) => {
-        const embed = new BEmbed()
-          .setAuthor({
-            name: "Status — Counter-Strike",
-          })
-          .setThumbnail(
-            "https://images-ext-2.discordapp.net/external/O5C3rkJrjmLpvDHM_rHk13MBeIrYUJbFmg65j7z4O24/https/cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/69f7ebe2735c366c65c0b33dae00e12dc40edbe4.jpg?width=35&height=35"
-          )
-          .setColor("Red");
-        switch (r.data.result.services.SessionsLogon) {
-          case "normal":
-            client.misc.set("SessionResult", 0);
-            client.misc.set("WebAPI", 0);
-            break;
-          case "surge":
-            {
-              if (client.misc.get("SessionResult") === 1) return;
-              client.misc.set("SessionResult", 1);
-              embed
-                .setDescription(
-                  `O Serviço de ${inlineCode(
-                    "Sessões de logon"
-                  )} acabou de iniciar! (lentidão é esperado.)`
-                )
-                .setColor("Yellow");
-              data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.csStatus ?? "");
-                if (channel?.type === ChannelType.GuildText)
-                  channel.send({ embeds: [embed] });
-              });
+        const embed = new BEmbed().setThumbnail(
+          "https://images-ext-2.discordapp.net/external/O5C3rkJrjmLpvDHM_rHk13MBeIrYUJbFmg65j7z4O24/https/cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/69f7ebe2735c366c65c0b33dae00e12dc40edbe4.jpg?width=35&height=35"
+        );
+
+        const sessionsResponse =
+          apiResponseMap[r.data.result.services.SessionsLogon];
+        const communityResponse =
+          apiResponseMap[r.data.result.services.SteamCommunity];
+        const matchmakerResponse =
+          apiResponseMap[r.data.result.matchmaking.scheduler];
+
+        if (
+          sessionsResponse &&
+          client.misc.get("webAPI_Sessions") !== sessionsResponse.value
+        ) {
+          client.misc.set("webAPI_Sessions", sessionsResponse.value);
+
+          embed.setAuthor({
+            name: "Sessões — Counter-Strike",
+          });
+          embed.setDescription(sessionsResponse.description);
+          embed.setColor(sessionsResponse.color);
+
+          data.forEach((e) => {
+            if (e?.csStatus) {
+              const channel = client.channels.cache.get(e?.csStatus ?? "");
+
+              if (channel?.type === ChannelType.GuildText)
+                channel.send({ embeds: [embed] });
             }
-            break;
-          case "offline":
-            {
-              if (client.misc.get("SessionResult") === 2) return;
-              client.misc.set("SessionResult", 2);
-              embed
-                .setDescription(
-                  `O Serviço de ${inlineCode("Sessões de logon")} está Offline.`
-                )
-                .setColor("Red");
-              data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.csStatus ?? "");
-                if (channel?.type === ChannelType.GuildText)
-                  channel.send({ embeds: [embed] });
-              });
-            }
-            break;
-          case "delayed":
-            {
-              if (client.misc.get("SessionResult") === 3) return;
-              client.misc.set("SessionResult", 3);
-              embed
-                .setDescription(
-                  `O Serviço de ${inlineCode("Sessões de logon")} está lento.`
-                )
-                .setColor("Yellow");
-              data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.csStatus ?? "");
-                if (channel?.type === ChannelType.GuildText)
-                  channel.send({ embeds: [embed] });
-              });
-            }
-            break;
+          });
         }
 
-        switch (r.data.result.services.SteamCommunity) {
-          case "normal":
-            client.misc.set("CommunityResult", 0);
-            break;
-          case "surge":
-            {
-              if (client.misc.get("CommunityResult") === 1) return;
-              client.misc.set("CommunityResult", 1);
-              embed
-                .setDescription(
-                  `O Serviço de ${inlineCode(
-                    "Comunidade"
-                  )} acabou de iniciar! (lentidão é esperado.)`
-                )
-                .setColor("Yellow");
-              data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.csStatus ?? "");
-                if (channel?.type === ChannelType.GuildText)
-                  channel.send({ embeds: [embed] });
-              });
+        if (
+          communityResponse &&
+          client.misc.get("webAPI_Community") !== communityResponse.value
+        ) {
+          client.misc.set("webAPI_Community", communityResponse.value);
+
+          embed.setAuthor({
+            name: "Comunidade — Counter-Strike",
+          });
+          embed.setDescription(communityResponse.description);
+          embed.setColor(communityResponse.color);
+
+          data.forEach((e) => {
+            if (e?.csStatus) {
+              const channel = client.channels.cache.get(e?.csStatus ?? "");
+              if (channel?.type === ChannelType.GuildText)
+                channel.send({ embeds: [embed] });
             }
-            break;
-          case "offline":
-            {
-              if (client.misc.get("CommunityResult") === 2) return;
-              client.misc.set("CommunityResult", 2);
-              embed
-                .setDescription(
-                  `O Serviço de ${inlineCode("Comunidade")} está Offline.`
-                )
-                .setColor("Red");
-              data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.csStatus ?? "");
-                if (channel?.type === ChannelType.GuildText)
-                  channel.send({ embeds: [embed] });
-              });
-            }
-            break;
-          case "delayed":
-            {
-              if (client.misc.get("CommunityResult") === 3) return;
-              client.misc.set("CommunityResult", 3);
-              embed
-                .setDescription(
-                  `O Serviço de ${inlineCode("Comunidade")} está lento.`
-                )
-                .setColor("Yellow");
-              data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.csStatus ?? "");
-                if (channel?.type === ChannelType.GuildText)
-                  channel.send({ embeds: [embed] });
-              });
-            }
-            break;
+          });
         }
-        switch (r.data.result.matchmaking.scheduler) {
-          case "normal":
-            client.misc.set("MatchmakingResult", 0);
-            break;
-          case "surge":
-            if (client.misc.get("MatchmakingResult") === 1) return;
-            client.misc.set("MatchmakingResult", 1);
-            {
-              embed
-                .setDescription(
-                  `O Serviço de ${inlineCode(
-                    "Matchmaking"
-                  )} acabou de iniciar. (lentidão é esperado)`
-                )
-                .setColor("Yellow");
-              data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.csStatus ?? "");
-                if (channel?.type === ChannelType.GuildText)
-                  channel.send({ embeds: [embed] });
-              });
+
+        if (
+          matchmakerResponse &&
+          client.misc.get("webAPI_Matchmaker") !== matchmakerResponse.value
+        ) {
+          client.misc.set("webAPI_Matchmaker", matchmakerResponse.value);
+
+          embed.setAuthor({
+            name: "Matchmaker — Counter-Strike",
+          });
+          embed.setDescription(matchmakerResponse.description);
+          embed.setColor(matchmakerResponse.color);
+
+          data.forEach((e) => {
+            if (e?.csStatus) {
+              const channel = client.channels.cache.get(e?.csStatus ?? "");
+              if (channel?.type === ChannelType.GuildText)
+                channel.send({ embeds: [embed] });
             }
-            break;
-          case "offline":
-            if (client.misc.get("MatchmakingResult") === 2) return;
-            client.misc.set("MatchmakingResult", 2);
-            {
-              embed
-                .setDescription(
-                  `O Serviço de ${inlineCode("Matchmaking")} está Offline.`
-                )
-                .setColor("Red");
-              data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.csStatus ?? "");
-                if (channel?.type === ChannelType.GuildText)
-                  channel.send({ embeds: [embed] });
-              });
-            }
-            break;
-          case "delayed":
-            {
-              if (client.misc.get("MatchmakingResult") === 3) return;
-              client.misc.set("MatchmakingResult", 3);
-              embed
-                .setDescription(
-                  `O Serviço de ${inlineCode("Matchmaking")} está lento.`
-                )
-                .setColor("Yellow");
-              data.forEach((e) => {
-                const channel = client.channels.cache.get(e?.csStatus ?? "");
-                if (channel?.type === ChannelType.GuildText)
-                  channel.send({ embeds: [embed] });
-              });
-            }
-            break;
+          });
         }
       })
       .catch((error: AxiosError) => {
-        if(error.message === "read ETIMEDOUT") return;
-        console.log(error);
-        if (client.misc.get("WebAPI") === 1) return;
-        client.misc.set("WebAPI", 1);
         const embed = new BEmbed()
           .setTitle("WebAPI — Counter-Strike")
           .setThumbnail(
             "https://images-ext-2.discordapp.net/external/O5C3rkJrjmLpvDHM_rHk13MBeIrYUJbFmg65j7z4O24/https/cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/69f7ebe2735c366c65c0b33dae00e12dc40edbe4.jpg?width=35&height=35"
           )
-          .setColor("Red")
-          .setDescription(
-            `O Serviço de ${inlineCode("WebAPI")} retornou o erro HTTP ${
-              error.response?.status
-            }, (${error.message})`
-          ).setFooter({ text: "acesse o website https://developer.mozilla.org/en-US/docs/Web/HTTP/Status para entender os códigos de erro HTTP"});
+          .setColor("Red");
+        switch (error.message) {
+          case knownErrors.noConn:
+            {
+              embed.setDescription(
+                `O Serviço de ${inlineCode(
+                  "WebAPI"
+                )} não está respondendo. (Erro: ${knownErrors.noConn})`
+              );
+            }
+            break;
+          case knownErrors.unstableConn:
+            {
+              embed.setDescription(
+                `O Serviço de ${inlineCode(
+                  "WebAPI"
+                )} fechou a conexão repentinamente. (Erro: ${
+                  knownErrors.unstableConn
+                })`
+              );
+            }
+            break;
+          case knownErrors.AkamaiFail: {
+            embed.setDescription(
+              `O Cliente perdeu conexão com os serviços da Akamai. (Erro: ${knownErrors.AkamaiFail})`
+            );
+          }
+        }
+        if (client.misc.get("WebAPI") === 1) return;
+        client.misc.set("WebAPI", 1);
         data.forEach((e) => {
           const channel = client.channels.cache.get(e?.csStatus ?? "");
           if (channel?.type === ChannelType.GuildText)

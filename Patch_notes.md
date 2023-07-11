@@ -1,6 +1,23 @@
 <h1>Notas de atualização</h1>
 
 <div>
+<h2>6.5.0 — Limpando a bagunça</h2>
+</div>
+<ul>
+<li>
+Refactor do sistema de varredura do Blog do Counter-Strike.
+</li>
+<li>
+</li>
+<li>
+Refactor do sistema de status do Counter-Strike.
+</li>
+<li>
+Refactor do sistema de Leaderboard para melhor performance.
+</li>
+</ul>
+
+<div>
 <h2>6.4.0 — Sistema de XP</h2>
 </div>
 <ul>

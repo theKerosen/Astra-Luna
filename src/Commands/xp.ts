@@ -110,26 +110,28 @@ export = {
 
     if (interaction.options.getSubcommand() === "ranking") {
       await interaction.deferReply();
+
       const leaderboard = await defaultGuildConfig
         .find({ GuildId: interaction.guildId })
-        .sort({
-          "Users.XP": -1,
-        });
+        .sort({ "Users.XP": -1 });
+
       const roles = await defaultGuildConfig.findOne({
         GuildId: interaction.guildId,
       });
-      const sortedRanks: Ranks[] = [];
-      const slicedRanks: Ranks[][] = [];
-      leaderboard[0].Users.forEach((User) => {
-        sortedRanks.push({
-          userid: User.userId,
-          XP: User.XP,
-          Level: User.Level,
-        });
-      });
+
+      const sortedRanks: Ranks[] = leaderboard[0].Users.map((User) => ({
+        userid: User.userId,
+        XP: User.XP,
+        Level: User.Level,
+      }));
+
       sortedRanks.sort((a, b) => b.Level - a.Level).sort((a, b) => b.XP - a.XP);
-      for (let i = 0; i < Math.min(sortedRanks.length, 40); i += 5)
+
+      const slicedRanks: Ranks[][] = [];
+      for (let i = 0; i < Math.min(sortedRanks.length, 40); i += 5) {
         slicedRanks.push(sortedRanks.slice(i, i + 5));
+      }
+
       const GlobalPages: BEmbed[] = [];
       for (let i = 0; i < slicedRanks.length; i++) {
         const embed = new BEmbed()
@@ -137,46 +139,63 @@ export = {
           .setColor("NotQuiteBlack")
           .setThumbnail(interaction.guild?.iconURL() ?? null)
           .setFooter({ text: `Página ${i + 1} de ${slicedRanks.length}` });
-        for (let a = 0; a < Math.min(slicedRanks[i].length, 5); a++) {
-          const level = slicedRanks[i][a].Level;
-          const solvedFormula =
-            (5 / 6) *
-            (level + 1) *
-            (2 * (level + 1) * (level + 1) + 27 * (level + 1) + 91);
-          const user = await client.users.fetch(slicedRanks[i][a].userid);
-          const member = await interaction.guild?.members
+
+        const users = slicedRanks[i].map((rank) => rank.userid);
+        const resolvedUsers = await Promise.all(
+          users.map((userId) => client.users.fetch(userId))
+        );
+
+        const memberPromises = resolvedUsers.map((user) => {
+          return interaction.guild?.members
             .fetch(user.id)
             .catch(() =>
               console.log(
                 "[ASTRA LUNA] -> GuildMember#fetch() falhou, ignorando membro..."
               )
             );
-          if (member && roles) {
-            for (let i = 0; roles?.XPRoles.length > i; i++) {
-              const memberRoles = member.roles.cache.get(
-                roles?.XPRoles[i].role
-              );
-              if (memberRoles?.id === roles?.XPRoles[i].role)
+        });
+        const members = await Promise.all(memberPromises);
+
+        if (roles) {
+          roles.XPRoles.forEach((role) => {
+            members.forEach((member) => {
+              if (
+                member &&
+                member.roles.cache.get(role.role)?.id === role.role
+              ) {
                 client.roles
-                  .set(user.id, roles?.XPRoles[i])
+                  .set(member.user.id, role)
                   .sort((a: Roles, b: Roles) => b.level - a.level);
-            }
-          }
-          embed.addFields({
-            name: `#${
-              slicedRanks
-                .flat(1)
-                .findIndex((usr) => usr.userid === slicedRanks[i][a].userid) + 1
-            } ${user.globalName ?? user.username}`,
-            value: `├ [Lv.${slicedRanks[i][a].Level}]\n├ [${slicedRanks[i][
-              a
-            ].XP.toLocaleString()} / ${solvedFormula.toLocaleString()} XP]\n└ ${
-              client.roles.get(user.id)
-                ? `<@&${client.roles.get(user.id)?.role}>`
-                : "Sem Cargo"
-            }`,
+              }
+            });
           });
         }
+
+        slicedRanks[i].forEach((slicedRank, index) => {
+          const level = slicedRank.Level;
+          const solvedFormula =
+            (5 / 6) *
+            (level + 1) *
+            (2 * (level + 1) * (level + 1) + 27 * (level + 1) + 91);
+          const user = resolvedUsers.find(
+            (resolvedUser) => resolvedUser.id === slicedRank.userid
+          );
+          const member = members[index];
+          if (user && member) {
+            embed.addFields({
+              name: `#${i * 5 + index + 1} ${
+                user?.globalName ?? user?.username
+              }`,
+              value: `├ [Lv.${
+                slicedRank.Level
+              }]\n├ [${slicedRank.XP.toLocaleString()} / ${solvedFormula.toLocaleString()} XP]\n└ ${
+                client.roles.get(slicedRank.userid)
+                  ? `<@&${client.roles.get(slicedRank.userid)?.role}>`
+                  : "Sem Cargo"
+              }`,
+            });
+          }
+        });
 
         GlobalPages.push(embed);
       }
