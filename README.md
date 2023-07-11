@@ -30,7 +30,7 @@ Para configurar os cargos, apenas utilize /xp cargos adicionar/remover <cargo> <
 Para ver o ranking do servidor, apenas utilize /xp ranking<br>
 
 <h1></h1>
-<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120427883924557975/Screenshot_3.png" width="680" height="240" alt="XP System">
+<img src="https://cdn.discordapp.com/attachments/943547363031670785/1127863914168844378/image.png" width="510" height="140" alt="XP System">
 <br>
 </div>
   
@@ -42,7 +42,7 @@ O sistema de Reputação possui um comando que explica tudo sobre ele. O comando
 Agora administradores de um servidor podem botar um usuário em uma lista negra (ou lista branca)! <br>
 Comandos: /reputação blacklist/whitelist <usuário>
 <h1></h1>
-<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120428516752760862/Screenshot_4.png" width="680" height="720" alt="Rep System">
+<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120428516752760862/Screenshot_4.png" width="780" height="720" alt="Rep System">
 <h1></h1>
 </div>
 
