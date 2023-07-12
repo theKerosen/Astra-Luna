@@ -1,6 +1,14 @@
 <h1>Notas de atualização</h1>
 
 <div>
+<h2>6.5.1 — Hotfix</h2>
+</div>
+<ul>
+<li>
+Antes o sistema de XP não exibia o card caso você não tivesse nenhum cargo de XP.
+</li>
+
+<div>
 <h2>6.5.0 — Limpando a bagunça</h2>
 </div>
 <ul>

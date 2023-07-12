@@ -314,7 +314,8 @@ export = {
             )
             .setColor("Purple")
             .setDescription(
-              `<@&${sortedRoles[0].role}> [${xp.toLocaleString()}/${(
+              `${sortedRoles[0] ? `<@&${sortedRoles[0].role}>` : "Sem cargo "}
+                    [${xp.toLocaleString()}/${(
                 (5 / 6) *
                   (level + 1) *
                   (2 * (level + 1) * (level + 1) + 27 * (level + 1) + 91) -
