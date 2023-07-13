@@ -131,7 +131,7 @@ export = {
       });
     }
     if (interaction.options.getSubcommand() === "blacklist") {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply();
       const Guild = client.guilds.cache.get(interaction.guildId ?? "");
       const User = Guild?.members.cache.get(interaction.user.id);
       if (!User?.permissions.has(PermissionFlagsBits.Administrator))
@@ -144,7 +144,9 @@ export = {
         GuildId: interaction.guildId,
       });
       return await interaction.editReply({
-        content: "Usuário banido com sucesso.",
+        content: `O usuário ${
+          usuário?.globalName ? usuário.globalName : usuário?.username
+        } foi adicionado na lista negra!`,
       });
     }
     if (interaction.options.getSubcommand() === "whitelist") {
@@ -188,7 +190,7 @@ export = {
       interaction.options.getSubcommand() === "adicionar" ||
       interaction.options.getSubcommand() === "remover"
     ) {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply();
       const comment = interaction.options.getString("comentário");
       const user = interaction.options.getUser("usuário");
 
@@ -280,7 +282,7 @@ export = {
       });
     }
     if (interaction.options.getSubcommand() === "comentários") {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply();
       const user = interaction.options.getUser("usuário");
       const index = await RepSchem.findOne({ UserId: user?.id });
 

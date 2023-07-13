@@ -149,9 +149,16 @@ export async function checkStatus() {
               );
             }
             break;
-          case knownErrors.AkamaiFail: {
+          case knownErrors.AkamaiFail:
+            {
+              embed.setDescription(
+                `O Cliente perdeu conexão com os serviços da Akamai. (Erro: ${knownErrors.AkamaiFail})`
+              );
+            }
+            break;
+          default: {
             embed.setDescription(
-              `O Cliente perdeu conexão com os serviços da Akamai. (Erro: ${knownErrors.AkamaiFail})`
+              `O Serviço de ${inlineCode("WebAPI")} não está respondendo.`
             );
           }
         }

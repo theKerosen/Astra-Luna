@@ -1,6 +1,14 @@
 <h1>Notas de atualização</h1>
 
 <div>
+<h2>6.5.2 — Deixe o mundo ver!</h2>
+</div>
+<ul>
+<li>
+Agora as respostas de comandos de XP e Reputação não são mais efêmeras.
+</li>
+
+<div>
 <h2>6.5.1 — Hotfix</h2>
 </div>
 <ul>
