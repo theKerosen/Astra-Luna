@@ -1,11 +1,12 @@
 import { Command } from "../utils/command";
-import { BButton } from "../Constructors/Button";
+import { BButton } from "../discordComponents/Button";
 import {
   SlashCommandBuilder,
   ChatInputCommandInteraction,
   ButtonStyle,
 } from "discord.js";
-import { BEmbed } from "../Constructors/Embed";
+import { BEmbed } from "../discordComponents/Embed";
+import { setTimeout } from "timers/promises";
 
 export = {
   data: new SlashCommandBuilder()
@@ -40,32 +41,10 @@ export = {
         .setMinValue(5)
     ),
   async execute(interaction: ChatInputCommandInteraction, client) {
-    const wait = (await import("node:timers/promises")).setTimeout;
     const title = interaction.options.getString("título") as string;
     const opção_1 = interaction.options.getString("opção_1") as string;
     const opção_2 = interaction.options.getString("opção_2") as string;
     const tempo = interaction.options.getNumber("tempo") ?? 120;
-
-    function RegexFilter(string: string[]) {
-      for (let i = 0; i < string.length; i++) {
-        const link = string[i]?.search(
-          /(https?:\/\/)?([\da-z\\.-]+)\.([a-z\\.]{2,6})([\\/\w \\.-]*)/gu
-        );
-        const emoji = string[i]?.search(/<a?:.+:\d{1,100}>/gu);
-        const mention = string[i]?.search(/<@\d{1,1000}>/gu);
-        if (link || emoji || mention === 0) return true;
-        if (link || emoji || mention === -1) return false;
-      }
-    }
-
-    if (RegexFilter([title, opção_1, opção_2 /* opção_3, opção_4 */]) == true)
-      return interaction.reply({
-        content: "Enquetes não podem conter emojis, links ou menções.",
-        ephemeral: true,
-      });
-
-    /*     const FieldArray: APIEmbedField[] = [];
-    const ButtonArray: BButton[] = []; */
 
     const Embed = new BEmbed()
       .setAuthor({
@@ -108,8 +87,9 @@ export = {
       })
       .then(async () => {
         for (let i = 0; i < tempo + 1; i++) {
-          await wait(1000);
           const timeleft = tempo - i;
+          await setTimeout(1000);
+
           interaction.editReply({
             content: `*Essa votação acaba em ${timeleft} segundos*`,
           });

@@ -5,11 +5,10 @@ import {
   TextInputStyle,
   ChannelType,
   PermissionFlagsBits,
-  TextChannel,
 } from "discord.js";
-import { BModal } from "../Constructors/Modal";
-import { BEmbed } from "../Constructors/Embed";
-import { defaultGuildConfig } from "../Schem/Schematica";
+import { BModal } from "../discordComponents/Modal";
+import { BEmbed } from "../discordComponents/Embed";
+import { defaultGuildConfig } from "../mongooseSchemas/Schematica";
 
 export = {
   data: new SlashCommandBuilder()
@@ -58,7 +57,7 @@ export = {
         content: "O canal de sugestões foi alterado!",
         ephemeral: true,
       });
-      (channel as TextChannel).send({
+      channel.send({
         embeds: [
           new BEmbed()
             .setAuthor({ name: `${interaction.guild?.name} — Feedbacks` })

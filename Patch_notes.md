@@ -1,12 +1,48 @@
 <h1>Notas de atualização</h1>
 
 <div>
+<h2>7.0.0 — APAGA E FAZ DENOVO!</h2>
+</div>
+<ul>
+Por conta do código antigo do Astra Luna ser bem *bagunçado*, os seguintes sistemas foram refeitos do absoluto zero:
+<li>
+Alerta de UPDATE do Counter-Strike;
+</li>
+<li>
+Alerta de Status do Counter-Strike;
+</li>
+<li>
+Sistema de XP;
+</li>
+<li>
+Sistema de Rastreamento de novos POSTs no blog.counter-strike.net;
+</li>
+<li>
+Sistema de Eventos do BOT.
+</li>
+<li>
++ pequenos detalhes
+</li>
+</ul>
+O Sistema de XP foi otimizado para melhor manutenção, além de
+agora suportar a geração de páginas dinâmicas no Ranking, assim permitindo todos os membros de se acharem em suas posições.
+<h3> Mas não é só isso!</h3>
+<ul> 
+<li>
+Múltiplos erros/bugs foram arrumados graças pao Luar.
+</li>
+obrigado Luar.<br>
+era só isso mesmo :3
+</ul>
+
+<div>
 <h2>6.5.2 — Deixe o mundo ver!</h2>
 </div>
 <ul>
 <li>
 Agora as respostas de comandos de XP e Reputação não são mais efêmeras.
 </li>
+</ul>
 
 <div>
 <h2>6.5.1 — Hotfix</h2>
@@ -15,6 +51,7 @@ Agora as respostas de comandos de XP e Reputação não são mais efêmeras.
 <li>
 Antes o sistema de XP não exibia o card caso você não tivesse nenhum cargo de XP.
 </li>
+</ul>
 
 <div>
 <h2>6.5.0 — Limpando a bagunça</h2>

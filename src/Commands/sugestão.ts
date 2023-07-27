@@ -1,15 +1,14 @@
 import { Command } from "../utils/command";
-import { defaultGuildConfig } from "../Schem/Schematica";
-import { BModal } from "../Constructors/Modal";
+import { defaultGuildConfig } from "../mongooseSchemas/Schematica";
+import { BModal } from "../discordComponents/Modal";
 import {
   ChannelType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
   SlashCommandBuilder,
-  TextChannel,
   TextInputStyle,
 } from "discord.js";
-import { BEmbed } from "../Constructors/Embed";
+import { BEmbed } from "../discordComponents/Embed";
 export = {
   data: new SlashCommandBuilder()
     .setName("sugestão")
@@ -38,7 +37,9 @@ export = {
           content: "[❌] Sem permissão.",
           ephemeral: true,
         });
-      const channel = interaction.options.getChannel("canal");
+      const channel = interaction.options.getChannel("canal", true, [
+        ChannelType.GuildText,
+      ]);
       if (channel?.type != ChannelType.GuildText)
         return interaction.reply({
           content: "Esse canal não é de texto!",
@@ -59,7 +60,7 @@ export = {
         content: "O canal de sugestões foi alterado!",
         ephemeral: true,
       });
-      (channel as TextChannel).send({
+      channel.send({
         embeds: [
           new BEmbed()
             .setAuthor({ name: `${interaction.guild?.name} — Sugestões` })

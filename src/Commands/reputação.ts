@@ -1,6 +1,6 @@
 import { Command } from "../utils/command";
-import { RepSchem, shadowBanSchema } from "../Schem/Schematica";
-import { BEmbed } from "../Constructors/Embed";
+import { RepSchem, shadowBanSchema } from "../mongooseSchemas/Schematica";
+import { BEmbed } from "../discordComponents/Embed";
 import {
   SlashCommandBuilder,
   ChatInputCommandInteraction,
@@ -52,7 +52,7 @@ export = {
         .addUserOption((s) =>
           s
             .setName("usuário")
-            .setDescription("► Usuário para entrar na blacklist")
+            .setDescription("► Usuário para remover da blacklist")
             .setRequired(true)
         )
     )
@@ -150,6 +150,7 @@ export = {
       });
     }
     if (interaction.options.getSubcommand() === "whitelist") {
+      await interaction.deferReply();
       const Guild = client.guilds.cache.get(interaction.guildId ?? "");
       const User = Guild?.members.cache.get(interaction.user.id);
       if (!User?.permissions.has(PermissionFlagsBits.Administrator))
@@ -157,10 +158,19 @@ export = {
           content: "[❌] Sem permissão.",
         });
       const usuário = interaction.options.getUser("usuário");
-      await shadowBanSchema.deleteOne({
+      const searchBan = await shadowBanSchema.findOne({
         userId: usuário?.id,
         GuildId: interaction.guildId,
       });
+      if (!searchBan)
+        return await interaction.editReply({
+          content: "Esse usuário não está na blacklist!",
+        });
+      if (searchBan)
+        await shadowBanSchema.deleteOne({
+          userId: usuário?.id,
+          GuildId: interaction.guildId,
+        });
       return await interaction.editReply({
         content: "Usuário desbanido com sucesso.",
       });
@@ -203,6 +213,11 @@ export = {
         });
 
       const isPositive = interaction.options.getSubcommand() === "adicionar";
+      if (user?.bot)
+        return interaction.editReply({
+          content:
+            "Você não pode adicionar/remover pontos de reputação de um robô.",
+        });
       if (!isPositive && user?.id) {
         const currentTimestamp = Date.now();
         const index = await RepSchem.findOne({ UserId: user.id });
@@ -219,7 +234,6 @@ export = {
               comment.createdAt >= currentTimestamp - 3600000 &&
               comment.createdAt <= currentTimestamp
           );
-          console.log(negativeReviews);
           if (negativeReviews.length >= 2) {
             const softbanExpiration = Date.now() + 3600000;
             if (!softbannedUsers.has(interaction.user.id))
@@ -284,6 +298,10 @@ export = {
     if (interaction.options.getSubcommand() === "comentários") {
       await interaction.deferReply();
       const user = interaction.options.getUser("usuário");
+      if (user?.bot)
+        return interaction.editReply({
+          content: "Você não pode ver pontos de reputação de um robô.",
+        });
       const index = await RepSchem.findOne({ UserId: user?.id });
 
       if (!index) {

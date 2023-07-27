@@ -27,8 +27,8 @@ class AstraLuna extends Client {
   commands: Collection<string, Command> = new Collection();
   misc: Collection<unknown, unknown> = new Collection();
   votes: Collection<unknown, unknown> = new Collection();
-  toggleModules: Collection<string, boolean> = new Collection();
   roles: Collection<string, Roles> = new Collection();
+  xpRankingPages: Collection<string, { usrIndex: number }> = new Collection();
   constructor() {
     super({ intents: 3276799 });
   }

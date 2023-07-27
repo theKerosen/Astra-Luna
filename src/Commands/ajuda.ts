@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
 import { Command } from "../utils/command";
-import { BEmbed } from "../Constructors/Embed";
+import { BEmbed } from "../discordComponents/Embed";
 
 export = {
   data: new SlashCommandBuilder()

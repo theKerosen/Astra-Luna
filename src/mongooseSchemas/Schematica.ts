@@ -1,35 +1,39 @@
 import { Schema, model } from "mongoose";
 
-const WPScanner = new Schema({
-  Name: { type: String, default: "CSGO-Blog-Scanner" },
-  LastId: {
-    type: Number,
-    default: 0,
-  },
-  LastPostId: {
-    type: Number,
-    default: 0,
-  },
-});
-const WPSDB = model("WordPressScan", WPScanner);
-
 const guildStuff = new Schema({
   GuildId: String,
   userId: String,
-  Users: Array,
-  XP: Number,
-  Level: Number,
-  cooldown: Number,
+  xpAlertConfig: {
+    message: {
+      type: String,
+      default: "O usuário {@user} avançou para o nível {@level}!",
+    },
+  },
+  Users: [
+    {
+      userId: String,
+      XP: Number,
+      Level: Number,
+      cooldown: Date,
+    },
+  ],
+
   channels: {
     suggestions: String,
     reports: String,
     updatesCS: String,
     csStatus: String,
     feedbacks: String,
+    xpAlerts: String,
   },
   defaultMentionRole: String,
   toggleCommands: Array,
-  XPRoles: Array,
+  XPRoles: [
+    {
+      role: String,
+      level: Number,
+    },
+  ],
 });
 
 const defaultGuildConfig = model("guildStuff", guildStuff);
@@ -60,4 +64,4 @@ const shadowBan = new Schema({
 
 const shadowBanSchema = model("blacklist", shadowBan);
 
-export { WPSDB, defaultGuildConfig, RepSchem, shadowBanSchema };
+export { defaultGuildConfig, RepSchem, shadowBanSchema };

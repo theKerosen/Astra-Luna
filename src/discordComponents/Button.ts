@@ -27,13 +27,12 @@ export class BButton extends ActionRowBuilder<ButtonBuilder> {
     disabled?: boolean;
     emoji?: ComponentEmojiResolvable;
   }) {
-    return super.addComponents(
-      new ButtonBuilding()
-        .setCustomId(ButtonStuff?.customId)
-        .setDisabled(ButtonStuff?.disabled ?? false)
-        .setLabel(ButtonStuff?.label ?? "​")
-        .setStyle(ButtonStuff.style ?? ButtonStyle.Primary)
-        .setEmoji(ButtonStuff.emoji ?? "")
-    );
+    const Button = new ButtonBuilding()
+      .setCustomId(ButtonStuff?.customId)
+      .setDisabled(ButtonStuff?.disabled ?? false)
+      .setLabel(ButtonStuff?.label ?? "​")
+      .setStyle(ButtonStuff.style ?? ButtonStyle.Primary);
+    if (ButtonStuff.emoji) Button.setEmoji(ButtonStuff.emoji);
+    return super.addComponents(Button);
   }
 }

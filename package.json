@@ -12,7 +12,7 @@
     "discord.js": "14.11.1-dev.1688385870-75d91b5.0",
     "dotenv": "^16.0.3",
     "globaloffensive": "^2.3.0",
-    "mongoose": "^6.8.3",
+    "mongoose": "6.8.3",
     "node-cron": "^3.0.2",
     "prettier": "^2.8.8",
     "protobufjs": "^7.2.3",

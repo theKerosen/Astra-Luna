@@ -6,8 +6,8 @@ import {
   PermissionFlagsBits,
   TextChannel,
 } from "discord.js";
-import { defaultGuildConfig } from "../Schem/Schematica";
-import { BEmbed } from "../Constructors/Embed";
+import { defaultGuildConfig } from "../mongooseSchemas/Schematica";
+import { BEmbed } from "../discordComponents/Embed";
 
 export = {
   data: new SlashCommandBuilder()
