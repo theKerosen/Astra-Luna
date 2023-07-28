@@ -22,7 +22,7 @@ export = {
         .addUserOption((s) => s.setName("usuário").setDescription("o usuário"))
     )
     .addSubcommand((s) =>
-      s.setName("ranking").setDescription("► (desativado)!")
+      s.setName("ranking").setDescription("► Veja o Ranking do servidor!")
     )
     .addSubcommandGroup((s) =>
       s
