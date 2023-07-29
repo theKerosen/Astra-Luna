@@ -1,6 +1,16 @@
 <h1>Notas de atualização</h1>
 
 <div>
+<h2> 7.0.1 — Patch</h2>
+</div>
+<ul>
+<li>
+Após alguns testes, o algorítmo de organização da Leaderboard dinâmica foi alterado.
+Agora cargos e posições devem estar mais precisos.
+</li>
+</ul>
+
+<div>
 <h2>7.0.0 — APAGA E FAZ DENOVO!</h2>
 </div>
 <ul>

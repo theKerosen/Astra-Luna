@@ -36,11 +36,9 @@ export class XPSystem extends Mensagem {
     return true;
   }
   async sortDB() {
-    const data = await defaultGuildConfig
-      .findOne({
-        GuildId: this.mensagem.guildId,
-      })
-      .populate("Users");
+    const data = await defaultGuildConfig.findOne({
+      GuildId: this.mensagem.guildId,
+    });
 
     if (!data) {
       const newData = await defaultGuildConfig.create({
@@ -49,7 +47,12 @@ export class XPSystem extends Mensagem {
       });
       return newData;
     }
-    data.Users.sort((a, b) => (b.Level || 0) - (a.Level || 0));
+    if (data) {
+      await defaultGuildConfig.updateOne(
+        { GuildId: this.mensagem.guildId },
+        { $push: { Users: { $each: [], $sort: { Level: -1, XP: -1 } } } }
+      );
+    }
     return data;
   }
 
@@ -155,11 +158,9 @@ export class displayInformation extends Interação {
   }
 
   async sortDB() {
-    const data = await defaultGuildConfig
-      .findOne({
-        GuildId: this.interaction.guildId,
-      })
-      .populate("Users");
+    const data = await defaultGuildConfig.findOne({
+      GuildId: this.interaction.guildId,
+    });
 
     if (!data) {
       const newData = await defaultGuildConfig.create({
@@ -168,7 +169,12 @@ export class displayInformation extends Interação {
       });
       return newData;
     }
-    data.Users.sort((a, b) => (b.Level || 0) - (a.Level || 0));
+    if (data) {
+      await defaultGuildConfig.updateOne(
+        { GuildId: this.interaction.guildId },
+        { $push: { Users: { $each: [], $sort: { Level: -1, XP: -1 } } } }
+      );
+    }
     return data;
   }
 
@@ -259,11 +265,9 @@ export class XPRank extends Interação {
   }
 
   async sortDB() {
-    const data = await defaultGuildConfig
-      .findOne({
-        GuildId: this.interaction.guildId,
-      })
-      .populate("Users");
+    const data = await defaultGuildConfig.findOne({
+      GuildId: this.interaction.guildId,
+    });
 
     if (!data) {
       const newData = await defaultGuildConfig.create({
@@ -272,7 +276,12 @@ export class XPRank extends Interação {
       });
       return newData;
     }
-    data.Users.sort((a, b) => (b.Level || 0) - (a.Level || 0));
+    if (data) {
+      await defaultGuildConfig.updateOne(
+        { GuildId: this.interaction.guildId },
+        { $push: { Users: { $each: [], $sort: { Level: -1, XP: -1 } } } }
+      );
+    }
     return data;
   }
 
@@ -329,38 +338,38 @@ export class XPRank extends Interação {
         } │ Página ${pageInformation ? pageInformation?.usrIndex / 5 : 0} `,
       });
 
-    for (let i = 0; usersPerPage.length > i; i++) {
+    for (const user of usersPerPage) {
       const member = await this.interaction.guild?.members
-        .fetch(usersPerPage[i].userId)
+        .fetch(user.userId)
         .catch(() =>
           console.log(
             "[ASTRA LUNA] -> GuildMember#fetch() falhou, ignorando membro..."
           )
         );
       if (member) {
-        for (let i = 0; xpRoles.length > i; i++) {
-          const getUserRoles = member.roles.cache.get(xpRoles[i].role);
-
-          if (getUserRoles && getUserRoles.id === xpRoles[i].role) {
-            userRoles.push(xpRoles[i]);
-            userRoles.sort((a, b) => b.level - a.level);
-          }
+        for (const roles of xpRoles) {
+          if (user.Level && roles.level && user.Level >= roles.level)
+            userRoles.push(roles);
+          console.log(
+            user?.Level,
+            roles.level,
+            user?.Level >= roles.level,
+            roles
+          );
         }
+        console.log(member.user.username, userRoles);
       }
 
-      const levelUp = await this.calculateLevel(
-        undefined,
-        usersPerPage[i].userId
-      );
-      const discordUser = await this.client.users.fetch(usersPerPage[i].userId);
-
+      const levelUp = await this.calculateLevel(undefined, user.userId);
+      const discordUser = await this.client.users.fetch(user.userId);
+      userRoles.sort((a, b) => b.level - a.level);
       Embed.addFields({
         name:
           discordUser.id === this.interaction.user.id
             ? `${discordUser.globalName ?? discordUser.username} <-- Você 🎉`
             : discordUser.globalName ?? discordUser.username,
-        value: `├ [Lv.${usersPerPage[i].Level}]
-        ├ [${usersPerPage[i].XP.toLocaleString()} / ${Math.floor(
+        value: `├ [Lv.${user.Level}]
+        ├ [${user.XP.toLocaleString()} / ${Math.floor(
           levelUp
         ).toLocaleString()}]
         └ ${userRoles[0] ? `<@&${userRoles[0].role}>` : "Sem cargo"}
