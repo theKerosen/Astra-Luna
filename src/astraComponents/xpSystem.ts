@@ -104,8 +104,13 @@ export class XPUser extends XPSystem {
         this.mensagem.guild?.members.cache
           .get(this.mensagem.author.id)
           ?.roles.remove(userRole);
-      return;
+
+      if (userRole && user.Level >= r.level)
+        this.mensagem.guild?.members.cache
+          .get(this.mensagem.author.id)
+          ?.roles.add(userRole);
     });
+    return;
   }
 }
 
@@ -116,7 +121,6 @@ export class displayInformation extends Interação {
   }) {
     super({ client: options.client, interaction: options.interaction });
     this.interaction = options.interaction;
-
   }
   async calculateLevel(minusXP: true | undefined = undefined, id: string) {
     const user = await this.db.validateUser(id);
@@ -156,10 +160,7 @@ export class displayInformation extends Interação {
       .setTitle(
         `${discordUser.globalName ?? discordUser.username} [Lv.${
           user.Level
-        }] **#${
-          guild.Users.findIndex((e) => e.userId === this.interaction.user.id) +
-          1
-        }**`
+        }] **#${guild.Users.findIndex((e) => e.userId === id) + 1}**`
       )
       .setDescription(
         `
@@ -213,8 +214,7 @@ export class XPRank extends Interação {
       .setThumbnail(this.interaction.guild?.iconURL() ?? null)
       .setFooter({
         text: ` Você está na posição #${
-          guild.Users.findIndex((e) => e.userId === this.interaction.user.id) +
-          1
+          guild.Users.findIndex((e) => e.userId === id) + 1
         } │ Página ${pageInformation ? pageInformation?.usrIndex / 5 : 0} `,
       });
 

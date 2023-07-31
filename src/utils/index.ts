@@ -6,7 +6,7 @@ import { CSGOClient, AstraLuna } from "./Client";
 import cron from "node-cron";
 import { BEmbed } from "../discordComponents/Embed";
 import { XPUser } from "../astraComponents/xpSystem";
-import { Inicializar, Interação } from "../astraComponents/Events";
+import { Inicializar, Interação, Mensagem } from "../astraComponents/Events";
 
 const client = new AstraLuna();
 client.mongoConnect();
@@ -48,7 +48,8 @@ client.once(Events.ClientReady, () =>
 client.on(Events.InteractionCreate, async (interaction) =>
   new Interação({ client: client, interaction: interaction }).run()
 );
-client.on("messageCreate", async (message) => {
+client.on(Events.MessageCreate, async (message) => {
+  await new Mensagem({ client: client, mensagem: message }).run();
   await new XPUser({ client: client, mensagem: message }).run();
 });
 export { client };

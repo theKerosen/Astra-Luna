@@ -52,7 +52,7 @@ export = {
     if (!User?.permissions.has(PermissionFlagsBits.Administrator))
       return interaction.reply({
         content: "[❌] Sem permissão.",
-        ephemeral: true,
+
       });
     if (interaction.options.getSubcommand() === "updates") {
       const role = interaction.options.getRole("cargo");
@@ -71,7 +71,7 @@ export = {
       interaction.reply({
         content:
           "Canal & Cargo salvo com sucesso, agora você irá ser notificado!",
-        ephemeral: true,
+
       });
       (selectedChannel as TextChannel).send({
         embeds: [
@@ -108,7 +108,6 @@ export = {
       );
       interaction.reply({
         content: "Canal salvo com sucesso, agora você irá ser notificado!",
-        ephemeral: true,
       });
       (selectedChannel as TextChannel).send({
         embeds: [

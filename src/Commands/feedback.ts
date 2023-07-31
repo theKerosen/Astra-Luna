@@ -37,7 +37,6 @@ export = {
       if (!User?.permissions.has(PermissionFlagsBits.BanMembers))
         return interaction.reply({
           content: "[❌] Sem permissão.",
-          ephemeral: true,
         });
       const channel = interaction.options.getChannel("canal", true, [
         ChannelType.GuildText,
@@ -55,7 +54,6 @@ export = {
       );
       interaction.reply({
         content: "O canal de sugestões foi alterado!",
-        ephemeral: true,
       });
       channel.send({
         embeds: [

@@ -1,6 +1,21 @@
 <h1>Notas de atualização</h1>
 
 <div>
+<h2> 7.2.2 — Malditos bugs!</h2>
+</div>
+<ul>
+<li>
+O BOT agora atualiza os cargos de XP novamente;
+</li>
+<li>
+O BOT notifica novamente quando há notas de atualização no SteamDB
+</li>
+<li>
+Alguns bugs foram esmagados e consertados.
+</li>
+</ul>
+
+<div>
 <h2> 7.2.1 — Pequenos consertos</h2>
 </div>
 <ul>

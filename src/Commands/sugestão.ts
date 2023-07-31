@@ -35,7 +35,6 @@ export = {
       if (!User?.permissions.has(PermissionFlagsBits.Administrator))
         return interaction.reply({
           content: "[❌] Sem permissão.",
-          ephemeral: true,
         });
       const channel = interaction.options.getChannel("canal", true, [
         ChannelType.GuildText,
@@ -43,7 +42,6 @@ export = {
       if (channel?.type != ChannelType.GuildText)
         return interaction.reply({
           content: "Esse canal não é de texto!",
-          ephemeral: true,
         });
       await defaultGuildConfig.findOneAndUpdate(
         {
@@ -58,7 +56,6 @@ export = {
       );
       interaction.reply({
         content: "O canal de sugestões foi alterado!",
-        ephemeral: true,
       });
       channel.send({
         embeds: [

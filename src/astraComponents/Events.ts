@@ -4,7 +4,7 @@
 
 */
 
-import { Interaction, Message } from "discord.js";
+import { ChannelType, Interaction, Message } from "discord.js";
 import { AstraLuna } from "../utils/Client";
 import { Command } from "../utils/command";
 import { Modals } from "./Modals";
@@ -20,6 +20,19 @@ export class Mensagem {
     this.client = options.client;
     this.mensagem = options.mensagem;
     this.db = new guildDatabases({ guild_id: this.mensagem.guildId });
+  }
+  async run() {
+    if (this.mensagem.author.id === "890753656331325480") {
+      const data = await this.db.find();
+
+      if (data.defaultMentionRole && data.channels?.updatesCS) {
+        const channel = this.client.channels.cache.get(
+          data.channels?.updatesCS
+        );
+        if (channel?.type === ChannelType.GuildText)
+          channel.send({ content: `<@&${data.defaultMentionRole}>` });
+      }
+    }
   }
 }
 
