@@ -1,6 +1,15 @@
 <h1>Notas de atualização</h1>
 
 <div>
+<h2> 7.2.1 — Pequenos consertos</h2>
+</div>
+<ul>
+<li>
+Pequenas melhorias no código interno.
+</li>
+</ul>
+
+<div>
 <h2> 7.1.1 — Mais e mais modulação!</h2>
 </div>
 <ul>

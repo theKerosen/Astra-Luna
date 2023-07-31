@@ -127,5 +127,6 @@ export class Rastreador {
           }
         });
     }
+    return this;
   }
 }

@@ -8,7 +8,6 @@ import { ChatInputCommandInteraction, Message } from "discord.js";
 import { AstraLuna } from "../utils/Client";
 import { Interação, Mensagem } from "./Events";
 import { BEmbed } from "../discordComponents/Embed";
-import { guildDatabases } from "./dbManager";
 
 interface IUser {
   userId: string;
@@ -26,9 +25,7 @@ export class XPSystem extends Mensagem {
     super({ client: options.client, mensagem: options.mensagem });
   }
   async validateXP() {
-    const user = await await new guildDatabases({
-      guild_id: this.mensagem.guildId,
-    }).validateUser(this.mensagem.author.id);
+    const user = await this.db.validateUser(this.mensagem.author.id);
     if (this.mensagem.author.bot) return false;
     if (this.mensagem.content.length < 5) return false;
     if (this.mensagem.content.search(/\b(\w{2})\w*\1\b/g) === 0) return false;
@@ -39,9 +36,7 @@ export class XPSystem extends Mensagem {
   }
 
   async calculateLevel(minusXP: true | undefined = undefined) {
-    const user = await new guildDatabases({
-      guild_id: this.mensagem.guildId,
-    }).validateUser(this.mensagem.author.id);
+    const user = await this.db.validateUser(this.mensagem.author.id);
 
     const level = user.Level + 1;
     const levelUp =
@@ -63,9 +58,7 @@ export class XPUser extends XPSystem {
   }
 
   private async updateUserXP() {
-    const data = await new guildDatabases({
-      guild_id: this.mensagem.guildId,
-    }).find();
+    const data = await this.db.find();
 
     const isValid = await this.validateXP();
 
@@ -82,9 +75,7 @@ export class XPUser extends XPSystem {
   }
 
   private async updateUserLevel() {
-    const data = await new guildDatabases({
-      guild_id: this.mensagem.guildId,
-    }).find();
+    const data = await this.db.find();
     const level = await this.calculateLevel(true);
 
     if (level <= 0) {
@@ -100,13 +91,9 @@ export class XPUser extends XPSystem {
   }
 
   private async updateUserRole() {
-    const data = await new guildDatabases({
-      guild_id: this.mensagem.guildId,
-    }).find();
+    const data = await this.db.find();
 
-    const user = await new guildDatabases({
-      guild_id: this.mensagem.guildId,
-    }).validateUser(this.mensagem.author.id);
+    const user = await this.db.validateUser(this.mensagem.author.id);
 
     const xpRoles = data.XPRoles as Roles[];
 
@@ -129,11 +116,10 @@ export class displayInformation extends Interação {
   }) {
     super({ client: options.client, interaction: options.interaction });
     this.interaction = options.interaction;
+
   }
   async calculateLevel(minusXP: true | undefined = undefined, id: string) {
-    const user = await new guildDatabases({
-      guild_id: this.interaction.guildId,
-    }).validateUser(id);
+    const user = await this.db.validateUser(id);
     const level = user.Level + 1;
     const levelUp =
       (5 / 6) * level * (2 * level ** 2 + 27 * level + 91) -
@@ -142,13 +128,9 @@ export class displayInformation extends Interação {
   }
 
   async generateDisplay(id: string) {
-    const user = await new guildDatabases({
-      guild_id: this.interaction.guildId,
-    }).validateUser(id);
+    const user = await this.db.validateUser(id);
 
-    const guild = await new guildDatabases({
-      guild_id: this.interaction.guildId,
-    }).find();
+    const guild = await this.db.find();
     const level = await this.calculateLevel(undefined, id);
 
     const discordUser = await this.client.users.fetch(id);
@@ -204,9 +186,7 @@ export class XPRank extends Interação {
   }
 
   async calculateLevel(minusXP: true | undefined = undefined, id: string) {
-    const user = await new guildDatabases({
-      guild_id: this.interaction.guildId,
-    }).validateUser(id);
+    const user = await this.db.validateUser(id);
     const level = user.Level + 1;
     const levelUp =
       (5 / 6) * level * (2 * level ** 2 + 27 * level + 91) -
@@ -215,9 +195,7 @@ export class XPRank extends Interação {
   }
 
   async generatePage(id: string) {
-    const guild = await new guildDatabases({
-      guild_id: this.interaction.guildId,
-    }).sort(-1);
+    const guild = await this.db.sort(-1);
     const Users = guild.Users as IUser[];
     const xpRoles = guild.XPRoles as Roles[];
     const userRoles: Roles[] = [];

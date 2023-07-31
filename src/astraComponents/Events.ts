@@ -9,24 +9,29 @@ import { AstraLuna } from "../utils/Client";
 import { Command } from "../utils/command";
 import { Modals } from "./Modals";
 import { Buttons } from "./Buttons";
+import { guildDatabases } from "./dbManager";
 
 export class Mensagem {
   public client: AstraLuna;
   public mensagem: Message;
+  public db: guildDatabases;
 
   constructor(options: { client: AstraLuna; mensagem: Message }) {
     this.client = options.client;
     this.mensagem = options.mensagem;
+    this.db = new guildDatabases({ guild_id: this.mensagem.guildId });
   }
 }
 
 export class Interação {
   public client: AstraLuna;
   public interaction: Interaction;
+  public db: guildDatabases;
 
   constructor(options: { client: AstraLuna; interaction: Interaction }) {
     this.client = options.client;
     this.interaction = options.interaction;
+    this.db = new guildDatabases({ guild_id: this.interaction.guildId });
   }
   async run() {
     if (this.interaction.isCommand()) {

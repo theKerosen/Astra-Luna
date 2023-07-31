@@ -23,12 +23,9 @@ cron.schedule("*/45 * * * * *", async () => {
   await new Rastreador({
     client: client,
     request_hops: 10,
-  }).rastrearIdentificador();
-
-  await new Rastreador({
-    client: client,
-    request_hops: 5,
-  }).rastrearPost();
+  })
+    .rastrearIdentificador()
+    .then(async (e) => await e.rastrearPost());
 });
 
 cron.schedule("1 0 22 * * TUE", async () => {

@@ -149,19 +149,23 @@ export = {
         } foi adicionado na lista negra!`,
       });
     }
+
     if (interaction.options.getSubcommand() === "whitelist") {
       await interaction.deferReply();
       const Guild = client.guilds.cache.get(interaction.guildId ?? "");
       const User = Guild?.members.cache.get(interaction.user.id);
+
       if (!User?.permissions.has(PermissionFlagsBits.Administrator))
         return await interaction.editReply({
           content: "[❌] Sem permissão.",
         });
+
       const usuário = interaction.options.getUser("usuário");
       const searchBan = await shadowBanSchema.findOne({
         userId: usuário?.id,
         GuildId: interaction.guildId,
       });
+
       if (!searchBan)
         return await interaction.editReply({
           content: "Esse usuário não está na blacklist!",
@@ -180,11 +184,13 @@ export = {
       GuildId: interaction.guildId,
       userId: interaction.user.id,
     });
+
     if (shadowban)
       return await interaction.editReply({
         content:
           "[❌] Você está permanentemente banido de usar o sistema de reputações.",
       });
+
     if (
       softbannedUsers.has(interaction.user.id) &&
       softbannedUsers.get(interaction.user.id) > Date.now()
@@ -196,6 +202,7 @@ export = {
         content: `[❌] Você está sendo limitado de usar o sistema de Reputação. Aguarde ${remainingTime} segundos.`,
       });
     }
+
     if (
       interaction.options.getSubcommand() === "adicionar" ||
       interaction.options.getSubcommand() === "remover"
@@ -218,6 +225,7 @@ export = {
           content:
             "Você não pode adicionar/remover pontos de reputação de um robô.",
         });
+
       if (!isPositive && user?.id) {
         const currentTimestamp = Date.now();
         const index = await RepSchem.findOne({ UserId: user.id });
@@ -269,6 +277,7 @@ export = {
 
         { upsert: true }
       );
+      
       const embed = new BEmbed()
         .setAuthor({
           name: `${user?.globalName}${isPositive ? "🤝" : "🖕"}${
@@ -295,6 +304,7 @@ export = {
         content: `<@${user?.id}>`,
       });
     }
+
     if (interaction.options.getSubcommand() === "comentários") {
       await interaction.deferReply();
       const user = interaction.options.getUser("usuário");
