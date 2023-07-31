@@ -1,6 +1,15 @@
 <h1>Notas de atualização</h1>
 
 <div>
+<h2> 7.1.1 — Mais e mais modulação!</h2>
+</div>
+<ul>
+<li>
+Mudanças internas envolvendo a Database dos Servidores. 
+</li>
+</ul>
+
+<div>
 <h2> 7.0.1 — Patch</h2>
 </div>
 <ul>

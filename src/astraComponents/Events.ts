@@ -6,7 +6,6 @@
 
 import { Interaction, Message } from "discord.js";
 import { AstraLuna } from "../utils/Client";
-import { defaultGuildConfig } from "../mongooseSchemas/Schematica";
 import { Command } from "../utils/command";
 import { Modals } from "./Modals";
 import { Buttons } from "./Buttons";
@@ -19,21 +18,6 @@ export class Mensagem {
     this.client = options.client;
     this.mensagem = options.mensagem;
   }
-
-  async findAndSaveServer() {
-    const data = await defaultGuildConfig.findOne({
-      GuildId: this.mensagem.guildId,
-    });
-
-    if (!data) {
-      const newData = await defaultGuildConfig.create({
-        GuildId: this.mensagem.guildId,
-        Users: [],
-      });
-      return newData;
-    }
-    return data;
-  }
 }
 
 export class Interação {
@@ -43,21 +27,6 @@ export class Interação {
   constructor(options: { client: AstraLuna; interaction: Interaction }) {
     this.client = options.client;
     this.interaction = options.interaction;
-  }
-
-  async findAndSaveServer() {
-    const data = await defaultGuildConfig.findOne({
-      GuildId: this.interaction.guildId,
-    });
-
-    if (!data) {
-      const newData = await defaultGuildConfig.create({
-        GuildId: this.interaction.guildId,
-        Users: [],
-      });
-      return newData;
-    }
-    return data;
   }
   async run() {
     if (this.interaction.isCommand()) {

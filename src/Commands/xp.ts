@@ -10,6 +10,7 @@ import { defaultGuildConfig } from "../mongooseSchemas/Schematica";
 import { AstraLuna } from "../utils/Client";
 import { XPRank, displayInformation } from "../astraComponents/xpSystem";
 import { BButton } from "../discordComponents/Button";
+import { guildDatabases } from "../astraComponents/dbManager";
 
 export = {
   data: new SlashCommandBuilder()
@@ -129,10 +130,10 @@ export = {
         `${interaction.user.id}_rankingPage`
       );
 
-      const guild = await new XPRank({
-        client: client,
-        interaction: interaction,
-      }).findAndSaveServer();
+      const guild = await new guildDatabases({
+        guild_id: interaction.guildId,
+      }).find();
+
       const embed = await new XPRank({
         client: client,
         interaction: interaction,

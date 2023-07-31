@@ -8,9 +8,9 @@ import { ChatInputCommandInteraction, Message } from "discord.js";
 import { AstraLuna } from "../utils/Client";
 import { Interação, Mensagem } from "./Events";
 import { BEmbed } from "../discordComponents/Embed";
-import { defaultGuildConfig } from "../mongooseSchemas/Schematica";
+import { guildDatabases } from "./dbManager";
 
-export interface IUser {
+interface IUser {
   userId: string;
   XP: number;
   Level: number;
@@ -26,7 +26,9 @@ export class XPSystem extends Mensagem {
     super({ client: options.client, mensagem: options.mensagem });
   }
   async validateXP() {
-    const user = await this.validateUser();
+    const user = await await new guildDatabases({
+      guild_id: this.mensagem.guildId,
+    }).validateUser(this.mensagem.author.id);
     if (this.mensagem.author.bot) return false;
     if (this.mensagem.content.length < 5) return false;
     if (this.mensagem.content.search(/\b(\w{2})\w*\1\b/g) === 0) return false;
@@ -35,51 +37,12 @@ export class XPSystem extends Mensagem {
 
     return true;
   }
-  async sortDB() {
-    const data = await defaultGuildConfig.findOne({
-      GuildId: this.mensagem.guildId,
-    });
-
-    if (!data) {
-      const newData = await defaultGuildConfig.create({
-        GuildId: this.mensagem.guildId,
-        Users: [],
-      });
-      return newData;
-    }
-    if (data) {
-      await defaultGuildConfig.updateOne(
-        { GuildId: this.mensagem.guildId },
-        { $push: { Users: { $each: [], $sort: { Level: -1, XP: -1 } } } }
-      );
-    }
-    return data;
-  }
-
-  async validateUser() {
-    const data = await this.sortDB();
-    const user = data.Users.find(
-      (user) => user.userId === this.mensagem.author.id
-    );
-    if (!user) {
-      const newUser: IUser = await data.updateOne({
-        $push: {
-          Users: {
-            userId: this.mensagem.author.id,
-            Level: 0,
-            XP: 0,
-            cooldown: Date.now(),
-          },
-        },
-      });
-      return newUser;
-    }
-
-    return user as IUser;
-  }
 
   async calculateLevel(minusXP: true | undefined = undefined) {
-    const user = await this.validateUser();
+    const user = await new guildDatabases({
+      guild_id: this.mensagem.guildId,
+    }).validateUser(this.mensagem.author.id);
+
     const level = user.Level + 1;
     const levelUp =
       (5 / 6) * level * (2 * level ** 2 + 27 * level + 91) -
@@ -100,7 +63,10 @@ export class XPUser extends XPSystem {
   }
 
   private async updateUserXP() {
-    const data = await this.findAndSaveServer();
+    const data = await new guildDatabases({
+      guild_id: this.mensagem.guildId,
+    }).find();
+
     const isValid = await this.validateXP();
 
     if (isValid) {
@@ -116,7 +82,9 @@ export class XPUser extends XPSystem {
   }
 
   private async updateUserLevel() {
-    const data = await this.findAndSaveServer();
+    const data = await new guildDatabases({
+      guild_id: this.mensagem.guildId,
+    }).find();
     const level = await this.calculateLevel(true);
 
     if (level <= 0) {
@@ -132,8 +100,14 @@ export class XPUser extends XPSystem {
   }
 
   private async updateUserRole() {
-    const data = await this.findAndSaveServer();
-    const user = await this.validateUser();
+    const data = await new guildDatabases({
+      guild_id: this.mensagem.guildId,
+    }).find();
+
+    const user = await new guildDatabases({
+      guild_id: this.mensagem.guildId,
+    }).validateUser(this.mensagem.author.id);
+
     const xpRoles = data.XPRoles as Roles[];
 
     xpRoles.forEach((r) => {
@@ -156,50 +130,10 @@ export class displayInformation extends Interação {
     super({ client: options.client, interaction: options.interaction });
     this.interaction = options.interaction;
   }
-
-  async sortDB() {
-    const data = await defaultGuildConfig.findOne({
-      GuildId: this.interaction.guildId,
-    });
-
-    if (!data) {
-      const newData = await defaultGuildConfig.create({
-        GuildId: this.interaction.guildId,
-        Users: [],
-      });
-      return newData;
-    }
-    if (data) {
-      await defaultGuildConfig.updateOne(
-        { GuildId: this.interaction.guildId },
-        { $push: { Users: { $each: [], $sort: { Level: -1, XP: -1 } } } }
-      );
-    }
-    return data;
-  }
-
-  async validateUser(id: string) {
-    const data = await this.sortDB();
-    const user = data.Users.find((user) => user.userId === id);
-    if (!user) {
-      const newUser: IUser = await data.updateOne({
-        $push: {
-          Users: {
-            userId: id,
-            Level: 0,
-            XP: 0,
-            cooldown: Date.now(),
-          },
-        },
-      });
-      return newUser;
-    }
-
-    return user as IUser;
-  }
-
   async calculateLevel(minusXP: true | undefined = undefined, id: string) {
-    const user = await this.validateUser(id);
+    const user = await new guildDatabases({
+      guild_id: this.interaction.guildId,
+    }).validateUser(id);
     const level = user.Level + 1;
     const levelUp =
       (5 / 6) * level * (2 * level ** 2 + 27 * level + 91) -
@@ -208,8 +142,13 @@ export class displayInformation extends Interação {
   }
 
   async generateDisplay(id: string) {
-    const user = await this.validateUser(id);
-    const guild = await this.sortDB();
+    const user = await new guildDatabases({
+      guild_id: this.interaction.guildId,
+    }).validateUser(id);
+
+    const guild = await new guildDatabases({
+      guild_id: this.interaction.guildId,
+    }).find();
     const level = await this.calculateLevel(undefined, id);
 
     const discordUser = await this.client.users.fetch(id);
@@ -264,49 +203,10 @@ export class XPRank extends Interação {
     this.interaction = options.interaction;
   }
 
-  async sortDB() {
-    const data = await defaultGuildConfig.findOne({
-      GuildId: this.interaction.guildId,
-    });
-
-    if (!data) {
-      const newData = await defaultGuildConfig.create({
-        GuildId: this.interaction.guildId,
-        Users: [],
-      });
-      return newData;
-    }
-    if (data) {
-      await defaultGuildConfig.updateOne(
-        { GuildId: this.interaction.guildId },
-        { $push: { Users: { $each: [], $sort: { Level: -1, XP: -1 } } } }
-      );
-    }
-    return data;
-  }
-
-  async validateUser(id: string) {
-    const data = await this.sortDB();
-    const user = data.Users.find((user) => user.userId === id);
-    if (!user) {
-      const newUser: IUser = await data.updateOne({
-        $push: {
-          Users: {
-            userId: id,
-            Level: 0,
-            XP: 0,
-            cooldown: Date.now(),
-          },
-        },
-      });
-      return newUser;
-    }
-
-    return user as IUser;
-  }
-
   async calculateLevel(minusXP: true | undefined = undefined, id: string) {
-    const user = await this.validateUser(id);
+    const user = await new guildDatabases({
+      guild_id: this.interaction.guildId,
+    }).validateUser(id);
     const level = user.Level + 1;
     const levelUp =
       (5 / 6) * level * (2 * level ** 2 + 27 * level + 91) -
@@ -315,7 +215,9 @@ export class XPRank extends Interação {
   }
 
   async generatePage(id: string) {
-    const guild = await this.sortDB();
+    const guild = await new guildDatabases({
+      guild_id: this.interaction.guildId,
+    }).sort(-1);
     const Users = guild.Users as IUser[];
     const xpRoles = guild.XPRoles as Roles[];
     const userRoles: Roles[] = [];
@@ -350,14 +252,7 @@ export class XPRank extends Interação {
         for (const roles of xpRoles) {
           if (user.Level && roles.level && user.Level >= roles.level)
             userRoles.push(roles);
-          console.log(
-            user?.Level,
-            roles.level,
-            user?.Level >= roles.level,
-            roles
-          );
         }
-        console.log(member.user.username, userRoles);
       }
 
       const levelUp = await this.calculateLevel(undefined, user.userId);
