@@ -573,10 +573,15 @@
     tslib "^2.6.1"
     ws "^8.13.0"
 
-"@doctormckay/stdlib@^1.14.1", "@doctormckay/stdlib@^1.15.2", "@doctormckay/stdlib@^1.6.0", "@doctormckay/stdlib@^1.8.0":
+"@doctormckay/stdlib@^1.14.1", "@doctormckay/stdlib@^1.6.0", "@doctormckay/stdlib@^1.8.0":
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/@doctormckay/stdlib/-/stdlib-1.15.2.tgz#d980981403329062195e42609e426107c5daebfb"
   integrity sha512-PRb0kXvHbAzYZT3wIaXTBg1JxiPGZJ54KNg8z5uXkuQ07PWqA1gbXmb15NrMd6EnDa4evC/ErHXVvb9EgySR2w==
+
+"@doctormckay/stdlib@^1.16.0":
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/@doctormckay/stdlib/-/stdlib-1.16.0.tgz#7ae410b6e5286e513b8c3a3722ff87e23dc1dbd3"
+  integrity sha512-mObNOnuEgEb+hZKkd6mY2PoB+9gLfuYkmv8ggN/R3JFjaRIWDOR1QlBV3psQZs7TqGpe3ZFB6bgddQGE02psOA==
 
 "@doctormckay/stdlib@^2.4.1":
   version "2.5.0"
@@ -1364,11 +1369,6 @@ ansi-styles@^4.1.0:
   integrity sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==
   dependencies:
     color-convert "^2.0.1"
-
-appdirectory@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/appdirectory/-/appdirectory-0.1.0.tgz#eb6c816320e7b2ab16f5ed997f28d8205df56375"
-  integrity sha512-DJ5DV8vZXBbusyiyPlH28xppwS8eAMRuuyMo88xeEcf4bV64lbLtbxRxqixZuJBXsZzLtXFmA13GwVjJc7vdQw==
 
 arg@^4.1.0:
   version "4.1.3"
@@ -2951,11 +2951,6 @@ sift@16.0.1:
   resolved "https://registry.yarnpkg.com/sift/-/sift-16.0.1.tgz#e9c2ccc72191585008cf3e36fc447b2d2633a053"
   integrity sha512-Wv6BjQ5zbhW7VFefWusVP33T/EM0vYikCaQ2qR8yULbsilAT8/wQaXvuQ3ptGLpoKx+lihJE3y2UTgKDyyNHZQ==
 
-simple-vdf@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/simple-vdf/-/simple-vdf-1.1.1.tgz#07e2c4dec06cf614ed6f4211b18cce123c93fca9"
-  integrity sha512-IHz5fiOyWX0etTzlrzpWfKWxkwOhSwbbuZxcig+JuON0id1clnYlINBRbe4M4Pz4VnNvNvNaZiKiS7tdIYyF6g==
-
 slash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
@@ -3001,10 +2996,10 @@ steam-appticket@^1.0.1:
     protobufjs "^6.8.8"
     steamid "^1.1.0"
 
-steam-session@^1.1.0:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/steam-session/-/steam-session-1.2.4.tgz#441b642f814a320722775363b4df9e539783dda5"
-  integrity sha512-jmpGAygK6dGy/53QotsaBiw6aGCS+9KiM1XxTZ/J/7H1T4+jhszysW22dWeZ8QjEnSec7BsrDvpWEgBzTsqQkw==
+steam-session@^1.2.5:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/steam-session/-/steam-session-1.3.0.tgz#4f42d1688cad02ab4572d8932da6d7ba99e5cc61"
+  integrity sha512-s0gThNvX0TG3B5Po2hZQQZ2dr4OlTD+Lu6D2ucIssq6xUPdgEm7Ky2hVvOXLVYSWy7IdSMaq7lWzSI3s2lq81g==
   dependencies:
     "@doctormckay/stdlib" "^2.4.1"
     debug "^4.3.4"
@@ -3021,25 +3016,24 @@ steam-totp@^2.0.1:
   resolved "https://registry.yarnpkg.com/steam-totp/-/steam-totp-2.1.2.tgz#ab03eea28e40dedddde3041468dc8551055d84cc"
   integrity sha512-bTKlc/NoIUQId+my+O556s55DDsNNXfVIPWFDNVu68beql7AJhV0c+GTjFxfwCDYfdc4NkAme+0WrDdnY2D2VA==
 
-steam-user@^4.28.6:
-  version "4.28.7"
-  resolved "https://registry.yarnpkg.com/steam-user/-/steam-user-4.28.7.tgz#4e4f222dd5baeb213bcebc642974fa883655b3b4"
-  integrity sha512-bV1oBCOq0CiXVW4RPuZqL44ksYJe2ttnsTiGdEPAwYsbB6xBT+UyA3nzMLlDWpWmbuIPV7jXHYWKPA2p9uz4RA==
+steam-user@^4.29.1:
+  version "4.29.1"
+  resolved "https://registry.yarnpkg.com/steam-user/-/steam-user-4.29.1.tgz#682b0b673043ef2f19cf141504d0818a3937e3bd"
+  integrity sha512-J4Z3QZRvB6ETRMe/oSiW3byLdqixUBv2UrBJ9cGeyFCuxl0z69zuarK/IbCFxDeCM2t8zLQwY9l0z94ofzF15w==
   dependencies:
     "@bbob/parser" "^2.2.0"
-    "@doctormckay/stdlib" "^1.15.2"
+    "@doctormckay/stdlib" "^1.16.0"
     "@doctormckay/steam-crypto" "^1.2.0"
     adm-zip "^0.5.10"
-    appdirectory "^0.1.0"
     binarykvparser "^2.2.0"
     bytebuffer "^5.0.0"
     file-manager "^2.0.0"
+    kvparser "^1.0.1"
     lzma "^2.3.2"
     protobufjs "^6.11.3"
-    simple-vdf "^1.1.1"
     socks-proxy-agent "^7.0.0"
     steam-appticket "^1.0.1"
-    steam-session "^1.1.0"
+    steam-session "^1.2.5"
     steam-totp "^2.0.1"
     steamid "^1.1.0"
     websocket13 "^3.0.1"
