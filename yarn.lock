@@ -573,10 +573,15 @@
     tslib "^2.6.1"
     ws "^8.13.0"
 
-"@doctormckay/stdlib@^1.14.1", "@doctormckay/stdlib@^1.15.2", "@doctormckay/stdlib@^1.6.0", "@doctormckay/stdlib@^1.8.0":
+"@doctormckay/stdlib@^1.14.1", "@doctormckay/stdlib@^1.6.0", "@doctormckay/stdlib@^1.8.0":
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/@doctormckay/stdlib/-/stdlib-1.15.2.tgz#d980981403329062195e42609e426107c5daebfb"
   integrity sha512-PRb0kXvHbAzYZT3wIaXTBg1JxiPGZJ54KNg8z5uXkuQ07PWqA1gbXmb15NrMd6EnDa4evC/ErHXVvb9EgySR2w==
+
+"@doctormckay/stdlib@^1.16.0":
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/@doctormckay/stdlib/-/stdlib-1.16.0.tgz#7ae410b6e5286e513b8c3a3722ff87e23dc1dbd3"
+  integrity sha512-mObNOnuEgEb+hZKkd6mY2PoB+9gLfuYkmv8ggN/R3JFjaRIWDOR1QlBV3psQZs7TqGpe3ZFB6bgddQGE02psOA==
 
 "@doctormckay/stdlib@^2.4.1":
   version "2.5.0"
@@ -658,6 +663,13 @@
   dependencies:
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
+
+"@mongodb-js/saslprep@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@mongodb-js/saslprep/-/saslprep-1.1.0.tgz#022fa36620a7287d17acd05c4aae1e5f390d250d"
+  integrity sha512-Xfijy7HvfzzqiOAhAepF4SGN5e9leLkMvg/OPOF97XemjfVCYN/oWa75wnkc6mltMSTwY+XlbhWgUOJmkFspSw==
+  dependencies:
+    sparse-bitfield "^3.0.3"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -1358,11 +1370,6 @@ ansi-styles@^4.1.0:
   dependencies:
     color-convert "^2.0.1"
 
-appdirectory@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/appdirectory/-/appdirectory-0.1.0.tgz#eb6c816320e7b2ab16f5ed997f28d8205df56375"
-  integrity sha512-DJ5DV8vZXBbusyiyPlH28xppwS8eAMRuuyMo88xeEcf4bV64lbLtbxRxqixZuJBXsZzLtXFmA13GwVjJc7vdQw==
-
 arg@^4.1.0:
   version "4.1.3"
   resolved "https://registry.yarnpkg.com/arg/-/arg-4.1.3.tgz#269fc7ad5b8e42cb63c896d5666017261c144089"
@@ -1641,6 +1648,7 @@ discord.js@14.12.1:
   version "14.12.1"
   resolved "https://registry.yarnpkg.com/discord.js/-/discord.js-14.12.1.tgz#f3073d6fedaaf4948209311165c574dffa417df4"
   integrity sha512-gGjhTkauIPgFXxpBl0UZgyehrKhDe90cIS8Hn1xFBYQ63EuUAkKoUqRNmc/pcla6DD16s4cUz5tAbdSpXivnxw==
+
   dependencies:
     "@discordjs/builders" "^1.6.4"
     "@discordjs/collection" "^1.5.2"
@@ -2508,7 +2516,6 @@ magic-bytes.js@^1.0.15:
   version "1.0.15"
   resolved "https://registry.yarnpkg.com/magic-bytes.js/-/magic-bytes.js-1.0.15.tgz#3c9d2b7d45bb8432482646b5f74bbf6725274616"
   integrity sha512-bpRmwbRHqongRhA+mXzbLWjVy7ylqmfMBYaQkSs6pac0z6hBTvsgrH0r4FBYd/UYVJBmS6Rp/O+oCCQVLzKV1g==
-
 make-error@^1.1.1:
   version "1.3.6"
   resolved "https://registry.yarnpkg.com/make-error/-/make-error-1.3.6.tgz#2eb2e37ea9b67c4891f684a1394799af484cf7a2"
@@ -2556,7 +2563,7 @@ minimist@^1.2.0, minimist@^1.2.6:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
 
-mongodb-connection-string-url@^2.5.4:
+mongodb-connection-string-url@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/mongodb-connection-string-url/-/mongodb-connection-string-url-2.6.0.tgz#57901bf352372abdde812c81be47b75c6b2ec5cf"
   integrity sha512-WvTZlI9ab0QYtTYnuMLgobULWhokRjtC7db9LtcVfJ+Hsnyr5eo6ZtNAt3Ly24XZScGMelOcGtm7lSn0332tPQ==
@@ -2564,26 +2571,26 @@ mongodb-connection-string-url@^2.5.4:
     "@types/whatwg-url" "^8.2.1"
     whatwg-url "^11.0.0"
 
-mongodb@4.16.0:
-  version "4.16.0"
-  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-4.16.0.tgz#8b0043de7b577c6a7e0ce44a2ca7315b9c0a7927"
-  integrity sha512-0EB113Fsucaq1wsY0dOhi1fmZOwFtLOtteQkiqOXGklvWMnSH3g2QS53f0KTP+/6qOkuoXE2JksubSZNmxeI+g==
+mongodb@4.17.1:
+  version "4.17.1"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-4.17.1.tgz#ccff6ddbda106d5e06c25b0e4df454fd36c5f819"
+  integrity sha512-MBuyYiPUPRTqfH2dV0ya4dcr2E5N52ocBuZ8Sgg/M030nGF78v855B3Z27mZJnp8PxjnUquEnAtjOsphgMZOlQ==
   dependencies:
     bson "^4.7.2"
-    mongodb-connection-string-url "^2.5.4"
+    mongodb-connection-string-url "^2.6.0"
     socks "^2.7.1"
   optionalDependencies:
     "@aws-sdk/credential-providers" "^3.186.0"
-    saslprep "^1.0.3"
+    "@mongodb-js/saslprep" "^1.1.0"
 
-mongoose@6.11.3:
-  version "6.11.3"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.11.3.tgz#26e5de0437c470f09c5a71a188a75718efc6c84a"
-  integrity sha512-M1Y5PjttgV51YDa30u7GVMVypQSlNZF/jUhlzTBAmaz5C9FvOr8eih/VLhhO7xtTSlcVTFQS1dqlQNMbtfUowQ==
+mongoose@6.12.0:
+  version "6.12.0"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.12.0.tgz#53035998245a029144411331373c5ce878f62815"
+  integrity sha512-sd/q83C6TBRPBrrD2A/POSbA/exbCFM2WOuY7Lf2JuIJFlHFG39zYSDTTAEiYlzIfahNOLmXPxBGFxdAch41Mw==
   dependencies:
     bson "^4.7.2"
     kareem "2.5.1"
-    mongodb "4.16.0"
+    mongodb "4.17.1"
     mpath "0.9.0"
     mquery "4.0.3"
     ms "2.1.3"
@@ -2906,13 +2913,6 @@ safe-regex-test@^1.0.0:
     get-intrinsic "^1.1.3"
     is-regex "^1.1.4"
 
-saslprep@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/saslprep/-/saslprep-1.0.3.tgz#4c02f946b56cf54297e347ba1093e7acac4cf226"
-  integrity sha512-/MY/PEMbk2SuY5sScONwhUDsV2p77Znkb/q3nSVstq/yQzYJOH/Azh29p9oJLsl3LnQwSvZDKagDGBsBwSooag==
-  dependencies:
-    sparse-bitfield "^3.0.3"
-
 semver@^6.3.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.0.tgz#ee0a64c8af5e8ceea67687b133761e1becbd1d3d"
@@ -2950,11 +2950,6 @@ sift@16.0.1:
   version "16.0.1"
   resolved "https://registry.yarnpkg.com/sift/-/sift-16.0.1.tgz#e9c2ccc72191585008cf3e36fc447b2d2633a053"
   integrity sha512-Wv6BjQ5zbhW7VFefWusVP33T/EM0vYikCaQ2qR8yULbsilAT8/wQaXvuQ3ptGLpoKx+lihJE3y2UTgKDyyNHZQ==
-
-simple-vdf@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/simple-vdf/-/simple-vdf-1.1.1.tgz#07e2c4dec06cf614ed6f4211b18cce123c93fca9"
-  integrity sha512-IHz5fiOyWX0etTzlrzpWfKWxkwOhSwbbuZxcig+JuON0id1clnYlINBRbe4M4Pz4VnNvNvNaZiKiS7tdIYyF6g==
 
 slash@^3.0.0:
   version "3.0.0"
@@ -3001,10 +2996,10 @@ steam-appticket@^1.0.1:
     protobufjs "^6.8.8"
     steamid "^1.1.0"
 
-steam-session@^1.1.0:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/steam-session/-/steam-session-1.2.4.tgz#441b642f814a320722775363b4df9e539783dda5"
-  integrity sha512-jmpGAygK6dGy/53QotsaBiw6aGCS+9KiM1XxTZ/J/7H1T4+jhszysW22dWeZ8QjEnSec7BsrDvpWEgBzTsqQkw==
+steam-session@^1.2.5:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/steam-session/-/steam-session-1.3.0.tgz#4f42d1688cad02ab4572d8932da6d7ba99e5cc61"
+  integrity sha512-s0gThNvX0TG3B5Po2hZQQZ2dr4OlTD+Lu6D2ucIssq6xUPdgEm7Ky2hVvOXLVYSWy7IdSMaq7lWzSI3s2lq81g==
   dependencies:
     "@doctormckay/stdlib" "^2.4.1"
     debug "^4.3.4"
@@ -3021,25 +3016,24 @@ steam-totp@^2.0.1:
   resolved "https://registry.yarnpkg.com/steam-totp/-/steam-totp-2.1.2.tgz#ab03eea28e40dedddde3041468dc8551055d84cc"
   integrity sha512-bTKlc/NoIUQId+my+O556s55DDsNNXfVIPWFDNVu68beql7AJhV0c+GTjFxfwCDYfdc4NkAme+0WrDdnY2D2VA==
 
-steam-user@^4.28.6:
-  version "4.28.7"
-  resolved "https://registry.yarnpkg.com/steam-user/-/steam-user-4.28.7.tgz#4e4f222dd5baeb213bcebc642974fa883655b3b4"
-  integrity sha512-bV1oBCOq0CiXVW4RPuZqL44ksYJe2ttnsTiGdEPAwYsbB6xBT+UyA3nzMLlDWpWmbuIPV7jXHYWKPA2p9uz4RA==
+steam-user@^4.29.1:
+  version "4.29.1"
+  resolved "https://registry.yarnpkg.com/steam-user/-/steam-user-4.29.1.tgz#682b0b673043ef2f19cf141504d0818a3937e3bd"
+  integrity sha512-J4Z3QZRvB6ETRMe/oSiW3byLdqixUBv2UrBJ9cGeyFCuxl0z69zuarK/IbCFxDeCM2t8zLQwY9l0z94ofzF15w==
   dependencies:
     "@bbob/parser" "^2.2.0"
-    "@doctormckay/stdlib" "^1.15.2"
+    "@doctormckay/stdlib" "^1.16.0"
     "@doctormckay/steam-crypto" "^1.2.0"
     adm-zip "^0.5.10"
-    appdirectory "^0.1.0"
     binarykvparser "^2.2.0"
     bytebuffer "^5.0.0"
     file-manager "^2.0.0"
+    kvparser "^1.0.1"
     lzma "^2.3.2"
     protobufjs "^6.11.3"
-    simple-vdf "^1.1.1"
     socks-proxy-agent "^7.0.0"
     steam-appticket "^1.0.1"
-    steam-session "^1.1.0"
+    steam-session "^1.2.5"
     steam-totp "^2.0.1"
     steamid "^1.1.0"
     websocket13 "^3.0.1"
