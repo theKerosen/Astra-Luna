@@ -35,35 +35,10 @@ export class Rastreador extends AstraLuna {
     this.request_hops = request_hops;
   }
 
-  private async enviarPost(id: number) {
-    const Embed = new BEmbed()
-      .setTitle(`Post rastreado 🕵️`)
-      .setDescription(`https://www.counter-strike.net/news/updates (${id})`)
-      .setFooter({
-        text: "Isso pode ser um sinal de uma futura atualização no Counter-Strike.",
-      })
-      .setColor("Green")
-      .setThumbnail(this.img);
-
-    defaultGuildConfig.find().then((e) =>
-      e.forEach((ch) => {
-        if (ch.channels?.updatesCS) {
-          const channel = this.channels.cache.get(ch.channels?.updatesCS);
-          if (channel?.type === ChannelType.GuildText)
-            channel.send({ embeds: [Embed] });
-        }
-      })
-    );
-  }
-
   private async enviarIdentificador(id: number) {
     const Embed = new BEmbed()
       .setTitle(`Post rastreado 🕵️`)
       .setDescription(`Identificador rastreado: ${id}`)
-      .setFooter({
-        text: "Isso pode ser um sinal de uma futura atualização no Counter-Strike.",
-      })
-      .setColor("Green")
       .setThumbnail(this.img);
 
     defaultGuildConfig.find().then((e) =>
@@ -75,32 +50,6 @@ export class Rastreador extends AstraLuna {
         }
       })
     );
-  }
-
-  async rastrearPost() {
-    const config: Config = JSON.parse(
-      fs.readFileSync(`${root}/blogConfig/blog_lastId.json`).toString()
-    );
-
-    for (let i = 0; i < this.request_hops; i++) {
-      await axios
-        .get(
-          `https://blog.counter-strike.net/wp-json/wp/v2/posts/${config.lastId}`
-        )
-        .then((r) => {
-          if (r.status === 200) {
-            config.lastPostId = config.lastPostId + 1 + i;
-            config.lastPostDate = new Date();
-
-            fs.writeFileSync(
-              `${root}/blogConfig/blog_lastId.json`,
-              JSON.stringify(config)
-            );
-            this.enviarPost(config.lastPostId);
-          }
-        })
-        .catch();
-    }
   }
 
   async rastrearIdentificador() {

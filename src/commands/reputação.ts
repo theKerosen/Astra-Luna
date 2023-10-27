@@ -3,6 +3,7 @@ import {
   ChatInputCommandInteraction,
   PermissionFlagsBits,
   SlashCommandBuilder,
+  User,
   codeBlock,
 } from "discord.js";
 import { Command } from "../command";
@@ -15,6 +16,8 @@ class Reputation implements Command {
   public softbannedUsers = new Map();
   public interaction: ChatInputCommandInteraction | null = null;
   public client: AstraLuna | null = null;
+  private comment: string | null = null;
+  private user: User | null = null;
 
   constructor() {
     this.data
@@ -104,6 +107,24 @@ class Reputation implements Command {
     return this;
   }
 
+  permissionCheck() {
+    if (!this.interaction || !this.client)
+      return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
+
+    const Guild = this.client.guilds.cache.get(this.interaction.guildId ?? "");
+    const User = Guild?.members.cache.get(this.interaction.user.id);
+    if (!User?.permissions.has(PermissionFlagsBits.Administrator)) return false;
+    return true;
+  }
+
+  setMisc() {
+    if (!this.interaction || !this.client)
+      return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
+
+    this.comment = this.interaction.options.getString("comentário");
+    this.user = this.interaction.options.getUser("usuário");
+  }
+
   async ajuda() {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
@@ -157,14 +178,14 @@ class Reputation implements Command {
   async blacklist() {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
-
     await this.interaction.deferReply();
-    const Guild = this.client.guilds.cache.get(this.interaction.guildId ?? "");
-    const User = Guild?.members.cache.get(this.interaction.user.id);
-    if (!User?.permissions.has(PermissionFlagsBits.Administrator))
-      return await this.interaction.editReply({
-        content: "[❌] Sem permissão.",
+
+    const hasPermissions = this.permissionCheck();
+    if (!hasPermissions)
+      return this.interaction.editReply({
+        content: "Você não tem permissão para isso.",
       });
+
     const usuário = this.interaction.options.getUser("usuário");
     await shadowBanSchema.create({
       userId: usuário?.id,
@@ -181,16 +202,14 @@ class Reputation implements Command {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
 
-    await this.interaction.deferReply();
-    const Guild = this.client.guilds.cache.get(this.interaction.guildId ?? "");
-    const User = Guild?.members.cache.get(this.interaction.user.id);
-    if (!User?.permissions.has(PermissionFlagsBits.Administrator))
-      return await this.interaction.editReply({
-        content: "[❌] Sem permissão.",
+    const hasPermissions = this.permissionCheck();
+    if (!hasPermissions)
+      return this.interaction.editReply({
+        content: "Você não tem permissão para isso.",
       });
-    const usuário = this.interaction.options.getUser("usuário");
+
     const searchBan = await shadowBanSchema.findOne({
-      userId: usuário?.id,
+      userId: this.user?.id,
       GuildId: this.interaction.guildId,
     });
     if (!searchBan)
@@ -199,7 +218,7 @@ class Reputation implements Command {
       });
     if (searchBan) {
       await shadowBanSchema.deleteOne({
-        userId: usuário?.id,
+        userId: this.user?.id,
         GuildId: this.interaction.guildId,
       });
       return await this.interaction.editReply({
@@ -229,33 +248,33 @@ class Reputation implements Command {
     }
   }
 
+  validateOperation() {
+    if (this.user?.id === this.interaction?.user.id) return false;
+
+    if (this.user?.bot) return false;
+
+    return true;
+  }
+
   async adicionar() {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
 
     await this.interaction.deferReply();
-    const comment = this.interaction.options.getString("comentário");
-    const user = this.interaction.options.getUser("usuário");
 
-    if (user?.id === this.interaction.user.id)
-      return await this.interaction.editReply({
-        content: "[❌] Você não pode adicionar pontos de reputação a si mesmo.",
-      });
-
-    if (user?.bot)
-      return this.interaction.editReply({
-        content: "Você não pode adicionar pontos de reputação a um robô.",
-      });
+    const validate = this.validateOperation();
+    if (!validate)
+      return this.interaction.editReply({ content: "Operação inválida." });
 
     await RepSchem.findOneAndUpdate(
-      { UserId: user?.id },
+      { UserId: this.user?.id },
       {
         $push: {
           Comments: {
             $each: [
               {
                 userId: this.interaction.user.id,
-                comment: comment,
+                comment: this.comment,
                 createdAt: new Date(),
                 isPositive: true,
               },
@@ -274,18 +293,18 @@ class Reputation implements Command {
 
     const embed = new BEmbed()
       .setAuthor({
-        name: `${user?.globalName}🤝${this.interaction.user.globalName}`,
+        name: `${this.user?.globalName}🤝${this.interaction.user.globalName}`,
       })
       .setDescription(
         `**🤑 | REPUTAÇÃO ADICIONADA!**\n${codeBlock(
-          `${user?.globalName} recebeu ponto de reputação de ${this.interaction.user.globalName}.\n${this.interaction.user.globalName} comentou: "${comment}"`
+          `${this.user?.globalName} recebeu ponto de reputação de ${this.interaction.user.globalName}.\n${this.interaction.user.globalName} comentou: "${this.comment}"`
         )}`
       )
       .setColor("Green");
 
     await this.interaction.editReply({
       embeds: [embed],
-      content: `<@${user?.id}>`,
+      content: `<@${this.user?.id}>`,
     });
   }
 
@@ -294,21 +313,13 @@ class Reputation implements Command {
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
 
     await this.interaction.deferReply();
-    const comment = this.interaction.options.getString("comentário");
-    const user = this.interaction.options.getUser("usuário");
 
-    if (user?.id === this.interaction.user.id)
-      return await this.interaction.editReply({
-        content: "[❌] Você não pode remover pontos de reputação de si mesmo.",
-      });
-
-    if (user?.bot)
-      return this.interaction.editReply({
-        content: "Você não pode remover pontos de reputação de um robô.",
-      });
+    const validate = this.validateOperation();
+    if (!validate)
+      return this.interaction.editReply({ content: "Operação inválida." });
 
     const currentTimestamp = Date.now();
-    const index = await RepSchem.findOne({ UserId: user?.id });
+    const index = await RepSchem.findOne({ UserId: this.user?.id });
     if (!index) return;
 
     const negativeReviews = index.Comments.filter(
@@ -325,14 +336,14 @@ class Reputation implements Command {
     }
 
     await RepSchem.findOneAndUpdate(
-      { UserId: user?.id },
+      { UserId: this.user?.id },
       {
         $push: {
           Comments: {
             $each: [
               {
                 userId: this.interaction.user.id,
-                comment: comment,
+                comment: this.comment,
                 createdAt: new Date(),
                 isPositive: false,
               },
@@ -351,18 +362,18 @@ class Reputation implements Command {
 
     const embed = new BEmbed()
       .setAuthor({
-        name: `${user?.globalName}🖕${this.interaction.user.globalName}`,
+        name: `${this.user?.globalName}🖕${this.interaction.user.globalName}`,
       })
       .setDescription(
         `**💸 | REPUTAÇÃO REMOVIDA!**\n${codeBlock(
-          `${this.interaction.user.globalName} removeu ponto de reputação de ${user?.globalName}.\n${this.interaction.user.globalName} comentou: "${comment}"`
+          `${this.interaction.user.globalName} removeu ponto de reputação de ${this.user?.globalName}.\n${this.interaction.user.globalName} comentou: "${this.comment}"`
         )}`
       )
       .setColor("Red");
 
     await this.interaction.editReply({
       embeds: [embed],
-      content: `<@${user?.id}>`,
+      content: `<@${this.user?.id}>`,
     });
   }
 
@@ -371,14 +382,11 @@ class Reputation implements Command {
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
 
     await this.interaction.deferReply();
-    const user = this.interaction.options.getUser("usuário");
 
-    if (user?.bot)
-      return this.interaction.editReply({
-        content: "Você não pode ver pontos de reputação de um robô.",
-      });
-
-    const index = await RepSchem.findOne({ UserId: user?.id });
+    const validate = this.validateOperation();
+    if (!validate)
+      return this.interaction.editReply({ content: "Operação inválida." });
+    const index = await RepSchem.findOne({ UserId: this.user?.id });
 
     if (!index) {
       return this.interaction.editReply({
@@ -403,15 +411,15 @@ class Reputation implements Command {
     });
 
     const embed = new BEmbed()
-      .setAuthor({ name: user?.globalName ?? "Sem nick" })
+      .setAuthor({ name: this.user?.globalName ?? "Sem nick" })
       .setDescription(
         `✅ ${index.goodRep} Reputações boa(s)\n❌ ${
           index.badRep
         } Reputações ruim(s)\n📜 ${
           index.Comments.length
-        } comentário(s)\n❓ ${trustPercentage.toFixed(2)}% (${
-          trustLevel?.level
-        }).`
+        } comentário(s)\n❓ ${trustPercentage.toFixed(
+          2
+        )}% (${trustLevel?.level}).`
       )
       .setColor("Blurple");
 

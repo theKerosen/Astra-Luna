@@ -1,9 +1,12 @@
 import {
+  APIRole,
   CacheType,
   ChannelType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
+  Role,
   SlashCommandBuilder,
+  TextChannel,
 } from "discord.js";
 import { AstraLuna } from "../Client";
 import { Command } from "../command";
@@ -14,6 +17,8 @@ class Notify implements Command {
   client: AstraLuna | null = null;
   data: SlashCommandBuilder = new SlashCommandBuilder();
   interaction: ChatInputCommandInteraction<CacheType> | null = null;
+  role: Role | APIRole | null = null;
+  channel: TextChannel | null = null;
 
   constructor() {
     this.data
@@ -53,6 +58,16 @@ class Notify implements Command {
           )
       );
   }
+  setMisc() {
+    if (!this.interaction || !this.client)
+      throw console.error("INTERACTION/CLIENT IS NOT DEFINED.");
+
+    this.role = this.interaction.options.getRole("cargo");
+    this.channel = this.interaction.options.getChannel("canal", true, [
+      ChannelType.GuildText,
+    ]);
+  }
+
   setClient(client: AstraLuna) {
     this.client = client;
     return this;
@@ -67,16 +82,12 @@ class Notify implements Command {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
 
-    const role = this.interaction.options.getRole("cargo");
-    const selectedChannel = this.interaction.options.getChannel("canal", true, [
-      ChannelType.GuildText,
-    ]);
     await defaultGuildConfig.findOneAndUpdate(
       { GuildId: this.interaction.guildId },
       {
         GuildId: this.interaction.guildId,
-        "channels.updatesCS": selectedChannel?.id,
-        NotifyRoleId: role?.id,
+        "channels.updatesCS": this.channel?.id,
+        NotifyRoleId: this.role?.id,
       },
       { upsert: true }
     );
@@ -84,7 +95,7 @@ class Notify implements Command {
       content:
         "Canal & Cargo salvo com sucesso, agora você irá ser notificado!",
     });
-    selectedChannel.send({
+    this.channel?.send({
       embeds: [
         new BEmbed()
           .setAuthor({ name: "Counter-Strike — Atualizações" })
@@ -107,23 +118,19 @@ class Notify implements Command {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
 
-    const role = this.interaction.options.getRole("cargo");
-    const selectedChannel = this.interaction.options.getChannel("canal", true, [
-      ChannelType.GuildText,
-    ]);
     await defaultGuildConfig.findOneAndUpdate(
       { GuildId: this.interaction.guildId },
       {
         GuildId: this.interaction.guildId,
-        "channels.csStatus": selectedChannel?.id,
-        NotifyRoleId: role?.id,
+        "channels.csStatus": this.channel?.id,
+        NotifyRoleId: this.role?.id,
       },
       { upsert: true }
     );
     this.interaction.reply({
       content: "Canal salvo com sucesso, agora você irá ser notificado!",
     });
-    selectedChannel.send({
+    this.channel?.send({
       embeds: [
         new BEmbed()
           .setAuthor({ name: "Counter-Strike — Status Geral" })
@@ -144,6 +151,8 @@ class Notify implements Command {
   async execute() {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
+
+    this.setMisc();
 
     const Guild = this.client.guilds.cache.get(this.interaction.guildId ?? "");
     const User = Guild?.members.cache.get(this.interaction.user.id);
