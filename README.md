@@ -15,9 +15,7 @@
   <h3> [⚠] Alerta de indisponibilidade do Counter-Strike </h3>
 Sabe quando você quer MUITO jogar Counter-Strike, só que o jogo não funciona? Com esses avisos você descobre o porquê!<br>
 Para utilizar esse sistema, é só utilizar o comando /notificar
-<h1></h1>
-<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120265442838204507/Screenshot_2.png" width="680" height="240" alt="CS Alerts"/>
-<br>
+
 </div>
 
 <div align="right">
@@ -28,10 +26,6 @@ O sistema é tão simples que até um gato consegue utilizar sem problemas. (Eu 
 Para ver o XP do usuário apenas use /xp ver <usuário> <br>
 Para configurar os cargos, apenas utilize /xp cargos adicionar/remover <cargo> <nível><br>
 Para ver o ranking do servidor, apenas utilize /xp ranking<br>
-
-<h1></h1>
-<img src="https://cdn.discordapp.com/attachments/943547363031670785/1127863914168844378/image.png" width="510" height="140" alt="XP System">
-<br>
 </div>
   
 <div align="left"> 
@@ -41,50 +35,23 @@ Para ver o ranking do servidor, apenas utilize /xp ranking<br>
 O sistema de Reputação possui um comando que explica tudo sobre ele. O comando é /reputação ajuda <br>
 Agora administradores de um servidor podem botar um usuário em uma lista negra (ou lista branca)! <br>
 Comandos: /reputação blacklist/whitelist <usuário>
-<h1></h1>
-<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120428516752760862/Screenshot_4.png" width="780" height="720" alt="Rep System">
-<h1></h1>
 </div>
 
 <div align="right">
 <h3> Sistema de Enquetes! [🔼|🔽] </h3>
 Simples e autoexplicativo como o sistema de XP, só utilizar /enquete para ver as opções.
 <h1></h1>
-<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120281601255944222/Screenshot_5.png" width="680" height="240" alt="vote system">
-<br>
-<h1></h1>
 </div>
 <div align="left">
 <h3> [📜] Sistema de Sugestões </h3>
 Um sistema ótimo para dar sugestões a um servidor, basta digitar o comando /sugestão sugerir e preencher o formulário
-<h1></h1>
-<img src="https://cdn.discordapp.com/attachments/943547363031670785/1120504077403570196/image.png" width="540" height="540" alt="suggestion system">
-<br>
 <h1></h1>
 </div>
 <div align="right">
 <h3> [⬅️] Sistema de Feedback! </h3>
 Um sistema ótimo para dar feedbacks a um servidor, apenas digite /feedback enviar para abrir o formulário. <br> para configurar o canal de feedback, utilize /feedback canal.
 <h1></h1>
-<img src="https://cdn.discordapp.com/attachments/943547363031670785/1123129471508168764/Screenshot_3.png" width="540" height="350" alt="suggestion system">
-<br>
-<h1></h1>
 </div>
-<h1>Futuros Planos</h1>
-
-Pretendo adicionar tudo que está/estará citado aqui.
-
-| Feature                                 | Feito? |
-| --------------------------------------- | ------ |
-| Arrumar Ranking                         | ✅     |
-| Cargos de XP configuráveis              | ✅     |
-| Adicionar mais opções nas enquetes      | ❌     |
-| Sistema de Sugestões Global             | ✅     |
-| Black/Whitelist no sistema de Reputação | ✅     |
-
-_Tem alguma ideia de feature interessante? me contate via Discord: @neko.lunx, ou envie uma Pull Request._
-
-<h1></h1>
 
 <h1>Contribuindo</h1>
 
