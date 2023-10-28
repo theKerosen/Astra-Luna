@@ -1208,10 +1208,18 @@
   resolved "https://registry.yarnpkg.com/@types/async/-/async-3.2.20.tgz#53517caaa68c94f99da1c4e986cf7f2954981515"
   integrity sha512-6jSBQQugzyX1aWto0CbvOnmxrU9tMoXfA9gc4IrLEtvr3dTwSg5GLGoWiZnGLI6UG/kqpB3JOQKQrqnhUWGKQA==
 
-"@types/bytebuffer@*", "@types/bytebuffer@^5.0.44":
+"@types/bytebuffer@*":
   version "5.0.44"
   resolved "https://registry.yarnpkg.com/@types/bytebuffer/-/bytebuffer-5.0.44.tgz#553015fb34db1fc3eb3f7b232bff91c006c251a1"
   integrity sha512-k1qonHga/SfQT02NF633i+7tIfKd+cfC/8pjnedcfuXJNMWooss/FkCgRMSnLf2WorLjbuH4bfgAZEbtyHBDoQ==
+  dependencies:
+    "@types/long" "^3.0.0"
+    "@types/node" "*"
+
+"@types/bytebuffer@^5.0.45":
+  version "5.0.46"
+  resolved "https://registry.yarnpkg.com/@types/bytebuffer/-/bytebuffer-5.0.46.tgz#65ddd3f98b8e0a783fe86fbeeb370e7152ddfb82"
+  integrity sha512-QxINdj2nX5ITZfRk4fOZza9IGVJ0QLBeVIuUcEEcmTm1MyPn0PRiK+tf8K7XXwJ+fjT9S5aKt+z78NlCm2RNtA==
   dependencies:
     "@types/long" "^3.0.0"
     "@types/node" "*"
