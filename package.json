@@ -6,7 +6,7 @@
     "@types/async": "^3.2.16",
     "@types/bytebuffer": "^5.0.45",
     "@types/globaloffensive": "^2.3.1",
-    "@types/node-cron": "^3.0.7",
+    "@types/node-cron": "^3.0.9",
     "@types/steamid": "^2.0.1",
     "app-root-path": "^3.1.0",
     "axios": "^1.5.1",
