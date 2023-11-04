@@ -12,6 +12,7 @@ class DevMode implements Command {
   client: AstraLuna | null = null;
   data: SlashCommandBuilder = new SlashCommandBuilder();
   interaction: ChatInputCommandInteraction<CacheType> | null = null;
+  talkToggle = false;
 
   constructor() {
     this.data
@@ -32,35 +33,37 @@ class DevMode implements Command {
     });
 
     const bool = this.interaction.options.getBoolean("dev_talk");
+    if (bool) {
+      this.interaction.reply({
+        content: "[DevTalk] Módulo habilitado.",
+        ephemeral: true,
+      });
+
+      this.talkToggle = true;
+    }
 
     if (!bool) {
       this.interaction.reply({
         content: "[DevTalk] Módulo desabilitado.",
         ephemeral: true,
       });
-
-      return collector?.stop();
+      this.talkToggle = false;
     }
 
-    if (bool) {
-      collector?.on("collect", (m) => {
-        const content = m.content;
-        m.delete();
+    collector?.on("collect", (m) => {
+      if (this.talkToggle === false) return collector.stop();
+      const content = m.content;
+      m.delete();
 
-        const embed = new BEmbed()
-          .setTitle(m.author.globalName ?? m.author.username)
-          .setURL("https://lunxi.dev")
-          .setDescription(content)
-          .setColor("Blurple")
-          .setFooter({ text: "Mensagem do desenvolvedor!" });
+      const embed = new BEmbed()
+        .setTitle(m.author.globalName ?? m.author.username)
+        .setURL("https://lunxi.dev")
+        .setDescription(content)
+        .setColor("Blurple")
+        .setFooter({ text: "Mensagem do desenvolvedor!" });
 
-        m.channel.send({ embeds: [embed] });
-      });
-      this.interaction.reply({
-        content: "[DevTalk] Módulo habilitado.",
-        ephemeral: true,
-      });
-    }
+      m.channel.send({ embeds: [embed] });
+    });
   }
 
   async execute() {

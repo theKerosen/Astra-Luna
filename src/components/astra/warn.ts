@@ -1,9 +1,7 @@
 import { ClientInteraction } from "./events";
-import { AstraLuna } from "../../Client";
-import { Interaction } from "discord.js";
 import { GuildDatabases } from "./dbManager";
 
-enum warnTypes {
+export enum warnTypes {
   NOTHING = 0,
   MUTE = 1,
   KICK = 2,
@@ -13,7 +11,7 @@ enum warnTypes {
 interface WarnInfo {
   warnLevel: number;
   punishmentType: warnTypes;
-  wearTime: Date;
+  wearTime: number;
 }
 
 interface IUser {
@@ -25,38 +23,40 @@ interface IUser {
 }
 
 export class WarnSystem extends ClientInteraction {
-  public client: AstraLuna;
-  public interaction: Interaction;
-  public db: GuildDatabases;
-
-  constructor(options: { client: AstraLuna; interaction: Interaction }) {
-    super({ client: options.client, interaction: options.interaction });
-    this.interaction = options.interaction;
-    this.client = options.client;
-    this.db = new GuildDatabases({ guild_id: this.interaction.guildId });
-  }
+  db = new GuildDatabases({ guild_id: this.interaction.guildId });
 
   async setWarnSize(size: number) {
     const db = await this.db.find();
-    db.updateOne({ $set: { maxWarnLevels: size } });
+    await db.updateOne({ $set: { maxWarnLevels: size } });
     return true;
   }
 
-  async setPerWarnPunishment(
-    warnLevel: number,
-    warnType: warnTypes,
-    wearTime: Date
-  ) {
+  async createWarnRule(warnLevel: number, warnType: warnTypes) {
     const db = await this.db.find();
-    db.updateOne({
-      $push: {
-        perWarnPunishment: {
-          warnLevel: warnLevel,
-          punishmentType: warnType,
-          wearTime: wearTime,
+    await db.updateOne(
+      {
+        $push: {
+          perWarnPunishment: {
+            warnLevel: warnLevel,
+            punishmentType: warnType,
+          },
         },
       },
+      { upsert: true }
+    );
+    return true;
+  }
+
+  async updateWarnRule(warnLevel: number, warnType: warnTypes) {
+    const db = await this.db.find();
+
+    await db.updateOne({
+      $set: {
+        "warnLevel.$": warnLevel,
+        punishmentType: warnType,
+      },
     });
+
     return true;
   }
 
@@ -68,6 +68,7 @@ export class WarnSystem extends ClientInteraction {
       },
       { arrayFilters: [{ "outer.userId": userId }] }
     );
+
     return true;
   }
 

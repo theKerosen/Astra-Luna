@@ -1,81 +1,103 @@
 /*
-    Feito por Lunx © 2023
-    
 
     Essa classe é utilizada para rastrear o site blog.counter-strike.net e counter-strike.net
     para encontrar novas postagens utilizando a API do Wordpress.
 
     >> https://joaopcos.xyz/post.php?id=1
-    (Créditos de quem originalmente descobriu esse método)
 
 */
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import fs from "fs";
 import { BEmbed } from "../discord/Embed";
 import { defaultGuildConfig } from "../../schematicas/Schematica";
-import { ChannelType } from "discord.js";
+import { REST } from "discord.js";
 import { AstraLuna } from "../../Client";
 import root from "app-root-path";
 
 interface Config {
   lastId: number;
-  lastPostId: number;
   lastIdDate: Date;
-  lastPostDate: Date;
 }
 
 export class Rastreador extends AstraLuna {
   public request_hops: number;
   private img =
-    "https:///cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/69f7ebe2735c366c65c0b33dae00e12dc40edbe4.jpg";
+    "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/730/69f7ebe2735c366c65c0b33dae00e12dc40edbe4.jpg";
 
   constructor(request_hops: number) {
     super();
     this.request_hops = request_hops;
   }
 
-  private async enviarIdentificador(id: number) {
+  private enviarIdentificador(id: number) {
+    console.log(
+      `[Astra Luna] > New ID detected in the Counter-Strike's blog, sending it to everybody...`
+    );
     const Embed = new BEmbed()
       .setTitle(`Post rastreado 🕵️`)
       .setDescription(`Identificador rastreado: ${id}`)
+      .setColor("DarkGold")
       .setThumbnail(this.img);
 
-    defaultGuildConfig.find().then((e) =>
-      e.forEach((ch) => {
-        if (ch.channels?.updatesCS) {
-          const channel = this.channels.cache.get(ch.channels?.updatesCS);
-          if (channel?.type === ChannelType.GuildText)
-            channel.send({ embeds: [Embed] });
+    defaultGuildConfig.find().then(async (e) => {
+      for (let i = 0; e.length > i; i++) {
+        const channelid = e[i].channels?.updatesCS;
+
+        //Can't use ChannelManager#fetch() here...
+        //Likely a bug in the Discord.js Library, or the Discord API.
+        //The API returns some error saying that the REST API didn't send the client's TOKEN,
+        //So we doing this thing the weird way.
+
+        const rest = new REST({ version: "10" }).setToken(
+          process.env.TOKEN ?? ""
+        );
+        if (channelid) {
+          await rest
+            .post(`/channels/${channelid}/messages`, {
+              body: {
+                embeds: [Embed],
+              },
+            })
+            .catch(() =>
+              console.error(
+                `[Astra Luna] Channel ${channelid} is nonexistent or unreachable, ignoring...`
+              )
+            );
         }
-      })
-    );
+      }
+    });
+    return true;
   }
 
-  async rastrearIdentificador() {
+  rastrearIdentificador() {
     const config: Config = JSON.parse(
-      fs.readFileSync(`${root}/blogConfig/blog_lastId.json`).toString()
+      fs.readFileSync(`${root}/blog/blogData.json`).toString()
     );
 
     for (let i = 0; i < this.request_hops; i++) {
-      await axios
-        .get(
+      const promise = Promise.resolve(
+        axios.get(
           `https://blog.counter-strike.net/wp-json/wp/v2/categories?post=${
-            config.lastPostId + 1 + i
+            config.lastId + 1 + i
           }`
         )
-        .catch((error) => {
-          if (error.response.data.code === "rest_forbidden_context") {
-            config.lastPostId = config.lastPostId + 1 + i;
-            config.lastPostDate = new Date();
+      );
 
-            fs.writeFileSync(
-              `${root}/blogConfig/blog_lastId.json`,
-              JSON.stringify(config)
-            );
-            this.enviarIdentificador(config.lastId);
-          }
-        });
+      promise.catch((error: AxiosError) => {
+        if (error.response?.status === 401) {
+          config.lastId = config.lastId + 1 + i;
+          config.lastIdDate = new Date();
+
+          fs.writeFileSync(
+            `${root}/blog/blogData.json`,
+            JSON.stringify(config)
+          );
+          this.enviarIdentificador(config.lastId);
+        }
+      });
     }
+
+    return true;
   }
 }

@@ -1,7 +1,6 @@
 import { Interaction } from "discord.js";
 import { AstraLuna } from "../../Client";
 import { GuildDatabases } from "./dbManager";
-import { Buttons } from "./Buttons";
 import { Modals } from "./Modals";
 import { BaseHandler } from "./loader";
 
@@ -34,22 +33,6 @@ export class ClientInteraction extends AstraLuna {
             interaction: this.interaction,
           }).sugestãoModal();
           break;
-      }
-    }
-    if (this.interaction.isButton()) {
-      switch (this.interaction.customId) {
-        case "poll_btn_1":
-          new Buttons({
-            client: this,
-            interaction: this.interaction,
-          }).PollButton({ vote1: 1 });
-          break;
-        case "poll_btn_2": {
-          new Buttons({
-            client: this,
-            interaction: this.interaction,
-          }).PollButton({ vote2: 1 });
-        }
       }
     }
   }

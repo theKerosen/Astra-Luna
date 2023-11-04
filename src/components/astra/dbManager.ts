@@ -13,10 +13,13 @@ export class GuildDatabases {
     this.guild_id = options.guild_id;
     if (!options.guild_id) return;
   }
+  
+
   async find() {
     const data = await Promise.resolve(
       defaultGuildConfig.findOne({ GuildId: this.guild_id })
     );
+    
     if (!data) {
       const newData = await defaultGuildConfig.create({
         GuildId: this.guild_id,
@@ -26,6 +29,7 @@ export class GuildDatabases {
     }
     return data;
   }
+
   async sort(order: 1 | -1) {
     const data = this.find();
     await Promise.resolve(
@@ -36,6 +40,7 @@ export class GuildDatabases {
     );
     return data;
   }
+
   async validateUser(userId: string) {
     const data = await this.find();
     const user = data.Users.find((user) => user.userId === userId);

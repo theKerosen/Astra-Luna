@@ -4,7 +4,6 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
   User,
-  codeBlock,
 } from "discord.js";
 import { Command } from "../command";
 import { AstraLuna } from "../Client";
@@ -86,7 +85,7 @@ class Reputation implements Command {
       )
       .addSubcommand((sub) =>
         sub
-          .setName("comentários")
+          .setName("ver")
           .setDescription("► Veja uma lista de comentários sobre um usuário...")
           .addUserOption((usr) =>
             usr
@@ -296,9 +295,7 @@ class Reputation implements Command {
         name: `${this.user?.globalName}🤝${this.interaction.user.globalName}`,
       })
       .setDescription(
-        `**🤑 | REPUTAÇÃO ADICIONADA!**\n${codeBlock(
-          `${this.user?.globalName} recebeu ponto de reputação de ${this.interaction.user.globalName}.\n${this.interaction.user.globalName} comentou: "${this.comment}"`
-        )}`
+        `**🤑 | REPUTAÇÃO ADICIONADA!**\n${this.user?.globalName} recebeu um ponto de reputação de ${this.interaction.user.globalName}.\n${this.interaction.user.globalName} comentou: "${this.comment}"`
       )
       .setColor("Green");
 
@@ -365,9 +362,7 @@ class Reputation implements Command {
         name: `${this.user?.globalName}🖕${this.interaction.user.globalName}`,
       })
       .setDescription(
-        `**💸 | REPUTAÇÃO REMOVIDA!**\n${codeBlock(
-          `${this.interaction.user.globalName} removeu ponto de reputação de ${this.user?.globalName}.\n${this.interaction.user.globalName} comentou: "${this.comment}"`
-        )}`
+        `**💸 | REPUTAÇÃO REMOVIDA!**\n$${this.interaction.user.globalName} removeu um ponto de reputação de ${this.user?.globalName}.\n${this.interaction.user.globalName} comentou: "${this.comment}"`
       )
       .setColor("Red");
 
@@ -387,7 +382,6 @@ class Reputation implements Command {
     if (!validate)
       return this.interaction.editReply({ content: "Operação inválida." });
     const index = await RepSchem.findOne({ UserId: this.user?.id });
-
     if (!index) {
       return this.interaction.editReply({
         content: "[❌] Este usuário não tem reputação alguma.",
@@ -442,6 +436,8 @@ class Reputation implements Command {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
 
+    this.setMisc();
+
     switch (this.interaction.options.getSubcommand()) {
       case "ajuda":
         await this.ajuda();
@@ -458,7 +454,7 @@ class Reputation implements Command {
       case "remover":
         await this.remover();
         break;
-      case "comentários":
+      case "ver":
         await this.comentarios();
         break;
     }

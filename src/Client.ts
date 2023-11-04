@@ -6,9 +6,6 @@ import { Command } from "./command";
 
 export class AstraLuna extends Client {
   commands: Collection<string, Command> = new Collection();
-  misc: Collection<unknown, unknown> = new Collection();
-  votes: Collection<unknown, unknown> = new Collection();
-  roles: Collection<string, { role: string; level: number }> = new Collection();
 
   constructor() {
     super({ intents: 3276799 });

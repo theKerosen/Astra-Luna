@@ -23,11 +23,11 @@ export class Main extends AstraLuna {
   async main() {
     this.login();
     this.mongoConnect();
-    schedule("*/45 * * * * *", () => {
+    schedule("*/50 * * * * *", () => {
       this.status.checkAll();
-
-      return void 0;
+      this.rastreador.rastrearIdentificador();
     });
+
     this.eventHandler.ready().interaction().message();
   }
 }
