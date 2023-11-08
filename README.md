@@ -45,6 +45,3 @@ Comandos: /reputação blacklist/whitelist <usuário>
 Caso veja um erro e saiba arrumar, um problema bobo, ou até uma maneira melhor de implementar algo, vá em frente, envie uma Pull Request!
 
 <h1></h1>
-
-
-mensagem para os membros do "Vlogueiro's Team": Faz o L de Lunx 👆
