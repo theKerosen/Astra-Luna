@@ -6,7 +6,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { AstraLuna } from "../Client";
-import { defaultGuildConfig } from "../schematicas/Schematica";
+import { GuildCollection } from "../schematicas/Schematica";
 import { DisplayInformation } from "../components/astra/xp";
 import { Command } from "../command";
 
@@ -93,7 +93,7 @@ class XPCommand implements Command {
           "Cargos com o nome de @everyone são desabilitados por motivos de segurança.",
       });
 
-    defaultGuildConfig.findOneAndUpdate(
+      GuildCollection.findOneAndUpdate(
       { GuildId: this.interaction.guildId },
       { $push: { XPRoles: { role: role?.id, level: level } } },
       { upsert: true }
@@ -118,7 +118,7 @@ class XPCommand implements Command {
         content: "[❌] Sem permissão.",
       });
 
-    defaultGuildConfig.findOneAndUpdate(
+      GuildCollection.findOneAndUpdate(
       { GuildId: this.interaction.guildId },
       { $pull: { XPRoles: { role: role?.id } } },
       { upsert: true }

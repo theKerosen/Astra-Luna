@@ -18,7 +18,6 @@ export class AstraDebugger extends Console {
    * @param level Level of debugging, 1 being simple logging, 2 tracing & logging
    */
   attach(classname: string, debug: unknown, level: 1 | 2) {
-    this.clear();
     this.log(`\n[Astra Debugger] -> "${classname}" DUMPs\n`);
     switch (level) {
       case 1:

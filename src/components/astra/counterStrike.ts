@@ -1,8 +1,8 @@
-import axios, {  AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { AstraLuna } from "../../Client";
 import { ColorResolvable, REST } from "discord.js";
 import { BEmbed } from "../../components/discord/Embed";
-import { defaultGuildConfig } from "../../schematicas/Schematica";
+import { GuildCollection } from "../../schematicas/Schematica";
 import { Cache } from "./Cache";
 const mensagens: Record<
   string,
@@ -15,7 +15,7 @@ const mensagens: Record<
   normal: {
     value: 0,
     color: "Green",
-    description: "O Serviço está de volta.",
+    description: "O Serviço está online",
   },
   delayed: {
     value: 1,
@@ -24,19 +24,19 @@ const mensagens: Record<
   },
   surge: {
     value: 2,
-    description: "O Serviço acabou de iniciar.",
+    description: "O Serviço está extremamente lento.",
     color: "Red",
   },
   offline: {
     value: 3,
-    description: "O Serviço de  está Offline.",
+    description: "O Serviço está Offline.",
     color: "Red",
   },
 };
 
 export class StatusChannel extends AstraLuna {
   async send(Embed: BEmbed) {
-    const guilds = await defaultGuildConfig.find();
+    const guilds = await GuildCollection.find();
     for (const guild of guilds) {
       if (guild.channels) {
         const rest = new REST({ version: "10" }).setToken(
@@ -85,15 +85,14 @@ export class StatusCS extends StatusChannel {
   private async checkSessions(r: AxiosResponse) {
     const response = mensagens[r.data.status.services.SessionsLogon];
     const getCurrentCache = this.cache.get("sessions");
-
-    if (getCurrentCache !== response.value)
-      await this.send(
-        new BEmbed()
-          .setTitle("🚨 Sessões — Counter-Strike")
-          .setDescription(response.description)
-          .setColor(response.color)
-          .setThumbnail(this.img)
-      );
+    if (getCurrentCache == response.value) return;
+    await this.send(
+      new BEmbed()
+        .setTitle("🚨 Sessões — Counter-Strike")
+        .setDescription(response.description)
+        .setColor(response.color)
+        .setThumbnail(this.img)
+    );
     this.cache.put("sessions", response.value);
   }
 
@@ -102,14 +101,14 @@ export class StatusCS extends StatusChannel {
 
     const getCurrentCache = this.cache.get("community");
 
-    if (getCurrentCache !== response.value)
-      await this.send(
-        new BEmbed()
-          .setTitle("🚨 Comunidade — Counter-Strike")
-          .setDescription(response.description)
-          .setColor(response.color)
-          .setThumbnail(this.img)
-      );
+    if (getCurrentCache == response.value) return;
+    await this.send(
+      new BEmbed()
+        .setTitle("🚨 Comunidade — Counter-Strike")
+        .setDescription(response.description)
+        .setColor(response.color)
+        .setThumbnail(this.img)
+    );
     this.cache.put("community", response.value);
   }
 
@@ -117,14 +116,14 @@ export class StatusCS extends StatusChannel {
     const response = mensagens[r.data.status.matchmaker.scheduler];
     const getCurrentCache = this.cache.get("matchmaker");
 
-    if (getCurrentCache !== response.value)
-      await this.send(
-        new BEmbed()
-          .setTitle("🚨 Matchmaker — Counter-Strike")
-          .setDescription(response.description)
-          .setColor(response.color)
-          .setThumbnail(this.img)
-      );
+    if (getCurrentCache == response.value) return;
+    await this.send(
+      new BEmbed()
+        .setTitle("🚨 Matchmaker — Counter-Strike")
+        .setDescription(response.description)
+        .setColor(response.color)
+        .setThumbnail(this.img)
+    );
     this.cache.put("matchmaker", response.value);
   }
 }

@@ -50,6 +50,6 @@ export class Cache {
   }
 
   debug() {
-    this.debugger.attach("CACHE", this.cache, 1);
+     this.debugger.attach("CACHE", this.cache, 1);
   }
 }

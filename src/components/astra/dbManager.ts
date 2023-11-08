@@ -1,4 +1,4 @@
-import { defaultGuildConfig } from "../../schematicas/Schematica";
+import { GuildCollection } from "../../schematicas/Schematica";
 
 interface IUser {
   userId: string;
@@ -17,11 +17,11 @@ export class GuildDatabases {
 
   async find() {
     const data = await Promise.resolve(
-      defaultGuildConfig.findOne({ GuildId: this.guild_id })
+      GuildCollection.findOne({ GuildId: this.guild_id })
     );
     
     if (!data) {
-      const newData = await defaultGuildConfig.create({
+      const newData = await GuildCollection.create({
         GuildId: this.guild_id,
         Users: [],
       });
@@ -33,7 +33,7 @@ export class GuildDatabases {
   async sort(order: 1 | -1) {
     const data = this.find();
     await Promise.resolve(
-      defaultGuildConfig.updateOne(
+      GuildCollection.updateOne(
         { GuildId: this.guild_id },
         { $push: { Users: { $each: [], $sort: { Level: order, XP: order } } } }
       )

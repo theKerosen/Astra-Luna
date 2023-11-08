@@ -10,7 +10,7 @@
 import axios, { AxiosError } from "axios";
 import fs from "fs";
 import { BEmbed } from "../discord/Embed";
-import { defaultGuildConfig } from "../../schematicas/Schematica";
+import { GuildCollection } from "../../schematicas/Schematica";
 import { REST } from "discord.js";
 import { AstraLuna } from "../../Client";
 import root from "app-root-path";
@@ -40,7 +40,7 @@ export class Rastreador extends AstraLuna {
       .setColor("DarkGold")
       .setThumbnail(this.img);
 
-    defaultGuildConfig.find().then(async (e) => {
+      GuildCollection.find().then(async (e) => {
       for (let i = 0; e.length > i; i++) {
         const channelid = e[i].channels?.updatesCS;
 

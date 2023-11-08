@@ -6,7 +6,7 @@
 
 import { ModalSubmitInteraction, codeBlock, ChannelType } from "discord.js";
 import { BEmbed } from "../../components/discord/Embed";
-import { defaultGuildConfig } from "../../schematicas/Schematica";
+import { GuildCollection } from "../../schematicas/Schematica";
 import { AstraLuna } from "../../Client";
 
 export class Modals {
@@ -56,7 +56,7 @@ export class Modals {
 
   async findSugestãoChannel() {
     const data = await Promise.resolve(
-      defaultGuildConfig.findOne({
+      GuildCollection.findOne({
         GuildId: this.interaction.guildId,
       })
     );
@@ -102,7 +102,7 @@ export class Modals {
   }
   async findFeedbackChannel() {
     const data = await Promise.resolve(
-      defaultGuildConfig.findOne({
+      GuildCollection.findOne({
         GuildId: this.interaction.guildId,
       })
     );

@@ -5,20 +5,14 @@ const guildStuff = new Schema({
   userId: String,
   maxWarnLevels: {
     type: Number,
-    default: 4
+    default: 4,
   },
   perWarnPunishment: [
     {
       warnLevel: Number,
       punishmentType: Number,
-    }
-  ],
-  xpAlertConfig: {
-    message: {
-      type: String,
-      default: "O usuário {@user} avançou para o nível {@level}!",
     },
-  },
+  ],
   Users: [
     {
       userId: String,
@@ -47,8 +41,6 @@ const guildStuff = new Schema({
   ],
 });
 
-const defaultGuildConfig = model("guildStuff", guildStuff);
-
 const Rep = new Schema({
   UserId: String,
   createdAt: Date,
@@ -66,13 +58,14 @@ const Rep = new Schema({
     default: 0,
   },
 });
-const RepSchem = model("Rep", Rep);
 
 const shadowBan = new Schema({
   userId: String,
   GuildId: String,
 });
 
-const shadowBanSchema = model("blacklist", shadowBan);
+const RepCollection = model("reputation", Rep);
+const GuildCollection = model("guild", guildStuff);
+const BlacklistCollection = model("blacklist", shadowBan);
 
-export { defaultGuildConfig, RepSchem, shadowBanSchema };
+export { RepCollection, GuildCollection, BlacklistCollection };

@@ -117,6 +117,11 @@ export class XPUser extends XPSystem {
           .get(this.mensagem.author.id)
           ?.roles.remove(userRole);
 
+      if (userRole && !user)
+        this.mensagem.guild?.members.cache
+          .get(this.mensagem.author.id)
+          ?.roles.remove(userRole);
+
       if (userRole && user.Level >= r.level)
         this.mensagem.guild?.members.cache
           .get(this.mensagem.author.id)

@@ -8,7 +8,7 @@ import {
 import { Command } from "../command";
 import { AstraLuna } from "../Client";
 import { BEmbed } from "../components/discord/Embed";
-import { RepSchem, shadowBanSchema } from "../schematicas/Schematica";
+import { RepCollection, BlacklistCollection } from "../schematicas/Schematica";
 
 class Reputation implements Command {
   public data: SlashCommandBuilder = new SlashCommandBuilder();
@@ -186,7 +186,7 @@ class Reputation implements Command {
       });
 
     const usuário = this.interaction.options.getUser("usuário");
-    await shadowBanSchema.create({
+    await BlacklistCollection.create({
       userId: usuário?.id,
       GuildId: this.interaction.guildId,
     });
@@ -207,7 +207,7 @@ class Reputation implements Command {
         content: "Você não tem permissão para isso.",
       });
 
-    const searchBan = await shadowBanSchema.findOne({
+    const searchBan = await BlacklistCollection.findOne({
       userId: this.user?.id,
       GuildId: this.interaction.guildId,
     });
@@ -216,7 +216,7 @@ class Reputation implements Command {
         content: "Esse usuário não está na blacklist!",
       });
     if (searchBan) {
-      await shadowBanSchema.deleteOne({
+      await BlacklistCollection.deleteOne({
         userId: this.user?.id,
         GuildId: this.interaction.guildId,
       });
@@ -225,7 +225,7 @@ class Reputation implements Command {
       });
     }
 
-    const shadowban = await shadowBanSchema.findOne({
+    const shadowban = await BlacklistCollection.findOne({
       GuildId: this.interaction.guildId,
       userId: this.interaction.user.id,
     });
@@ -265,7 +265,7 @@ class Reputation implements Command {
     if (!validate)
       return this.interaction.editReply({ content: "Operação inválida." });
 
-    await RepSchem.findOneAndUpdate(
+    await RepCollection.findOneAndUpdate(
       { UserId: this.user?.id },
       {
         $push: {
@@ -316,7 +316,7 @@ class Reputation implements Command {
       return this.interaction.editReply({ content: "Operação inválida." });
 
     const currentTimestamp = Date.now();
-    const index = await RepSchem.findOne({ UserId: this.user?.id });
+    const index = await RepCollection.findOne({ UserId: this.user?.id });
     if (!index) return;
 
     const negativeReviews = index.Comments.filter(
@@ -332,7 +332,7 @@ class Reputation implements Command {
         this.softbannedUsers.set(this.interaction.user.id, softbanExpiration);
     }
 
-    await RepSchem.findOneAndUpdate(
+    await RepCollection.findOneAndUpdate(
       { UserId: this.user?.id },
       {
         $push: {
@@ -381,7 +381,7 @@ class Reputation implements Command {
     const validate = this.validateOperation();
     if (!validate)
       return this.interaction.editReply({ content: "Operação inválida." });
-    const index = await RepSchem.findOne({ UserId: this.user?.id });
+    const index = await RepCollection.findOne({ UserId: this.user?.id });
     if (!index) {
       return this.interaction.editReply({
         content: "[❌] Este usuário não tem reputação alguma.",

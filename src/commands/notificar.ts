@@ -11,7 +11,7 @@ import {
 import { AstraLuna } from "../Client";
 import { Command } from "../command";
 import { BEmbed } from "../components/discord/Embed";
-import { defaultGuildConfig } from "../schematicas/Schematica";
+import { GuildCollection } from "../schematicas/Schematica";
 
 class Notify implements Command {
   client: AstraLuna | null = null;
@@ -82,7 +82,7 @@ class Notify implements Command {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
 
-    await defaultGuildConfig.findOneAndUpdate(
+    await GuildCollection.findOneAndUpdate(
       { GuildId: this.interaction.guildId },
       {
         GuildId: this.interaction.guildId,
@@ -118,7 +118,7 @@ class Notify implements Command {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
 
-    await defaultGuildConfig.findOneAndUpdate(
+    await GuildCollection.findOneAndUpdate(
       { GuildId: this.interaction.guildId },
       {
         GuildId: this.interaction.guildId,
