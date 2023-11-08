@@ -93,7 +93,7 @@ class XPCommand implements Command {
           "Cargos com o nome de @everyone são desabilitados por motivos de segurança.",
       });
 
-      GuildCollection.findOneAndUpdate(
+    await GuildCollection.findOneAndUpdate(
       { GuildId: this.interaction.guildId },
       { $push: { XPRoles: { role: role?.id, level: level } } },
       { upsert: true }
@@ -118,7 +118,7 @@ class XPCommand implements Command {
         content: "[❌] Sem permissão.",
       });
 
-      GuildCollection.findOneAndUpdate(
+   await GuildCollection.findOneAndUpdate(
       { GuildId: this.interaction.guildId },
       { $pull: { XPRoles: { role: role?.id } } },
       { upsert: true }
