@@ -1,7 +1,7 @@
 import { AstraLuna } from "../../client";
 import { ColorResolvable, REST } from "discord.js";
 import { BEmbed } from "../discord/Embed";
-import { GuildCollection } from "../../schematicas/Schematica";
+import { GuildCollection } from "../../schematicas/schematica";
 import { AstraEvents } from "./astraEvents";
 import { Cache } from "./astraCache";
 

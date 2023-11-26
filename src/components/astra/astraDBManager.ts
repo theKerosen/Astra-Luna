@@ -1,4 +1,4 @@
-import { GuildCollection } from "../../schematicas/Schematica";
+import { GuildCollection } from "../../schematicas/schematica";
 
 export class GuildDatabases {
   public guild_id: string | null;
