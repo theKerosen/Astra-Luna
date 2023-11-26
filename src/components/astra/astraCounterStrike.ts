@@ -1,7 +1,7 @@
 import { AstraLuna } from "../../client";
-import { REST } from "discord.js";
+import { ColorResolvable, REST } from "discord.js";
 import { BEmbed } from "../discord/Embed";
-import { GuildCollection } from "../../schematicas/schematica";
+import { GuildCollection } from "../../schematicas/Schematica";
 import { AstraEvents } from "./astraEvents";
 import { Cache } from "./astraCache";
 
@@ -49,6 +49,20 @@ export class StatusCS extends AstraEvents {
     this.setMaxListeners(12);
   }
 
+  sendStatusMessage(event: string, status: string, color: ColorResolvable) {
+    this.cache.put(event, status);
+
+    if (this.cache.get(event) === status) {
+      Promise.resolve(
+        this.channel.send(
+          this.sessionEmbed
+            .setDescription(`O ${event} do Counter-Strike está ${status}.`)
+            .setColor(color)
+        )
+      );
+    }
+  }
+
   async checkAll() {
     this.checkSessions();
     this.checkCommunity();
@@ -56,173 +70,63 @@ export class StatusCS extends AstraEvents {
   }
 
   private checkSessions() {
-    this.once("sessionsNormal", () => {
-      this.cache.put("sessions", 0);
+    [
+      "sessionsNormal",
+      "sessionsDelayed",
+      "sessionsSurge",
+      "sessionsOffline",
+    ].forEach((event) => {
+      const status =
+        {
+          sessionsNormal: "online",
+          sessionsDelayed: "lento",
+          sessionsSurge: "extremamente lento",
+          sessionsOffline: "offline",
+        }[event] ?? "???";
 
-      if (this.cache.get("sessions") === 0)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription("As sessões do Counter-Strike estão online.")
-              .setColor("Green")
-          )
-        );
-    });
-
-    this.once("sessionsDelayed", () => {
-      this.cache.put("sessions", 1);
-
-      if (this.cache.get("sessions") === 1)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription("As sessões do Counter-Strike estão lentas.")
-              .setColor("Yellow")
-          )
-        );
-    });
-
-    this.once("sessionsSurge", () => {
-      this.cache.put("sessions", 2);
-
-      if (this.cache.get("sessions") === 2)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription(
-                "As sessões do Counter-Strike estão extremamente lentas."
-              )
-              .setColor("Red")
-          )
-        );
-    });
-
-    this.once("sessionsOffline", () => {
-      this.cache.put("sessions", 3);
-
-      if (this.cache.get("sessions") === 3)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription("As sessões do Counter-Strike estão offline.")
-              .setColor("Grey")
-          )
-        );
+      this.once(event, () => this.sendStatusMessage(event, status, "Green"));
     });
 
     return this;
   }
 
   private checkCommunity() {
-    this.once("communityNormal", () => {
-      this.cache.put("community", 0);
+    [
+      "communityNormal",
+      "communityDelayed",
+      "communitySurge",
+      "communityOffline",
+    ].forEach((event) => {
+      const status =
+        {
+          communityNormal: "online",
+          communityDelayed: "lento",
+          communitySurge: "extremamente lento",
+          communityOffline: "offline",
+        }[event] ?? "???";
 
-      if (this.cache.get("community") === 0)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription("A comunidade do Counter-Strike está online.")
-              .setColor("Green")
-          )
-        );
-    });
-
-    this.once("communityDelayed", () => {
-      this.cache.put("community", 1);
-
-      if (this.cache.get("community") === 1)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription("A comunidade do Counter-Strike está lentas.")
-              .setColor("Yellow")
-          )
-        );
-    });
-
-    this.once("communitySurge", () => {
-      this.cache.put("community", 2);
-
-      if (this.cache.get("community") === 2)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription(
-                "A comunidade do Counter-Strike está extremamente lentas."
-              )
-              .setColor("Red")
-          )
-        );
-    });
-
-    this.once("communityOffline", () => {
-      this.cache.put("community", 3);
-
-      if (this.cache.get("community") === 3)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription("A comunidade do Counter-Strike está offline.")
-              .setColor("Grey")
-          )
-        );
+      this.once(event, () => this.sendStatusMessage(event, status, "Green"));
     });
 
     return this;
   }
 
   private async checkMatchmaker() {
-    this.once("matchmakerNormal", () => {
-      this.cache.put("matchmaker", 0);
+    [
+      "matchmakerNormal",
+      "matchmakerDelayed",
+      "matchmakerSurge",
+      "matchmakerOffline",
+    ].forEach((event) => {
+      const status =
+        {
+          matchmakerNormal: "online",
+          matchmakerDelayed: "lento",
+          matchmakerSurge: "extremamente lento",
+          matchmakerOffline: "offline",
+        }[event] ?? "???";
 
-      if (this.cache.get("matchmaker") === 0)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription("O Matchmaker do Counter-Strike está online.")
-              .setColor("Green")
-          )
-        );
-    });
-
-    this.once("matchmakerDelayed", () => {
-      this.cache.put("matchmaker", 1);
-
-      if (this.cache.get("matchmaker") === 1)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription("O Matchmaker do Counter-Strike está lentas.")
-              .setColor("Yellow")
-          )
-        );
-    });
-
-    this.once("matchmakerSurge", () => {
-      this.cache.put("matchmaker", 2);
-
-      if (this.cache.get("matchmaker") === 2)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription(
-                "O Matchmaker do Counter-Strike está extremamente lentas."
-              )
-              .setColor("Red")
-          )
-        );
-    });
-
-    this.once("matchmakerOffline", () => {
-      this.cache.put("matchmaker", 3);
-      if (this.cache.get("matchmaker") === 3)
-        Promise.resolve(
-          this.channel.send(
-            this.sessionEmbed
-              .setDescription("O Matchmaker do Counter-Strike está offline.")
-              .setColor("Grey")
-          )
-        );
+      this.once(event, () => this.sendStatusMessage(event, status, "Green"));
     });
 
     return this;

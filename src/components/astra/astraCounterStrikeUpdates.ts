@@ -10,7 +10,7 @@
 import axios, { AxiosError } from "axios";
 import fs from "fs";
 import { BEmbed } from "../discord/Embed";
-import { GuildCollection } from "../../schematicas/schematica";
+import { GuildCollection } from "../../schematicas/Schematica";
 import { REST } from "discord.js";
 import { AstraLuna } from "../../client";
 import root from "app-root-path";

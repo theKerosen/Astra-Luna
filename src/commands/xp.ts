@@ -6,7 +6,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { AstraLuna } from "../client";
-import { GuildCollection } from "../schematicas/schematica";
+import { GuildCollection } from "../schematicas/Schematica";
 import { DisplayInformation } from "../components/astra/astraXP";
 import { Command } from "../command";
 
