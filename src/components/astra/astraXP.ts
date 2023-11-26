@@ -1,22 +1,19 @@
-import { ChatInputCommandInteraction, Message } from "discord.js";
-import { AstraLuna } from "../../Client";
-import { ClientInteraction } from "./events";
+import { ChatInputCommandInteraction, Interaction, Message } from "discord.js";
 import { Canvas, loadFont, loadImage } from "canvas-constructor/napi-rs";
 import { request } from "undici";
 import root from "app-root-path";
-import { GuildDatabases } from "./dbManager";
+import { GuildDatabases } from "./astraDBManager";
 
 interface Roles {
   role: string;
   level: number;
 }
 
-export class Mensagem extends AstraLuna {
+export class Mensagem {
   public mensagem: Message;
   public db: GuildDatabases;
 
   constructor(mensagem: Message) {
-    super();
     this.mensagem = mensagem;
     this.db = new GuildDatabases({ guild_id: this.mensagem.guildId });
   }
@@ -33,8 +30,7 @@ export class XPSystem extends Mensagem {
     if (this.mensagem.content.length < 5) return false;
     if (this.mensagem.content.search(/(\p{Lu}{2,})/g) === 0) return false;
     if (this.mensagem.content.search(/(\w{2,})+(\w*)\1/g) === 0) return false;
-    if (Date.now() - parseInt(user?.cooldown.toDateString()) >= 150000)
-      return false;
+    if (Date.now() - parseInt(user?.cooldown) >= 150000) return false;
 
     return true;
   }
@@ -47,10 +43,10 @@ class CalculateStuff extends GuildDatabases {
   async calculateLevel(id: string, minusXP: true | undefined = undefined) {
     const user = await this.validateUser(id);
 
-    const level = user.Level + 1;
+    const level = user.xp.level ?? 0 + 1;
     const levelUp =
       (5 / 6) * level * (2 * level ** 2 + 27 * level + 91) -
-      (minusXP ? user.XP : 0);
+      (minusXP ? user.xp.user_xp : 0);
     return levelUp;
   }
 }
@@ -76,10 +72,12 @@ export class XPUser extends XPSystem {
     if (isValid) {
       await data.updateOne(
         {
-          $inc: { ["Users.$[outer].XP"]: 20 },
-          ["Users.$[outer].cooldown"]: Date.now(),
+          $inc: {
+            [`guild_users.$[outer].xp.user_xp`]: 20,
+          },
+          ["guild_users.$[outer].xp.cooldown"]: Date.now(),
         },
-        { arrayFilters: [{ "outer.userId": this.mensagem.author.id }] }
+        { arrayFilters: [{ "outer.user_id": this.mensagem.author.id }] }
       );
     }
   }
@@ -92,12 +90,12 @@ export class XPUser extends XPSystem {
     );
 
     if (level <= 0) {
-      await data.updateOne(
+      data.updateOne(
         {
-          $inc: { ["Users.$[outer].Level"]: 1 },
-          ["Users.$[outer].cooldown"]: Date.now(),
+          $inc: { ["guild_users.$[outer].xp.level"]: 1 },
+          ["guild_users.$[outer].xp.cooldown"]: Date.now(),
         },
-        { arrayFilters: [{ "outer.userId": this.mensagem.author.id }] }
+        { arrayFilters: [{ "outer.user_id": this.mensagem.author.id }] }
       );
     }
   }
@@ -107,7 +105,7 @@ export class XPUser extends XPSystem {
 
     const user = await this.db.validateUser(this.mensagem.author.id);
 
-    const xpRoles = data.XPRoles as Roles[];
+    const xpRoles = data.settings?.xp_settings?.xp_roles as Roles[];
 
     xpRoles.forEach((r) => {
       const userRole = this.mensagem.member?.guild.roles.cache.get(r.role);
@@ -130,16 +128,14 @@ export class XPUser extends XPSystem {
   }
 }
 
-export class DisplayInformation extends ClientInteraction {
+export class DisplayInformation {
   public calculateStuff: CalculateStuff;
-  public userRoles: Roles[] = [];
+  public db: GuildDatabases;
+  public interaction: Interaction;
 
-  constructor(options: {
-    client: AstraLuna;
-    interaction: ChatInputCommandInteraction;
-  }) {
-    super({ client: options.client, interaction: options.interaction });
-    this.interaction = options.interaction;
+  constructor(interaction: ChatInputCommandInteraction) {
+    this.interaction = interaction;
+    this.db = new GuildDatabases({ guild_id: this.interaction.guildId });
     this.calculateStuff = new CalculateStuff(
       this.interaction.guildId as string
     );
@@ -152,18 +148,6 @@ export class DisplayInformation extends ClientInteraction {
     const level = await this.calculateStuff.calculateLevel(id);
 
     const discordUser = await this.interaction.client.users.fetch(id);
-    const xpRoles = guild.XPRoles as Roles[];
-
-    for (let i = 0; xpRoles.length > i; i++) {
-      await this.interaction.guild?.members.fetch(id).then((member) => {
-        const getUserRoles = member.roles.cache.get(xpRoles[i].role);
-
-        if (getUserRoles && getUserRoles.id === xpRoles[i].role) {
-          this.userRoles.push(xpRoles[i]);
-          this.userRoles.sort((a, b) => b.level - a.level);
-        }
-      });
-    }
 
     const image = await loadImage(
       "https://cdn.discordapp.com/attachments/943547363031670785/1136447824083570728/Untitled-1.png"
@@ -199,16 +183,21 @@ export class DisplayInformation extends ClientInteraction {
       .printText("XP", 537, 224, 100)
       .setColor("#7289da")
 
-      .printStrokeText(`Lv.${user.Level}`, 250, 224, 100)
-      .printText(`Lv.${user.Level}`, 250, 224, 100)
+      .printStrokeText(`Lv.${user.xp.level}`, 250, 224, 100)
+      .printText(`Lv.${user.xp.level}`, 250, 224, 100)
 
       .printStrokeText(
-        `${Math.floor(user.XP)}/${Math.floor(level)}`,
+        `${Math.floor(user.xp.user_xp)}/${Math.floor(level)}`,
         572,
         224,
         115
       )
-      .printText(`${Math.floor(user.XP)}/${Math.floor(level)}`, 572, 224, 115)
+      .printText(
+        `${Math.floor(user.xp.user_xp)}/${Math.floor(level)}`,
+        572,
+        224,
+        115
+      )
       .setTextFont("30px MontSemi")
       .printStrokeText(
         this.interaction.guild?.name.toUpperCase() ?? "Sem nome",
@@ -224,13 +213,13 @@ export class DisplayInformation extends ClientInteraction {
       )
 
       .printStrokeText(
-        `#${guild.Users.findIndex((e) => e.userId === id) + 1}`,
+        `#${guild.guild_users.findIndex((e) => e.user_id === id) + 1}`,
         620,
         170,
         65
       )
       .printText(
-        `#${guild.Users.findIndex((e) => e.userId === id) + 1}`,
+        `#${guild.guild_users.findIndex((e) => e.user_id === id) + 1}`,
         620,
         170,
         65
@@ -238,10 +227,20 @@ export class DisplayInformation extends ClientInteraction {
 
       .setColor("#7289da")
       .setGlobalAlpha(1.0)
-      .printRectangle(256, 188, 407 * (((user.XP / level) * 100) / 100), 11)
+      .printRectangle(
+        256,
+        188,
+        407 * (((user.xp.user_xp / level) * 100) / 100),
+        11
+      )
       .setColor("#000000")
       .setTextFont("15px MontSemi")
-      .printText(`${Math.round((user.XP / level) * 100)}%`, 434, 199, 65)
+      .printText(
+        `${Math.round((user.xp.user_xp / level) * 100)}%`,
+        434,
+        199,
+        65
+      )
       .pngAsync();
   }
 }

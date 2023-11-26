@@ -10,9 +10,9 @@
 import axios, { AxiosError } from "axios";
 import fs from "fs";
 import { BEmbed } from "../discord/Embed";
-import { GuildCollection } from "../../schematicas/Schematica";
+import { GuildCollection } from "../../schematicas/schematica";
 import { REST } from "discord.js";
-import { AstraLuna } from "../../Client";
+import { AstraLuna } from "../../client";
 import root from "app-root-path";
 
 interface Config {
@@ -40,14 +40,10 @@ export class Rastreador extends AstraLuna {
       .setColor("DarkGold")
       .setThumbnail(this.img);
 
-      GuildCollection.find().then(async (e) => {
+    GuildCollection.find().then(async (e) => {
       for (let i = 0; e.length > i; i++) {
-        const channelid = e[i].channels?.updatesCS;
-
-        //Can't use ChannelManager#fetch() here...
-        //Likely a bug in the Discord.js Library, or the Discord API.
-        //The API returns some error saying that the REST API didn't send the client's TOKEN,
-        //So we doing this thing the weird way.
+        const channelid =
+          e[i].settings?.notification_settings?.counterstrike_updates;
 
         const rest = new REST({ version: "10" }).setToken(
           process.env.TOKEN ?? ""

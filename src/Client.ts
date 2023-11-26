@@ -17,6 +17,5 @@ export class AstraLuna extends Client {
   async mongoConnect() {
     set("strictQuery", true);
     await connect(process.env.MONGO_URI ?? "");
-    return console.log("[Astra Luna] -> Conexão com Mongoose iniciada.");
   }
 }

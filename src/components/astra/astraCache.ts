@@ -1,8 +1,4 @@
-import { AstraDebugger } from "./Debugger";
-
 export class Cache {
-  private debugger: AstraDebugger = new AstraDebugger(process.stdout);
-
   cache: {
     [key: string]: {
       value: unknown;
@@ -11,8 +7,6 @@ export class Cache {
   } = {};
 
   put(k: string, v: unknown, ttl?: number) {
-    this.debug();
-
     if (!ttl) {
       this.cache[k] = {
         value: v,
@@ -25,13 +19,12 @@ export class Cache {
       value: v,
       expireDate: Date.now() + ttl * 1000,
     };
+    return this;
   }
 
   get(k: string) {
     const cacheExpire = this.cache[k].expireDate;
     const cacheValue = this.cache[k].value;
-
-    this.debug();
 
     if (!cacheExpire) return this.cache[k]?.value;
 
@@ -47,9 +40,5 @@ export class Cache {
     if (!cacheExpire) return undefined;
 
     return Math.max(cacheExpire - Date.now(), 0);
-  }
-
-  debug() {
-     this.debugger.attach("CACHE", this.cache, 1);
   }
 }

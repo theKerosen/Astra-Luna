@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
-import { AstraLuna } from "./Client";
+import { AstraLuna } from "./client";
 
 export interface Command {
   data: SlashCommandBuilder;

@@ -3,9 +3,9 @@ import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
-import { AstraLuna } from "../Client";
+import { AstraLuna } from "../client";
 import { Command } from "../command";
-import { WarnSystem, warnTypes } from "../components/astra/warn";
+import { WarnSystem, warnTypes } from "../components/astra/astraWarn";
 
 class Warn implements Command {
   client: AstraLuna | null = null;
@@ -99,10 +99,7 @@ class Warn implements Command {
     if (!this.interaction || !this.client)
       throw console.log("NO INTERACTION/CLIENT!");
 
-    this.warnSystem = new WarnSystem({
-      client: this.client,
-      interaction: this.interaction,
-    });
+    this.warnSystem = new WarnSystem(this.interaction);
 
     return this;
   }

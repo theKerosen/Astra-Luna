@@ -6,17 +6,16 @@ import {
   User,
 } from "discord.js";
 import { Command } from "../command";
-import { AstraLuna } from "../Client";
+import { AstraLuna } from "../client";
 import { BEmbed } from "../components/discord/Embed";
-import { RepCollection, BlacklistCollection } from "../schematicas/Schematica";
-
+import { GuildDatabases } from "../components/astra/astraDBManager";
 class Reputation implements Command {
   public data: SlashCommandBuilder = new SlashCommandBuilder();
-  public softbannedUsers = new Map();
   public interaction: ChatInputCommandInteraction | null = null;
   public client: AstraLuna | null = null;
   private comment: string | null = null;
   private user: User | null = null;
+  private database: GuildDatabases | null = null;
 
   constructor() {
     this.data
@@ -106,12 +105,20 @@ class Reputation implements Command {
     return this;
   }
 
-  permissionCheck() {
+  setDatabase() {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
+    this.database = new GuildDatabases({ guild_id: this.interaction?.guildId });
+  }
 
-    const Guild = this.client.guilds.cache.get(this.interaction.guildId ?? "");
-    const User = Guild?.members.cache.get(this.interaction.user.id);
+  permissionCheck() {
+    if (!this.interaction || !this.client) {
+      return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
+    }
+
+    const User = this.interaction.guild?.members.cache.get(
+      this.interaction.user.id
+    );
     if (!User?.permissions.has(PermissionFlagsBits.Administrator)) return false;
     return true;
   }
@@ -186,14 +193,17 @@ class Reputation implements Command {
       });
 
     const usuário = this.interaction.options.getUser("usuário");
-    await BlacklistCollection.create({
-      userId: usuário?.id,
-      GuildId: this.interaction.guildId,
-    });
+
+    const db = await this.database?.find();
+    db?.updateOne(
+      { $set: { ["guild_users.$[outer].banned"]: true } },
+      { arrayFilters: [{ "outer.user_id": usuário?.id }] }
+    );
+
     return await this.interaction.editReply({
       content: `O usuário ${
         usuário?.globalName ? usuário.globalName : usuário?.username
-      } foi adicionado na lista negra!`,
+      } foi permanentemente banido de utilizar esse BOT dentro do servidor.`,
     });
   }
 
@@ -207,44 +217,21 @@ class Reputation implements Command {
         content: "Você não tem permissão para isso.",
       });
 
-    const searchBan = await BlacklistCollection.findOne({
-      userId: this.user?.id,
-      GuildId: this.interaction.guildId,
-    });
-    if (!searchBan)
+    const db = await this.database?.find();
+
+    const ban = db?.get(`guild_users.${this.user?.id}.banned`);
+
+    if (!ban) {
       return await this.interaction.editReply({
         content: "Esse usuário não está na blacklist!",
       });
-    if (searchBan) {
-      await BlacklistCollection.deleteOne({
-        userId: this.user?.id,
-        GuildId: this.interaction.guildId,
-      });
-      return await this.interaction.editReply({
-        content: "Usuário desbanido com sucesso.",
-      });
     }
 
-    const shadowban = await BlacklistCollection.findOne({
-      GuildId: this.interaction.guildId,
-      userId: this.interaction.user.id,
+    db?.set(`guild_users.${this.user?.id}.banned`, false);
+
+    return await this.interaction.editReply({
+      content: "Usuário desbanido com sucesso.",
     });
-    if (shadowban)
-      return await this.interaction.editReply({
-        content:
-          "[❌] Você está permanentemente banido de usar o sistema de reputações.",
-      });
-    if (
-      this.softbannedUsers.has(this.interaction.user.id) &&
-      this.softbannedUsers.get(this.interaction.user.id) > Date.now()
-    ) {
-      const remainingTime = Math.ceil(
-        (this.softbannedUsers.get(this.interaction.user.id) - Date.now()) / 1000
-      );
-      return await this.interaction.editReply({
-        content: `[❌] Você está sendo limitado de usar o sistema de Reputação. Aguarde ${remainingTime} segundos.`,
-      });
-    }
   }
 
   validateOperation() {
@@ -262,34 +249,39 @@ class Reputation implements Command {
     await this.interaction.deferReply();
 
     const validate = this.validateOperation();
-    if (!validate)
+    if (!validate) {
       return this.interaction.editReply({ content: "Operação inválida." });
+    }
 
-    await RepCollection.findOneAndUpdate(
-      { UserId: this.user?.id },
+    const db = await this.database?.find();
+
+    const upda = db?.updateOne(
       {
         $push: {
-          Comments: {
+          "guild_users.$[outer].reputation.comments": {
             $each: [
               {
-                userId: this.interaction.user.id,
+                user_id: this.interaction.user.id,
                 comment: this.comment,
-                createdAt: new Date(),
-                isPositive: true,
+                created_at: new Date(),
+                positive: true,
               },
             ],
             $sort: {
-              createdAt: -1,
+              created_at: -1,
             },
           },
         },
         $inc: {
-          goodRep: 1,
+          "guild_users.$[outer].reputation.good_reps": 1,
         },
       },
-      { upsert: true }
+      {
+        upsert: true,
+        arrayFilters: [{ "outer.user_id": this.user?.id }],
+      }
     );
-
+    console.log(upda);
     const embed = new BEmbed()
       .setAuthor({
         name: `${this.user?.globalName}🤝${this.interaction.user.globalName}`,
@@ -301,7 +293,6 @@ class Reputation implements Command {
 
     await this.interaction.editReply({
       embeds: [embed],
-      content: `<@${this.user?.id}>`,
     });
   }
 
@@ -315,46 +306,39 @@ class Reputation implements Command {
     if (!validate)
       return this.interaction.editReply({ content: "Operação inválida." });
 
-    const currentTimestamp = Date.now();
-    const index = await RepCollection.findOne({ UserId: this.user?.id });
-    if (!index) return;
+    const db = await this.database?.find();
 
-    const negativeReviews = index.Comments.filter(
-      (comment: { isPositive: boolean; createdAt: number; userId: string }) =>
-        !comment.isPositive &&
-        comment.userId === this.interaction?.user.id &&
-        comment.createdAt >= currentTimestamp - 3600000 &&
-        comment.createdAt <= currentTimestamp
-    );
-    if (negativeReviews.length >= 2) {
-      const softbanExpiration = Date.now() + 3600000;
-      if (!this.softbannedUsers.has(this.interaction.user.id))
-        this.softbannedUsers.set(this.interaction.user.id, softbanExpiration);
-    }
+    const dbUser = db?.get(`guild_users.$[outer].reputation.bad_reps`);
+    if (!dbUser)
+      return this.interaction.editReply({
+        content: "[❌] Este usuário não tem reputação alguma.",
+      });
 
-    await RepCollection.findOneAndUpdate(
-      { UserId: this.user?.id },
+    db?.updateOne(
       {
         $push: {
-          Comments: {
+          "guild_users.$[outer].reputation.comments": {
             $each: [
               {
-                userId: this.interaction.user.id,
+                user_id: this.interaction.user.id,
                 comment: this.comment,
-                createdAt: new Date(),
-                isPositive: false,
+                created_at: new Date(),
+                positive: true,
               },
             ],
             $sort: {
-              createdAt: -1,
+              created_at: -1,
             },
           },
         },
         $inc: {
-          badRep: 1,
+          "guild_users.$[outer].reputation.bad_reps": 1,
         },
       },
-      { upsert: true }
+      {
+        upsert: true,
+        arrayFilters: [{ "outer.user_id": this.user?.id }],
+      }
     );
 
     const embed = new BEmbed()
@@ -368,7 +352,6 @@ class Reputation implements Command {
 
     await this.interaction.editReply({
       embeds: [embed],
-      content: `<@${this.user?.id}>`,
     });
   }
 
@@ -379,17 +362,22 @@ class Reputation implements Command {
     await this.interaction.deferReply();
 
     const validate = this.validateOperation();
-    if (!validate)
+
+    if (!validate) {
       return this.interaction.editReply({ content: "Operação inválida." });
-    const index = await RepCollection.findOne({ UserId: this.user?.id });
-    if (!index) {
+    }
+
+    const db = await this.database?.find();
+
+    const dbUser = db?.get(`guild_users.$[outer].reputation`);
+    if (!dbUser) {
       return this.interaction.editReply({
         content: "[❌] Este usuário não tem reputação alguma.",
       });
     }
 
     const trustPercentage =
-      (index.goodRep / (index.goodRep + index.badRep)) * 100;
+      (dbUser.good_reps / (dbUser.good_reps + dbUser.bad_Reps)) * 100;
 
     const confidenceLevels = [
       { range: [0, 20], level: "⚠️ Muito Baixa ⚠️" },
@@ -407,24 +395,24 @@ class Reputation implements Command {
     const embed = new BEmbed()
       .setAuthor({ name: this.user?.globalName ?? "Sem nick" })
       .setDescription(
-        `✅ ${index.goodRep} Reputações boa(s)\n❌ ${
-          index.badRep
+        `✅ ${dbUser.good_reps} Reputações boa(s)\n❌ ${
+          dbUser.bad_Reps
         } Reputações ruim(s)\n📜 ${
-          index.Comments.length
+          dbUser.comments.length
         } comentário(s)\n❓ ${trustPercentage.toFixed(
           2
         )}% (${trustLevel?.level}).`
       )
       .setColor("Blurple");
 
-    for (const comment of index.Comments.slice(0, 5)) {
+    for (const comment of dbUser.comments.slice(0, 5)) {
       const fetchUser = await this.interaction.client?.users.fetch(
-        comment.userId
+        comment.user_id
       );
 
       embed.addFields({
         name: fetchUser?.globalName ?? "Sem nick",
-        value: `> \`${comment.isPositive ? "✅" : "❌"} ${comment.comment}\``,
+        value: `> \`${comment.positive ? "✅" : "❌"} ${comment.comment}\``,
         inline: true,
       });
     }

@@ -1,6 +1,12 @@
 <h1>Notas de atualização</h1>
 
 <div>
+<h2>8.1.0</h2>
+</div>
+<ul> 
+Um update imenso para o Astra Luna.
+</ul>
+<div>
 <h2>8.0.5</h2>
 </div>
 
