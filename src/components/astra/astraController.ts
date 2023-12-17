@@ -7,6 +7,7 @@ import { schedule } from "node-cron";
 import { Rastreador } from "./astraCounterStrikeUpdates";
 import { StatusCS } from "./astraCounterStrike";
 import { AutoRole } from "./astraAutoRole";
+import { AstraEvents } from "./astraEvents";
 
 export class AHandler extends AstraLuna {
   public i_handler: BaseHandler;
@@ -107,6 +108,7 @@ export class AController extends AstraLuna {
   p_Misc() {
     this.event.emit("aMiscBoot");
     schedule("*/50 * * * * *", () => {
+      new AstraEvents().status();
       new StatusCS().checkAll();
       new Rastreador(10).rastrearIdentificador();
     });
