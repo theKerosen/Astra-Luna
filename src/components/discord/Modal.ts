@@ -33,8 +33,15 @@ export class TextInputBuilding
       .setRequired(Input.required);
   }
 }
-export class ActionAdd extends ActionRowBuilder<TextInputBuilder> {}
+
 export class ModalBuilding extends ModalBuilder {
+  private ActionAdd: ActionRowBuilder<TextInputBuilder>;
+
+  constructor() {
+    super();
+    this.ActionAdd = new ActionRowBuilder();
+  }
+  
   addText(Modal: {
     custom_id: string;
     label: string;
@@ -45,7 +52,7 @@ export class ModalBuilding extends ModalBuilder {
     required?: boolean;
   }) {
     return super.addComponents(
-      new ActionAdd().addComponents(
+      this.ActionAdd.addComponents(
         new TextInputBuilding().setInput({
           custom_id: Modal.custom_id,
           label: Modal.label,
@@ -59,6 +66,7 @@ export class ModalBuilding extends ModalBuilder {
     );
   }
 }
+
 export class BModal extends ActionRowBuilder<ModalActionRowComponentBuilder> {
   createModal(Modal: { custom_id: string; title: string }) {
     return new ModalBuilding()

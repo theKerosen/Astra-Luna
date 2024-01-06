@@ -5,9 +5,14 @@ import {
   ComponentEmojiResolvable,
 } from "discord.js";
 
-class ButtonBuilding extends ButtonBuilder { }
-
 export class BButton extends ActionRowBuilder<ButtonBuilder> {
+  private button: ButtonBuilder;
+
+  constructor() {
+    super();
+    this.button = new ButtonBuilder();
+  }
+
   addButton(ButtonStuff: {
     customId: string;
     label?: string;
@@ -15,12 +20,12 @@ export class BButton extends ActionRowBuilder<ButtonBuilder> {
     disabled?: boolean;
     emoji?: ComponentEmojiResolvable;
   }) {
-    const Button = new ButtonBuilding()
+    this.button
       .setCustomId(ButtonStuff?.customId)
       .setDisabled(ButtonStuff?.disabled ?? false)
-      .setLabel(ButtonStuff?.label ?? "​")
+      .setLabel(ButtonStuff?.label ?? "\u200b")
       .setStyle(ButtonStuff.style ?? ButtonStyle.Primary);
-    if (ButtonStuff.emoji) Button.setEmoji(ButtonStuff.emoji);
-    return super.addComponents(Button);
+    if (ButtonStuff.emoji) this.button.setEmoji(ButtonStuff.emoji);
+    return super.addComponents(this.button);
   }
 }
