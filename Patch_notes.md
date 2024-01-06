@@ -1,6 +1,22 @@
 <h1>Notas de atualização</h1>
 
 <div>
+<h2>8.1.0</h2>
+</div>
+<ul> 
+Um update imenso para o Astra Luna.
+</ul>
+<div>
+<h2>8.0.5</h2>
+</div>
+
+<div>
+<h2>8.0.4 — Remake</h2>
+</div>
+<ul> 
+Nesta nova versão, estou criando um sistema de "avisos" (que não está pronto) altamente configurável, onde administradores poderão definir uma quantidade máxima de avisos para usuários e cada punição para X avisos em um usuário. NO MOMENTO o sistema de avisos não está pronto, regras não serão adicionadas corretamente e o sistema não está protegido por permissões.
+</ul>
+<div>
 <h2>8.0.0 — Remake</h2>
 </div>
 <ul> 

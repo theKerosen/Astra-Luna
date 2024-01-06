@@ -5,9 +5,9 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
-import { AstraLuna } from "../Client";
-import { defaultGuildConfig } from "../schematicas/Schematica";
-import { DisplayInformation } from "../components/astra/xp";
+import { AstraLuna } from "../client";
+import { GuildCollection } from "../schematicas/schematica";
+import { DisplayInformation } from "../components/astra/astraXP";
 import { Command } from "../command";
 
 class XPCommand implements Command {
@@ -80,8 +80,9 @@ class XPCommand implements Command {
     await this.interaction.deferReply();
     const role = this.interaction.options.getRole("cargo");
     const level = this.interaction.options.getInteger("level");
-    const Guild = this.client.guilds.cache.get(this.interaction.guildId ?? "");
-    const User = Guild?.members.cache.get(this.interaction.user.id);
+    const User = this.interaction.guild?.members.cache.get(
+      this.interaction.user.id
+    );
 
     if (!User?.permissions.has(PermissionFlagsBits.Administrator))
       return await this.interaction.editReply({
@@ -93,7 +94,7 @@ class XPCommand implements Command {
           "Cargos com o nome de @everyone são desabilitados por motivos de segurança.",
       });
 
-    defaultGuildConfig.findOneAndUpdate(
+    await GuildCollection.findOneAndUpdate(
       { GuildId: this.interaction.guildId },
       { $push: { XPRoles: { role: role?.id, level: level } } },
       { upsert: true }
@@ -110,15 +111,16 @@ class XPCommand implements Command {
     await this.interaction.deferReply();
 
     const role = this.interaction.options.getRole("cargo");
-    const Guild = this.client.guilds.cache.get(this.interaction.guildId ?? "");
-    const User = Guild?.members.cache.get(this.interaction.user.id);
+    const User = this.interaction.guild?.members.cache.get(
+      this.interaction.user.id
+    );
 
     if (!User?.permissions.has(PermissionFlagsBits.Administrator))
       return await this.interaction.editReply({
         content: "[❌] Sem permissão.",
       });
 
-    defaultGuildConfig.findOneAndUpdate(
+    await GuildCollection.findOneAndUpdate(
       { GuildId: this.interaction.guildId },
       { $pull: { XPRoles: { role: role?.id } } },
       { upsert: true }
@@ -134,10 +136,9 @@ class XPCommand implements Command {
 
     await this.interaction.deferReply();
     const usuário = this.interaction.options.getUser("usuário");
-    const buffer = await new DisplayInformation({
-      client: this.client,
-      interaction: this.interaction,
-    }).generateDisplay(usuário ? usuário?.id : this.interaction.user.id);
+    const buffer = await new DisplayInformation(
+      this.interaction
+    ).generateDisplay(usuário ? usuário?.id : this.interaction.user.id);
     const attachment = new AttachmentBuilder(Buffer.from(buffer), {
       name: "card.png",
     });
