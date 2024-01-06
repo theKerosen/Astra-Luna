@@ -1,238 +1,167 @@
 import {
-  SlashCommandBuilder,
+  AttachmentBuilder,
+  CacheType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
-  ButtonStyle,
-  Interaction,
+  SlashCommandBuilder,
 } from "discord.js";
-import { Command } from "../utils/command";
-import { defaultGuildConfig } from "../mongooseSchemas/Schematica";
-import { AstraLuna } from "../utils/Client";
-import { XPRank, displayInformation } from "../astraComponents/xpSystem";
-import { BButton } from "../discordComponents/Button";
-import { guildDatabases } from "../astraComponents/dbManager";
+import { AstraLuna } from "../client";
+import { GuildCollection } from "../schematicas/schematica";
+import { DisplayInformation } from "../components/astra/astraXP";
+import { Command } from "../command";
 
-export = {
-  data: new SlashCommandBuilder()
-    .setName("xp")
-    .setDescription("► Veja informações sobre seu XP!")
-    .addSubcommand((s) =>
-      s
-        .setName("ver")
-        .setDescription("► Veja o XP de alguém ou o seu próprio")
-        .addUserOption((s) => s.setName("usuário").setDescription("o usuário"))
-    )
-    .addSubcommand((s) =>
-      s.setName("ranking").setDescription("► Veja o Ranking do servidor!")
-    )
-    .addSubcommandGroup((s) =>
-      s
-        .setName("cargos")
-        .setDescription("► Configure cargos de XP para o seu servidor")
-        .addSubcommand((sub) =>
-          sub
-            .setName("adicionar")
-            .setDescription("► Configure cargos de XP para o seu servidor")
-            .addRoleOption((r) =>
-              r
-                .setName("cargo")
-                .setDescription("► Cargo que será dado ao usuário")
-                .setRequired(true)
-            )
-            .addIntegerOption((i) =>
-              i
-                .setName("level")
-                .setDescription(
-                  "► O nível que o usuário precisa ter para receber esse cargo"
-                )
-                .setRequired(true)
-            )
-        )
-        .addSubcommand((sub) =>
-          sub
-            .setName("remover")
-            .setDescription("Configure cargos de XP para o seu servidor")
-            .addRoleOption((r) =>
-              r
-                .setName("cargo")
-                .setDescription("Cargo que será dado ao usuário")
-                .setRequired(true)
-            )
-        )
-    ),
-  async execute(interaction: ChatInputCommandInteraction, client: AstraLuna) {
-    if (interaction.options.getSubcommand() === "adicionar") {
-      await interaction.deferReply();
-      const role = interaction.options.getRole("cargo");
-      const level = interaction.options.getInteger("level");
-      const Guild = client.guilds.cache.get(interaction.guildId ?? "");
-      const User = Guild?.members.cache.get(interaction.user.id);
+class XPCommand implements Command {
+  public data: SlashCommandBuilder = new SlashCommandBuilder();
+  public interaction: ChatInputCommandInteraction | null = null;
+  public client: AstraLuna | null = null;
 
-      if (!User?.permissions.has(PermissionFlagsBits.Administrator))
-        return await interaction.editReply({
-          content: "[❌] Sem permissão.",
-        });
-      if (role?.name === "@everyone")
-        return interaction.editReply({
-          content:
-            "Cargos com o nome de @everyone são desabilitados por motivos de segurança.",
-        });
+  constructor() {
+    this.data
+      .setName("xp")
 
-      await defaultGuildConfig.findOneAndUpdate(
-        { GuildId: interaction.guildId },
-        { $push: { XPRoles: { role: role?.id, level: level } } },
-        { upsert: true }
+      .setDescription("► Veja informações sobre seu XP!")
+      .addSubcommand((s) =>
+        s
+          .setName("ver")
+          .setDescription("► Veja o XP de alguém ou o seu próprio")
+          .addUserOption((s) =>
+            s.setName("usuário").setDescription("o usuário")
+          )
+      )
+      .addSubcommandGroup((s) =>
+        s
+          .setName("cargos")
+          .setDescription("► Configure cargos de XP para o seu servidor")
+          .addSubcommand((sub) =>
+            sub
+              .setName("adicionar")
+              .setDescription("► Configure cargos de XP para o seu servidor")
+              .addRoleOption((r) =>
+                r
+                  .setName("cargo")
+                  .setDescription("► Cargo que será dado ao usuário")
+                  .setRequired(true)
+              )
+              .addIntegerOption((i) =>
+                i
+                  .setName("level")
+                  .setDescription(
+                    "► O nível que o usuário precisa ter para receber esse cargo"
+                  )
+                  .setRequired(true)
+              )
+          )
+          .addSubcommand((sub) =>
+            sub
+              .setName("remover")
+              .setDescription("Configure cargos de XP para o seu servidor")
+              .addRoleOption((r) =>
+                r
+                  .setName("cargo")
+                  .setDescription("Cargo que será dado ao usuário")
+                  .setRequired(true)
+              )
+          )
       );
-      return await interaction.editReply({
-        content: "Cargo adicionado com sucesso!",
+  }
+  setClient(client: AstraLuna) {
+    this.client = client;
+    return this;
+  }
+  setInteraction(interaction: ChatInputCommandInteraction<CacheType>) {
+    this.interaction = interaction;
+    return this;
+  }
+
+  async adicionar() {
+    if (!this.interaction || !this.client)
+      return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
+
+    await this.interaction.deferReply();
+    const role = this.interaction.options.getRole("cargo");
+    const level = this.interaction.options.getInteger("level");
+    const User = this.interaction.guild?.members.cache.get(
+      this.interaction.user.id
+    );
+
+    if (!User?.permissions.has(PermissionFlagsBits.Administrator))
+      return await this.interaction.editReply({
+        content: "[❌] Sem permissão.",
       });
-    }
-    if (interaction.options.getSubcommand() === "remover") {
-      await interaction.deferReply();
-
-      const role = interaction.options.getRole("cargo");
-      const Guild = client.guilds.cache.get(interaction.guildId ?? "");
-      const User = Guild?.members.cache.get(interaction.user.id);
-
-      if (!User?.permissions.has(PermissionFlagsBits.Administrator))
-        return await interaction.editReply({
-          content: "[❌] Sem permissão.",
-        });
-
-      await defaultGuildConfig.findOneAndUpdate(
-        { GuildId: interaction.guildId },
-        { $pull: { XPRoles: { role: role?.id } } },
-        { upsert: true }
-      );
-      return await interaction.editReply({
-        content: "Cargo removido com sucesso!",
+    if (role?.name === "@everyone")
+      return this.interaction.editReply({
+        content:
+          "Cargos com o nome de @everyone são desabilitados por motivos de segurança.",
       });
-    }
 
-    if (interaction.options.getSubcommand() === "ver") {
-      await interaction.deferReply();
-      const usuário = interaction.options.getUser("usuário");
-      const embed = await new displayInformation({
-        client: client,
-        interaction: interaction,
-      }).generateDisplay(usuário ? usuário?.id : interaction.user.id);
-      interaction.editReply({
-        embeds: [embed],
+    await GuildCollection.findOneAndUpdate(
+      { GuildId: this.interaction.guildId },
+      { $push: { XPRoles: { role: role?.id, level: level } } },
+      { upsert: true }
+    );
+    return await this.interaction.editReply({
+      content: "Cargo adicionado com sucesso!",
+    });
+  }
+
+  async remover() {
+    if (!this.interaction || !this.client)
+      return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
+
+    await this.interaction.deferReply();
+
+    const role = this.interaction.options.getRole("cargo");
+    const User = this.interaction.guild?.members.cache.get(
+      this.interaction.user.id
+    );
+
+    if (!User?.permissions.has(PermissionFlagsBits.Administrator))
+      return await this.interaction.editReply({
+        content: "[❌] Sem permissão.",
       });
+
+    await GuildCollection.findOneAndUpdate(
+      { GuildId: this.interaction.guildId },
+      { $pull: { XPRoles: { role: role?.id } } },
+      { upsert: true }
+    );
+    return await this.interaction.editReply({
+      content: "Cargo removido com sucesso!",
+    });
+  }
+
+  async ver() {
+    if (!this.interaction || !this.client)
+      return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
+
+    await this.interaction.deferReply();
+    const usuário = this.interaction.options.getUser("usuário");
+    const buffer = await new DisplayInformation(
+      this.interaction
+    ).generateDisplay(usuário ? usuário?.id : this.interaction.user.id);
+    const attachment = new AttachmentBuilder(Buffer.from(buffer), {
+      name: "card.png",
+    });
+    this.interaction.editReply({
+      files: [attachment],
+    });
+  }
+
+  async execute() {
+    if (!this.interaction || !this.client)
+      return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
+    switch (this.interaction.options.getSubcommand()) {
+      case "adicionar":
+        this.adicionar();
+        break;
+      case "remover":
+        this.remover();
+        break;
+      case "ver":
+        this.ver();
+        break;
     }
+  }
+}
 
-    if (interaction.options.getSubcommand() === "ranking") {
-      await interaction.deferReply();
-      client.xpRankingPages.set(`${interaction.user.id}_rankingPage`, {
-        usrIndex: 5,
-      });
-      const pageInformation = client.xpRankingPages.get(
-        `${interaction.user.id}_rankingPage`
-      );
-
-      const guild = await new guildDatabases({
-        guild_id: interaction.guildId,
-      }).find();
-
-      const embed = await new XPRank({
-        client: client,
-        interaction: interaction,
-      }).generatePage(interaction.user.id);
-      const Buttons = () =>
-        new BButton()
-          .addButton({
-            customId: "rank_prev",
-            emoji: "<:previous_page:1098891318572363877>",
-            style: ButtonStyle.Primary,
-            disabled: pageInformation?.usrIndex === 5,
-          })
-          .addButton({
-            customId: "rank_x",
-            emoji: "❌",
-            style: ButtonStyle.Secondary,
-            disabled: true,
-          })
-          .addButton({
-            customId: "rank_next",
-            emoji: "<:next_page:1098891315611193364>",
-            style: ButtonStyle.Primary,
-            disabled: pageInformation
-              ? 0 >
-                guild.Users.slice(
-                  pageInformation.usrIndex,
-                  pageInformation.usrIndex + 5
-                ).length -
-                  1
-              : true,
-          });
-
-      if (embed)
-        await interaction
-          .editReply({
-            embeds: [embed],
-            components: [Buttons()],
-          })
-
-          .then((r) => {
-            const filterIn = (i: Interaction) =>
-              i.user.id === interaction.user.id;
-
-            const collector = r.createMessageComponentCollector({
-              filter: filterIn,
-              time: 120000,
-            });
-
-            collector.on("collect", async (button) => {
-              await button.deferUpdate();
-              switch (button.customId) {
-                case "rank_prev":
-                  {
-                    if (pageInformation) {
-                      client.xpRankingPages.set(
-                        `${interaction.user.id}_rankingPage`,
-                        {
-                          usrIndex: (pageInformation.usrIndex -= 5),
-                        }
-                      );
-                      const embed = await new XPRank({
-                        client: client,
-                        interaction: interaction,
-                      }).generatePage(interaction.user.id);
-                      if (embed)
-                        await interaction.editReply({
-                          embeds: [embed],
-                          components: [Buttons()],
-                        });
-                    }
-                  }
-                  break;
-                case "rank_next": {
-                  if (pageInformation) {
-                    client.xpRankingPages.set(
-                      `${interaction.user.id}_rankingPage`,
-                      {
-                        usrIndex: (pageInformation.usrIndex += 5),
-                      }
-                    );
-                    const embed = await new XPRank({
-                      client: client,
-                      interaction: interaction,
-                    }).generatePage(interaction.user.id);
-                    if (embed)
-                      await interaction.editReply({
-                        embeds: [embed],
-                        components: [Buttons()],
-                      });
-                  }
-                }
-              }
-            });
-            collector.on("end", () => {
-              client.xpRankingPages.delete(
-                `${interaction.user.id}_rankingPage`
-              );
-            });
-          });
-    }
-  },
-} as Command;
+export default new XPCommand();

@@ -1,78 +1,85 @@
 import { Schema, model } from "mongoose";
 
 const guildStuff = new Schema({
-  GuildId: String,
-  userId: String,
-  maxWarnLevels: {
-    type: Number,
-    default: 4
-  },
-  perWarnPunishment: [
-    {
-      warnLevel: Number,
-      punishmentType: Number,
-    }
-  ],
-  xpAlertConfig: {
-    message: {
-      type: String,
-      default: "O usuário {@user} avançou para o nível {@level}!",
-    },
-  },
-  Users: [
-    {
-      userId: String,
-      XP: Number,
-      Level: Number,
-      cooldown: Date,
-      warnlevel: Number,
-    },
-  ],
+  guild_id: String,
 
-  channels: {
-    suggestions: String,
-    reports: String,
-    updatesCS: String,
-    csStatus: String,
-    feedbacks: String,
-    xpAlerts: String,
-  },
-  defaultMentionRole: String,
-  toggleCommands: Array,
-  XPRoles: [
+  guild_users: [
     {
-      role: String,
-      level: Number,
+      user_id: String,
+      banned: Boolean,
+      xp: {
+        user_xp: {
+          type: Number,
+          default: 0,
+        },
+        level: {
+          type: Number,
+          default: 0,
+        },
+        cooldown: Date,
+      },
+      warn: {
+        warn_count: Number,
+      },
+      reputation: {
+        bad_reps: {
+          type: Number,
+          default: 0,
+        },
+        good_reps: {
+          type: Number,
+          default: 0,
+        },
+        comments: {
+          user_id: String,
+          comment: String,
+          created_at: Date,
+          positive: Boolean,
+        },
+      },
     },
   ],
+
+  settings: {
+    autorole_settings: {
+      role_id: String,
+    },
+
+    warn_settings: {
+      warn_rules: [
+        {
+          warn_level: Number,
+          punishment_type: Number,
+        },
+      ],
+      max_warn_level: {
+        type: Number,
+        default: 4,
+      },
+    },
+
+    xp_settings: {
+      xp_roles: [
+        {
+          role: String,
+          level: Number,
+        },
+      ],
+    },
+
+    notification_settings: {
+      astra_suggestions: String,
+      astra_reports: String,
+      astra_feedbacks: String,
+      counterstrike_updates: String,
+      counterstrike_status: String,
+      notification_roles: {
+        counterstrike_id: String,
+      },
+    },
+  },
 });
 
-const defaultGuildConfig = model("guildStuff", guildStuff);
+const GuildCollection = model("guild", guildStuff);
 
-const Rep = new Schema({
-  UserId: String,
-  createdAt: Date,
-  isPositive: {
-    type: Boolean,
-    default: false,
-  },
-  Comments: Object,
-  goodRep: {
-    type: Number,
-    default: 0,
-  },
-  badRep: {
-    type: Number,
-    default: 0,
-  },
-});
-const RepSchem = model("Rep", Rep);
-
-const shadowBan = new Schema({
-  userId: String,
-  GuildId: String,
-});
-
-const shadowBanSchema = model("blacklist", shadowBan);
-
-export { defaultGuildConfig, RepSchem, shadowBanSchema };
+export { GuildCollection };
