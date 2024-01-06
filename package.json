@@ -3,7 +3,7 @@
     "@discordjs/form-data": "^3.0.1",
     "@discordjs/rest": "^1.5.0",
     "@napi-rs/canvas": "^0.1.41",
-    "@types/async": "^3.2.16",
+    "@types/async": "^3.2.21",
     "@types/bytebuffer": "^5.0.45",
     "@types/globaloffensive": "^2.3.1",
     "@types/node-cron": "^3.0.9",

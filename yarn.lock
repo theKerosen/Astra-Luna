@@ -1247,7 +1247,7 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.4.tgz#0b92dcc0cc1c81f6f306a381f28e31b1a56536e9"
   integrity sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==
 
-"@types/async@^3.2.16":
+"@types/async@^3.2.21":
   version "3.2.22"
   resolved "https://registry.yarnpkg.com/@types/async/-/async-3.2.22.tgz#6c8c8ee46b4dd0c7a7c33fff2bdb313bf3e639d2"
   integrity sha512-aYsrMkRWXwJfchKtwubTIgvWcgRU8zFT+lL48l9jSu7RJKa3A+E3qwmAJVYap4Do9QzTCLm6p63JmOuII3j7dg==
@@ -1832,22 +1832,33 @@ discord-api-types@^0.37.45:
   resolved "https://registry.yarnpkg.com/discord-api-types/-/discord-api-types-0.37.61.tgz#9dd8e58c624237e6f1b23be2d29579af268b8c5b"
   integrity sha512-o/dXNFfhBpYHpQFdT6FWzeO7pKc838QeeZ9d91CfVAtpr5XLK4B/zYxQbYgPdoMiTDvJfzcsLW5naXgmHGDNXw==
 
-  version "14.11.1-dev.1688385870-75d91b5.0"
-  resolved "https://registry.yarnpkg.com/discord.js/-/discord.js-14.11.1-dev.1688385870-75d91b5.0.tgz#fb68880e7c12718c8194465df13d9098be9ce0eb"
-  integrity sha512-KgvNCxDiTNscUoOBynQ6IbmJssJQc0QndndmhUJMIMb/Q/jtgqsEGZYHaxIC1CHvtCZDQZ3aVNoRJoj7O14SOg==
+discord-api-types@0.37.60:
+  version "0.37.60"
+  resolved "https://registry.yarnpkg.com/discord-api-types/-/discord-api-types-0.37.60.tgz#435855217afcf867e6ea20d0a750b23550b734ed"
+  integrity sha512-5BELXTsv7becqVHrD81nZrqT4oEyXXWBwbsO/kwDDu6X3u19VV1tYDB5I5vaVAK+c1chcDeheI9zACBLm41LiQ==
+
+discord-api-types@^0.37.41, discord-api-types@^0.37.50:
+  version "0.37.61"
+  resolved "https://registry.yarnpkg.com/discord-api-types/-/discord-api-types-0.37.61.tgz#9dd8e58c624237e6f1b23be2d29579af268b8c5b"
+  integrity sha512-o/dXNFfhBpYHpQFdT6FWzeO7pKc838QeeZ9d91CfVAtpr5XLK4B/zYxQbYgPdoMiTDvJfzcsLW5naXgmHGDNXw==
+
+discord.js@14.12.0:
+  version "14.12.0"
+  resolved "https://registry.yarnpkg.com/discord.js/-/discord.js-14.12.0.tgz#e476c7f171ecc3add62781583223b522d12bd1fd"
+  integrity sha512-rvqwvcu73p8QCsy90klZ6n8HLfaN9SCCKyGGrgVIHcJ3ywUzr1hU67Zm/0c7h2PR45ySZqSHV8x2mIfJ1+n/OA==
   dependencies:
-    "@discordjs/builders" "^1.6.3"
-    "@discordjs/collection" "^1.5.1"
+    "@discordjs/builders" "^1.6.4"
+    "@discordjs/collection" "^1.5.2"
     "@discordjs/formatters" "^0.3.1"
-    "@discordjs/rest" "^1.7.1"
-    "@discordjs/util" "^0.3.1"
-    "@discordjs/ws" "^0.8.3"
+    "@discordjs/rest" "^2.0.0"
+    "@discordjs/util" "^1.0.0"
+    "@discordjs/ws" "^1.0.0"
     "@sapphire/snowflake" "^3.5.1"
-    "@types/ws" "^8.5.4"
-    discord-api-types "^0.37.45"
+    "@types/ws" "^8.5.5"
+    discord-api-types "^0.37.50"
     fast-deep-equal "^3.1.3"
     lodash.snakecase "^4.1.1"
-    tslib "^2.5.2"
+    tslib "^2.6.1"
     undici "^5.22.1"
     ws "^8.13.0"
 
