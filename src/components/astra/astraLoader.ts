@@ -1,20 +1,16 @@
 import { readdirSync } from "fs";
-import { AstraLuna } from "../../Client";
+import { AstraLuna } from "../../client";
 import {
   ChatInputCommandInteraction,
   Collection,
+  REST,
+  Routes,
   SlashCommandBuilder,
 } from "discord.js";
 import root from "app-root-path";
 
-export class BaseHandler {
+export class BaseHandler extends AstraLuna {
   CommandData: Collection<string, SlashCommandBuilder> = new Collection();
-  public client: AstraLuna;
-
-  constructor(client: AstraLuna) {
-    this.client = client;
-  }
-
   async loadCommands() {
     const files = readdirSync(`${root}/dist/commands`);
 
@@ -23,25 +19,25 @@ export class BaseHandler {
         const module = await import(`${root}/dist/commands/${file}`);
         const cmdClass = module.default;
         if (cmdClass) {
-          this.client.commands.set(cmdClass.data.name, cmdClass);
+          this.commands.set(cmdClass.data.name, cmdClass);
           this.CommandData.set(cmdClass.data.name, cmdClass.data.toJSON());
         }
       }
     }
+
     return this;
   }
 
   async sendCommands() {
-    try {
-      await this.client.application?.commands.set(
-        this.CommandData.map((v) => v)
+    const rest = new REST().setToken(process.env.TOKEN ?? "");
+
+    await rest
+      .put(Routes.applicationCommands(process.env.ID ?? ""), {
+        body: this.CommandData.map((v) => v),
+      })
+      .catch((e) =>
+        console.log(`[Astra Luna] Commands were not registered, error: \n${e}`)
       );
-      console.log("[Astra Luna] -> Comandos registrados com sucesso.");
-    } catch (e) {
-      console.log(
-        `[Astra Luna] -> Os comandos não foram registrados, motivo: \n${e}`
-      );
-    }
 
     return this;
   }
@@ -52,7 +48,7 @@ export class BaseHandler {
   ) {
     if (!interaction.isChatInputCommand()) return;
 
-    const command = this.client.commands.get(interaction.commandName);
+    const command = this.commands.get(interaction.commandName);
 
     if (!command) return;
     await command.setClient(client).setInteraction(interaction).execute();

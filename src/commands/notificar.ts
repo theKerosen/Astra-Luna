@@ -8,10 +8,10 @@ import {
   SlashCommandBuilder,
   TextChannel,
 } from "discord.js";
-import { AstraLuna } from "../Client";
+import { AstraLuna } from "../client";
 import { Command } from "../command";
 import { BEmbed } from "../components/discord/Embed";
-import { defaultGuildConfig } from "../schematicas/Schematica";
+import { GuildDatabases } from "../components/astra/astraDBManager";
 
 class Notify implements Command {
   client: AstraLuna | null = null;
@@ -82,12 +82,16 @@ class Notify implements Command {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
 
-    await defaultGuildConfig.findOneAndUpdate(
-      { GuildId: this.interaction.guildId },
+    const db = await new GuildDatabases({
+      guild_id: this.interaction.guildId,
+    }).find();
+
+    db.updateOne(
       {
-        GuildId: this.interaction.guildId,
-        "channels.updatesCS": this.channel?.id,
-        NotifyRoleId: this.role?.id,
+        "settings.notification_settings.counterstrike_updates":
+          this.channel?.id,
+        "settings.notification_settings.notification_roles.counterstrike_id":
+          this.role?.id,
       },
       { upsert: true }
     );
@@ -118,12 +122,14 @@ class Notify implements Command {
     if (!this.interaction || !this.client)
       return console.error("INTERACTION/CLIENT IS NOT DEFINED.");
 
-    await defaultGuildConfig.findOneAndUpdate(
-      { GuildId: this.interaction.guildId },
+    const db = await new GuildDatabases({
+      guild_id: this.interaction.guildId,
+    }).find();
+    db.updateOne(
       {
-        GuildId: this.interaction.guildId,
-        "channels.csStatus": this.channel?.id,
-        NotifyRoleId: this.role?.id,
+        "settings.notification_settings.counterstrike_status": this.channel?.id,
+        "settings.notification_settings.notification_roles.counterstrike_id":
+          this.role?.id,
       },
       { upsert: true }
     );
@@ -154,8 +160,9 @@ class Notify implements Command {
 
     this.setMisc();
 
-    const Guild = this.client.guilds.cache.get(this.interaction.guildId ?? "");
-    const User = Guild?.members.cache.get(this.interaction.user.id);
+    const User = this.interaction.guild?.members.cache.get(
+      this.interaction.user.id
+    );
     if (!User?.permissions.has(PermissionFlagsBits.Administrator)) {
       this.interaction.reply({
         content: "[❌] Sem permissão.",
