@@ -37,21 +37,6 @@ Agora administradores de um servidor podem botar um usuário em uma lista negra 
 Comandos: /reputação blacklist/whitelist <usuário>
 </div>
 
-<div align="right">
-<h3> Sistema de Enquetes! [🔼|🔽] </h3>
-Simples e autoexplicativo como o sistema de XP, só utilizar /enquete para ver as opções.
-<h1></h1>
-</div>
-<div align="left">
-<h3> [📜] Sistema de Sugestões </h3>
-Um sistema ótimo para dar sugestões a um servidor, basta digitar o comando /sugestão sugerir e preencher o formulário
-<h1></h1>
-</div>
-<div align="right">
-<h3> [⬅️] Sistema de Feedback! </h3>
-Um sistema ótimo para dar feedbacks a um servidor, apenas digite /feedback enviar para abrir o formulário. <br> para configurar o canal de feedback, utilize /feedback canal.
-<h1></h1>
-</div>
 
 <h1>Contribuindo</h1>
 
