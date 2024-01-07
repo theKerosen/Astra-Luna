@@ -14,7 +14,7 @@
     "discord-api-types": "0.37.60",
     "discord.js": "14.14.0",
     "dotenv": "^16.0.3",
-    "eslint": "^8.47.0",
+    "eslint": "^8.56.0",
     "globaloffensive": "^2.3.0",
     "mongoose": "^6.11.4",
     "node-cache": "^5.1.2",
