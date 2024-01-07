@@ -1260,10 +1260,10 @@
     "@types/long" "^3.0.0"
     "@types/node" "*"
 
-"@types/bytebuffer@^5.0.45":
-  version "5.0.46"
-  resolved "https://registry.yarnpkg.com/@types/bytebuffer/-/bytebuffer-5.0.46.tgz#65ddd3f98b8e0a783fe86fbeeb370e7152ddfb82"
-  integrity sha512-QxINdj2nX5ITZfRk4fOZza9IGVJ0QLBeVIuUcEEcmTm1MyPn0PRiK+tf8K7XXwJ+fjT9S5aKt+z78NlCm2RNtA==
+"@types/bytebuffer@^5.0.48":
+  version "5.0.48"
+  resolved "https://registry.yarnpkg.com/@types/bytebuffer/-/bytebuffer-5.0.48.tgz#0e6b0e8b8dbafde3314148ed378b8aed6eaac4f1"
+  integrity sha512-ormKm68NtTOtR8C/4jyRJEYbwKABXRkHHR/1fmkiuFbCQkltgtXSUGfldCSmJzvuyJvmBzWjBbOi79Ry/oJQug==
   dependencies:
     "@types/long" "^3.0.0"
     "@types/node" "*"
