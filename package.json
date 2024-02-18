@@ -24,7 +24,7 @@
     "steam-user": "^4.27.1",
     "steamid": "^2.0.0",
     "ts-node": "^10.9.1",
-    "undici": "^5.26.2"
+    "undici": "^5.28.3"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
