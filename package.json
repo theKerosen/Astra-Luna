@@ -14,7 +14,7 @@
     "discord-api-types": "0.37.60",
     "discord.js": "14.14.0",
     "dotenv": "^16.0.3",
-    "eslint": "^8.47.0",
+    "eslint": "^9.0.0",
     "globaloffensive": "^2.3.0",
     "mongoose": "^6.11.4",
     "node-cache": "^5.1.2",
@@ -24,7 +24,7 @@
     "steam-user": "^4.27.1",
     "steamid": "^2.0.0",
     "ts-node": "^10.9.1",
-    "undici": "^5.26.2"
+    "undici": "^5.28.4"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
