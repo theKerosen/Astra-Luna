@@ -13,7 +13,7 @@
     "canvas-constructor": "^7.0.1",
     "discord-api-types": "0.37.60",
     "discord.js": "14.14.0",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.4.5",
     "eslint": "^8.47.0",
     "globaloffensive": "^2.3.0",
     "mongoose": "^6.11.4",
