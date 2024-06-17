@@ -1705,12 +1705,12 @@ callsites@^3.0.0:
   resolved "https://registry.yarnpkg.com/callsites/-/callsites-3.1.0.tgz#b3630abd8943432f54b3f0519238e33cd7df2f73"
   integrity sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==
 
-canvas-constructor@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/canvas-constructor/-/canvas-constructor-7.0.1.tgz#64853283a3760eb6b793d728e26f632f6ad5d5dc"
-  integrity sha512-dO1FZDDA+0zMoamAYn9hq14/p63p24FHA/aM+r2JOUqwoi+So0kYQo44DywDy/QXH1h9/+tgMSjgn01FpshMfA==
+canvas-constructor@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/canvas-constructor/-/canvas-constructor-7.0.2.tgz#d034ea8c54517149af21aa9a70c655d9084b42d5"
+  integrity sha512-zboXizj9+zlg+4owI9Cdns/bWCAJ6loZzQYKpkhyGPywK2Da0RaYUQGV8y7VZ5o+lmMKNjt93uD1KTBa9UPL8A==
   dependencies:
-    tslib "^2.5.2"
+    tslib "^2.6.2"
 
 chalk@^4.0.0:
   version "4.1.2"
@@ -3451,7 +3451,7 @@ tsconfig-paths@^3.14.2:
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
-tslib@2.6.2, tslib@^2.3.1, tslib@^2.5.0, tslib@^2.5.2, tslib@^2.6.2:
+tslib@2.6.2, tslib@^2.3.1, tslib@^2.5.0, tslib@^2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.2.tgz#703ac29425e7b37cd6fd456e92404d46d1f3e4ae"
   integrity sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==
